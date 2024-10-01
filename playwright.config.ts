@@ -36,37 +36,36 @@ export default defineConfig({
 
   /* Configure projects for major browsers. See https://playwright.dev/docs/browsers */
   projects: [
-    {
-      name: "chrome",
-      use: {
-        ...devices["Desktop Chrome"],
-        channel: "chrome",
-        viewport: DEFAULT_VIEWPORT,
-      },
+  {
+    name: "chrome",
+    use: {
+      ...devices["Desktop Chrome"],
+      channel: "chrome",
+      viewport: DEFAULT_VIEWPORT,
     },
-    {
-      name: "edge",
-      use: {
-        ...devices["Desktop Edge"],
-        channel: "msedge",
-        viewport: DEFAULT_VIEWPORT,
-      },
+  },
+  {
+    name: "edge",
+    use: {
+      ...devices["Desktop Edge"],
+      channel: "msedge",
+      viewport: DEFAULT_VIEWPORT,
     },
-    {
-      name: "firefox",
-      use: { ...devices["Desktop Firefox"], viewport: DEFAULT_VIEWPORT },
-    },
-    {
-      name: "webkit",
-      use: { ...devices["Desktop Safari"], viewport: DEFAULT_VIEWPORT },
-    },
-    {
-      name: "mobilechrome",
-      use: { ...devices["Pixel 5"] },
-    },
-    {
-      name: "mobilesafari",
-      use: { ...devices["iPhone 12"] },
-    },
-  ],
-});
+  },
+  {
+    name: "firefox",
+    use: { ...devices["Desktop Firefox"], viewport: DEFAULT_VIEWPORT },
+  },
+  {
+    name: "webkit",
+    use: { ...devices["Desktop Safari"], viewport: DEFAULT_VIEWPORT },
+  },
+  {
+    name: "mobilechrome",
+    use: { ...devices["Pixel 5"] },
+  },
+  {
+    name: "mobilesafari",
+    use: { ...devices["iPhone 12"] },
+  },
+],
