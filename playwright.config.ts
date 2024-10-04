@@ -16,7 +16,7 @@ export default defineConfig({
   /* This timeout should match whatever your longest test takes with slight leeway for app performance */
   timeout: 2 * 60 * 1000,
   /* The default timeout for assertions is 5s, it's not advised to increase this massively.
-  If you need to, you can add a timeout to a specific assertion e.g. await page.goto('https://playwright.dev', { timeout: 30000 }); */
+     If you need to, you can add a timeout to a specific assertion e.g. await page.goto('https://playwright.dev', { timeout: 30000 }); */
   expect: { timeout: 10000 },
   /* As we're using shared environments, it's not suggested to raise worker numbers above 4. */
   // TODO: Number for CI should be set to the jenkins param
@@ -37,11 +37,11 @@ export default defineConfig({
   /* Configure projects for major browsers. See https://playwright.dev/docs/browsers */
   projects: [
     {
-      name: 'setup db',
+      name: "setup db",
       testMatch: /global\.setup\.ts/,
     },
     {
-      name: 'cleanup db',
+      name: "cleanup db",
       testMatch: /global\.teardown\.ts/,
     },
     {
@@ -51,7 +51,7 @@ export default defineConfig({
         channel: "chrome",
         viewport: DEFAULT_VIEWPORT,
       },
-      dependencies: ['setup db'],
+      dependencies: ["setup db"],
     },
     {
       name: "edge",
@@ -60,27 +60,27 @@ export default defineConfig({
         channel: "msedge",
         viewport: DEFAULT_VIEWPORT,
       },
-      dependencies: ['setup db'],
+      dependencies: ["setup db"],
     },
     {
       name: "firefox",
       use: { ...devices["Desktop Firefox"], viewport: DEFAULT_VIEWPORT },
-      dependencies: ['setup db'],
+      dependencies: ["setup db"],
     },
     {
       name: "webkit",
       use: { ...devices["Desktop Safari"], viewport: DEFAULT_VIEWPORT },
-      dependencies: ['setup db'],
+      dependencies: ["setup db"],
     },
     {
       name: "mobilechrome",
       use: { ...devices["Pixel 5"] },
-      dependencies: ['setup db'],
+      dependencies: ["setup db"],
     },
     {
       name: "mobilesafari",
       use: { ...devices["iPhone 12"] },
-      dependencies: ['setup db'],
+      dependencies: ["setup db"],
     },
   ],
 });

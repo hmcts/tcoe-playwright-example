@@ -1,0 +1,26 @@
+import { expect, Locator, Page } from "@playwright/test";
+import { WaitUtils } from "../../utils/wait.utils";
+import { SpinnerComponent } from "./spinner.component";
+
+export class CaseListComponent {
+  readonly caseList = this.root.locator("exui-case-list");
+  readonly filters = {
+    caseNameFilter: this.root.locator("#applicantCaseName"),
+    applyFilterBtn: this.root.getByTitle("Apply filter"),
+  };
+  readonly resultLinks = this.root.locator("ccd-search-result .govuk-link");
+  private spinnerComponent = new SpinnerComponent(this.page);
+
+  constructor(private page: Page, private root: Locator) {}
+
+  public async searchByCaseName(caseName: string): Promise<void> {
+    await this.filters.caseNameFilter.fill(caseName);
+    await this.filters.applyFilterBtn.click();
+    await this.spinnerComponent.wait();
+  }
+
+  public async selectCaseByIndex(index: number) {
+    await this.resultLinks.nth(index).click();
+    await this.spinnerComponent.wait();
+  }
+}
