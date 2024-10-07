@@ -1,8 +1,18 @@
 import { defineConfig, devices } from "@playwright/test";
 import path from "path";
 
+// TODO: Make this more reusable
 export const config = {
   sessionStoragePath: path.join(__dirname, ".sessions/"),
+  users: {
+    solicitor: {
+      username: process.env.SOLICITOR_USERNAME!,
+      password: process.env.SOLICITOR_PASSWORD!,
+    },
+  },
+  urls: {
+    manageCaseBaseUrl: process.env.MANAGE_CASES_BASE_URL!,
+  },
 };
 
 const DEFAULT_VIEWPORT = { width: 1920, height: 1080 };

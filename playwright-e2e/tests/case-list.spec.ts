@@ -5,13 +5,13 @@ import { CaseListPage } from "../page-objects/pages/case-list.po";
 
 test.use({
   storageState:
-    config.sessionStoragePath + `${process.env.SOLICITOR_USERNAME}.json`,
+    config.sessionStoragePath + `${config.users.solicitor.username}.json`,
 });
 
 test.describe(() => {
   test.beforeEach(async ({ page }) => {
     const caseListPage = new CaseListPage(page);
-    await page.goto(process.env.MANAGE_CASES_BASE_URL!);
+    await page.goto(config.urls.manageCaseBaseUrl);
     await caseListPage.exuiHeader.checkIsVisible();
   });
 
