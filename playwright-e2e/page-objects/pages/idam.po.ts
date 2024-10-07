@@ -1,4 +1,5 @@
 import { Page } from "@playwright/test";
+import { config } from "../../../playwright.config";
 import { Base } from "../base";
 
 export class IdamPage extends Base {
@@ -13,9 +14,12 @@ export class IdamPage extends Base {
     super(page);
   }
 
-  async logIn(username: string, password: string): Promise<void> {
+  async login(username: string, password: string): Promise<void> {
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
     await this.submitBtn.click();
+    await this.page
+      .context()
+      .storageState({ path: config.sessionStoragePath + `${username}.json` });
   }
 }

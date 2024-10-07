@@ -1,4 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
+import path from "path";
+
+export const config = {
+  sessionStoragePath: path.join(__dirname, ".sessions/"),
+};
 
 const DEFAULT_VIEWPORT = { width: 1920, height: 1080 };
 
