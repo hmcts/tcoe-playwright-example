@@ -3,7 +3,7 @@
 
 def type = "nodejs"
 def product = "tcoe"
-def component = "e2e-tests"
+def component = "web"
 
 def yarnBuilder = new uk.gov.hmcts.contino.YarnBuilder(this)
 
