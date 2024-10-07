@@ -38,10 +38,12 @@ export default defineConfig({
   projects: [
     {
       name: "setup db",
+      testDir: "./",
       testMatch: /global\.setup\.ts/,
     },
     {
       name: "cleanup db",
+      testDir: "./",
       testMatch: /global\.teardown\.ts/,
     },
     {
