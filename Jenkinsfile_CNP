@@ -3,11 +3,11 @@
 
 def type = "nodejs"
 def product = "tcoe"
-def component = "web"
+def component = "e2e-tests"
 
 def yarnBuilder = new uk.gov.hmcts.contino.YarnBuilder(this)
 
-withPipeline(type, product, component, 600) {
+withPipeline(type, product, component) {
   afterSuccess('build') {
     yarnBuilder.yarn('lint')
   }
