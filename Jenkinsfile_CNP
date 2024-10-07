@@ -8,7 +8,7 @@ def component = "e2e-tests"
 def yarnBuilder = new uk.gov.hmcts.contino.YarnBuilder(this)
 
 withPipeline(type, product, component, 600) {
-  after('build') {
+  afterSuccess('build') {
     yarnBuilder.yarn('lint')
   }
 }
