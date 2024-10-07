@@ -1,10 +1,8 @@
-import { expect, Page } from "@playwright/test";
-import BasePage from "../base.page";
-import { ExUiHeaderComponent } from "../components/exui-header.component";
-import { CaseListComponent } from "../components/case-list.component";
+import { Page } from "@playwright/test";
+import { Base } from "../base";
 import { CaseDetailsComponent } from "../components/case-details.component";
 
-export class CaseDetailsPage extends BasePage {
+export class CaseDetailsPage extends Base {
   readonly container = this.page.locator("exui-case-details-home");
   readonly caseDetailsComponent = new CaseDetailsComponent(
     this.page,

@@ -1,9 +1,10 @@
-import { expect, Locator, Page } from "@playwright/test";
-import { WaitUtils } from "../../utils/wait.utils";
-import { SpinnerComponent } from "./spinner.component";
+import { Locator, Page } from "@playwright/test";
+import { Base } from "../base";
 
-export class CaseDetailsComponent {
+export class CaseDetailsComponent extends Base {
   readonly caseHeader = this.root.locator("ccd-case-header");
 
-  constructor(private page: Page, private root: Locator) {}
+  constructor(page: Page, private root: Locator) {
+    super(page);
+  }
 }

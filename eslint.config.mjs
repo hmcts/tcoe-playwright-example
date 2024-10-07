@@ -1,6 +1,6 @@
 import typescript from "@typescript-eslint/eslint-plugin";
-import playwright from "eslint-plugin-playwright";
 import typescriptParser from "@typescript-eslint/parser";
+import playwright from "eslint-plugin-playwright";
 const { configs: typescriptConfigs } = typescript;
 
 export default [

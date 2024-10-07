@@ -1,8 +1,8 @@
-import { expect, Locator, Page } from "@playwright/test";
-import { WaitUtils } from "../../utils/wait.utils";
+import { Locator, Page } from "@playwright/test";
+import { Base } from "../base";
 import { SpinnerComponent } from "./spinner.component";
 
-export class CaseListComponent {
+export class CaseListComponent extends Base {
   readonly caseList = this.root.locator("exui-case-list");
   readonly filters = {
     caseNameFilter: this.root.locator("#applicantCaseName"),
@@ -11,7 +11,9 @@ export class CaseListComponent {
   readonly resultLinks = this.root.locator("ccd-search-result .govuk-link");
   private spinnerComponent = new SpinnerComponent(this.page);
 
-  constructor(private page: Page, private root: Locator) {}
+  constructor(page: Page, private root: Locator) {
+    super(page);
+  }
 
   public async searchByCaseName(caseName: string): Promise<void> {
     await this.filters.caseNameFilter.fill(caseName);

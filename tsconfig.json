@@ -8,6 +8,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "useDefineForClassFields": false,
     "noEmit": true,
     "allowJs": true,
     "outDir": "dist",

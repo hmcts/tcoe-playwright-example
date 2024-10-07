@@ -1,7 +1,7 @@
-import { expect, Page } from "@playwright/test";
-import BasePage from "../base.page";
+import { Page } from "@playwright/test";
+import { Base } from "../base";
 
-export class IdamPage extends BasePage {
+export class IdamPage extends Base {
   readonly heading = this.page.getByRole("heading", {
     name: "Sign in or create an account",
   });

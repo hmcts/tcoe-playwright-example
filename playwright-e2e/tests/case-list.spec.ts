@@ -1,7 +1,7 @@
-import { test, expect } from "@playwright/test";
-import { IdamPage } from "../page-objects/pages/idam.po";
-import { CaseListPage } from "../page-objects/pages/case-list.po";
+import { expect, test } from "@playwright/test";
 import { CaseDetailsPage } from "../page-objects/pages/case-details.po";
+import { CaseListPage } from "../page-objects/pages/case-list.po";
+import { IdamPage } from "../page-objects/pages/idam.po";
 
 test.describe(() => {
   test.beforeEach(async ({ page }) => {
