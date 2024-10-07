@@ -20,7 +20,6 @@ export default [
     rules: {
       ...typescriptConfigs.recommended.rules,
       ...playwright.configs["flat/recommended"].rules,
-      "no-console": "warn",
       "@typescript-eslint/no-floating-promises": ["error"],
     },
   },
