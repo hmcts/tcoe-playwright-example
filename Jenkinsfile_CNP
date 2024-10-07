@@ -8,7 +8,7 @@ def channel = "#tcoe-builds"
 
 def yarnBuilder = new uk.gov.hmcts.contino.YarnBuilder(this)
 
-withPipeline(type, product, component) {
+withNightlyPipeline(type, product, component) {
   enableSlackNotifications(channel)
   afterSuccess('build') {
     yarnBuilder.yarn('lint')
