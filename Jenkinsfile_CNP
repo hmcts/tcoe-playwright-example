@@ -11,7 +11,13 @@ def yarnBuilder = new uk.gov.hmcts.contino.YarnBuilder(this)
 
 withNightlyPipeline(type, product, component) {
   enableSlackNotifications(channel)
-  afterSuccess('build') {
-    yarnBuilder.yarn('lint')
+  afterAlways('DependencyCheckNightly') {
+    stage('Lint') {
+        try {
+          yarnBuilder.yarn('lint')
+        } catch (Error) {
+          unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
+        }
+      }
   }
 }
