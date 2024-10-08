@@ -1,8 +1,9 @@
 #!groovy
 @Library("Infrastructure")
 
+// Need to replace these with TCoE team once available
 def type = "nodejs"
-def product = "tcoe"
+def product = "dtsse"
 def component = "e2e-tests"
 def channel = "#tcoe-builds"
 
