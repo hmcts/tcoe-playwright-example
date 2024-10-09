@@ -12,10 +12,6 @@ test.use({
     config.sessionStoragePath + `${config.users.exui.username}.json`,
 });
 
-test.use({
-  storageState: "",
-});
-
 // test.describe() is used to group a suite of tests
 test.describe("Case List Tests", () => {
   // test.beforeEach hook to run before any test
