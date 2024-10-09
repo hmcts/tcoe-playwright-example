@@ -5,9 +5,9 @@ import path from "path";
 export const config = {
   sessionStoragePath: path.join(__dirname, ".sessions/"),
   users: {
-    solicitor: {
-      username: process.env.SOLICITOR_USERNAME!,
-      password: process.env.SOLICITOR_PASSWORD!,
+    exui: {
+      username: process.env.EXUI_USERNAME!,
+      password: process.env.EXUI_PASSWORD!,
     },
   },
   urls: {
@@ -52,12 +52,12 @@ export default defineConfig({
   /* Configure projects for major browsers. See https://playwright.dev/docs/browsers */
   projects: [
     {
-      name: "setup db",
+      name: "setup",
       testDir: "./",
       testMatch: /global\.setup\.ts/,
     },
     {
-      name: "cleanup db",
+      name: "teardown",
       testDir: "./",
       testMatch: /global\.teardown\.ts/,
     },
@@ -68,7 +68,7 @@ export default defineConfig({
         channel: "chrome",
         viewport: DEFAULT_VIEWPORT,
       },
-      dependencies: ["setup db"],
+      dependencies: ["setup"],
     },
     {
       name: "edge",
@@ -77,27 +77,27 @@ export default defineConfig({
         channel: "msedge",
         viewport: DEFAULT_VIEWPORT,
       },
-      dependencies: ["setup db"],
+      dependencies: ["setup"],
     },
     {
       name: "firefox",
       use: { ...devices["Desktop Firefox"], viewport: DEFAULT_VIEWPORT },
-      dependencies: ["setup db"],
+      dependencies: ["setup"],
     },
     {
       name: "webkit",
       use: { ...devices["Desktop Safari"], viewport: DEFAULT_VIEWPORT },
-      dependencies: ["setup db"],
+      dependencies: ["setup"],
     },
     {
       name: "mobilechrome",
       use: { ...devices["Pixel 5"] },
-      dependencies: ["setup db"],
+      dependencies: ["setup"],
     },
     {
       name: "mobilesafari",
       use: { ...devices["iPhone 12"] },
-      dependencies: ["setup db"],
+      dependencies: ["setup"],
     },
   ],
 });

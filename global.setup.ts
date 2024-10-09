@@ -6,8 +6,5 @@ setup("Set up", async ({ page }) => {
   // Log in using the solicitor user and save session
   const idam = new IdamPage(page);
   await page.goto(config.urls.manageCaseBaseUrl);
-  await idam.login(
-    process.env.SOLICITOR_USERNAME!,
-    process.env.SOLICITOR_PASSWORD!
-  );
+  await idam.login(config.users.exui.username, config.users.exui.password);
 });

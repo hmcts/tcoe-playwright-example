@@ -3,12 +3,22 @@ import { config } from "../../playwright.config";
 import { CaseDetailsPage } from "../page-objects/pages/case-details.po";
 import { CaseListPage } from "../page-objects/pages/case-list.po";
 
+/**
+ * Select a session for the browser to use
+ * Use test.use({ storageState: '' }) to override if required
+ */
 test.use({
   storageState:
-    config.sessionStoragePath + `${config.users.solicitor.username}.json`,
+    config.sessionStoragePath + `${config.users.exui.username}.json`,
 });
 
-test.describe(() => {
+test.use({
+  storageState: "",
+});
+
+// test.describe() is used to group a suite of tests
+test.describe("Case List Tests", () => {
+  // test.beforeEach hook to run before any test
   test.beforeEach(async ({ page }) => {
     const caseListPage = new CaseListPage(page);
     await page.goto(config.urls.manageCaseBaseUrl);
