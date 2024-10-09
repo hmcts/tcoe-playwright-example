@@ -26,6 +26,7 @@ test.describe("Case List Tests", () => {
   });
 
   test("Search & select a case", async ({ page }) => {
+    const unused = 0;
     const caseListPage = new CaseListPage(page);
     const caseDetailsPage = new CaseDetailsPage(page);
 
