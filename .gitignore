@@ -9,8 +9,8 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-.pnp.cjs
-.pnp.loader.mjs
+.pnp.*
 .yarn/*
+!.yarn/releases
 .vscode/*
 .sessions/
