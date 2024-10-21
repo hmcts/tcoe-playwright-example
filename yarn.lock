@@ -69,7 +69,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.13.0, @eslint/js@npm:^9.13.0":
+"@eslint/js@npm:9.13.0, @eslint/js@npm:^9.11.1":
   version: 9.13.0
   resolution: "@eslint/js@npm:9.13.0"
   checksum: 10c0/672257bffe17777b8a98bd80438702904cc7a0b98b9c2e426a8a10929198b3553edf8a3fc20feed4133c02e7c8f7331a0ef1b23e5dab8e4469f7f1791beff1e0
@@ -193,7 +193,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.48.1":
+"@playwright/test@npm:^1.47.2":
   version: 1.48.1
   resolution: "@playwright/test@npm:1.48.1"
   dependencies:
@@ -218,7 +218,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.7.7":
+"@types/node@npm:^22.6.1":
   version: 22.7.7
   resolution: "@types/node@npm:22.7.7"
   dependencies:
@@ -227,7 +227,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:8.10.0, @typescript-eslint/eslint-plugin@npm:^8.10.0":
+"@typescript-eslint/eslint-plugin@npm:8.10.0, @typescript-eslint/eslint-plugin@npm:^8.8.0":
   version: 8.10.0
   resolution: "@typescript-eslint/eslint-plugin@npm:8.10.0"
   dependencies:
@@ -250,7 +250,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:8.10.0, @typescript-eslint/parser@npm:^8.10.0":
+"@typescript-eslint/parser@npm:8.10.0, @typescript-eslint/parser@npm:^8.8.0":
   version: 8.10.0
   resolution: "@typescript-eslint/parser@npm:8.10.0"
   dependencies:
@@ -633,7 +633,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-playwright@npm:^1.8.1":
+"eslint-plugin-playwright@npm:^1.6.2":
   version: 1.8.1
   resolution: "eslint-plugin-playwright@npm:1.8.1"
   dependencies:
@@ -672,7 +672,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^9.13.0":
+"eslint@npm:^9.11.1":
   version: 9.13.0
   resolution: "eslint@npm:9.13.0"
   dependencies:
@@ -957,7 +957,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^15.11.0":
+"globals@npm:^15.10.0":
   version: 15.11.0
   resolution: "globals@npm:15.11.0"
   checksum: 10c0/861e39bb6bd9bd1b9f355c25c962e5eb4b3f0e1567cf60fa6c06e8c502b0ec8706b1cce055d69d84d0b7b8e028bec5418cf629a54e7047e116538d1c1c1a375c
@@ -1495,7 +1495,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.48.1, playwright-core@npm:^1.48.1":
+"playwright-core@npm:1.48.1, playwright-core@npm:^1.47.2":
   version: 1.48.1
   resolution: "playwright-core@npm:1.48.1"
   bin:
@@ -1745,17 +1745,17 @@ __metadata:
   resolution: "tcoe-playwright-example@workspace:."
   dependencies:
     "@axe-core/playwright": "npm:^4.10.0"
-    "@eslint/js": "npm:^9.13.0"
-    "@playwright/test": "npm:^1.48.1"
-    "@types/node": "npm:^22.7.7"
-    "@typescript-eslint/eslint-plugin": "npm:^8.10.0"
-    "@typescript-eslint/parser": "npm:^8.10.0"
-    eslint: "npm:^9.13.0"
-    eslint-plugin-playwright: "npm:^1.8.1"
-    globals: "npm:^15.11.0"
-    playwright-core: "npm:^1.48.1"
-    typescript: "npm:^5.6.3"
-    typescript-eslint: "npm:^8.10.0"
+    "@eslint/js": "npm:^9.11.1"
+    "@playwright/test": "npm:^1.47.2"
+    "@types/node": "npm:^22.6.1"
+    "@typescript-eslint/eslint-plugin": "npm:^8.8.0"
+    "@typescript-eslint/parser": "npm:^8.8.0"
+    eslint: "npm:^9.11.1"
+    eslint-plugin-playwright: "npm:^1.6.2"
+    globals: "npm:^15.10.0"
+    playwright-core: "npm:^1.47.2"
+    typescript: "npm:^5.6.2"
+    typescript-eslint: "npm:^8.8.0"
   languageName: unknown
   linkType: soft
 
@@ -1800,7 +1800,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript-eslint@npm:^8.10.0":
+"typescript-eslint@npm:^8.8.0":
   version: 8.10.0
   resolution: "typescript-eslint@npm:8.10.0"
   dependencies:
@@ -1814,7 +1814,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.6.3":
+"typescript@npm:^5.6.2":
   version: 5.6.3
   resolution: "typescript@npm:5.6.3"
   bin:
@@ -1824,7 +1824,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.6.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.6.2#optional!builtin<compat/typescript>":
   version: 5.6.3
   resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=8c6c40"
   bin:
