@@ -11,7 +11,7 @@ test.use({
 });
 
 // test.describe() is used to group a suite of tests
-test.describe("Case List Tests - Professional", () => {
+test.describe("Case List Tests - Professional @exui", () => {
   /* test.beforeEach hook not required because the fixture already navigates to case list URL
   test.beforeEach(async ({ caseListPage }) => {
     await caseListPage.exuiHeader.checkIsVisible();

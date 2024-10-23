@@ -1,0 +1,189 @@
+#!groovy
+
+properties([
+  // Currently, we run this pipeline every month (for resources sake)
+  // If you want to run this nightly, uncomment the below line
+  // pipelineTriggers([cron('H 8 * * 1-5')]),
+  // TODO: Set to monthly cron
+  pipelineTriggers([cron('H 8 * * 1-5')]),
+  parameters([
+    string(
+      name: 'CITIZEN_FRONTEND_BASE_URL',
+      defaultValue: 'https://privatelaw.aat.platform.hmcts.net/',
+      description: 'The Citizen URL to test against'
+    ),
+    string(
+      name: 'MANAGE_CASES_BASE_URL',
+      defaultValue: 'https://manage-case.aat.platform.hmcts.net/cases',
+      description: 'The Manage Cases URL to test against'
+    ),
+    string(
+      name: 'FUNCTIONAL_TESTS_WORKERS',
+      defaultValue: '4',
+      description: 'Number of workers running functional tests'
+    ),
+    string(
+      name: 'TAGS_TO_RUN',
+      defaultValue: '',
+      description: 'Optionally, run a single or multiple tags (comma separated e.g. @cui, @exui)'
+    ),
+  ])
+])
+
+@Library("Infrastructure")
+
+// Replace these with your own teams info
+def type = "nodejs"
+def product = "dtsse"
+def component = "e2e-tests"
+def channel = "#tcoe-builds"
+
+static Map < String, Object > secret(String secretName, String envVariable) {
+  [
+    $class: 'AzureKeyVaultSecret',
+    secretType: 'Secret',
+    name: secretName,
+    envVariable: envVariable
+  ]
+}
+
+// Replace the key vault name with your own service
+def secrets = [
+  'prl-${env}': [
+    secret('solicitor-user', 'EXUI_USERNAME'),
+    secret('solicitor-password', 'EXUI_PASSWORD'),
+    secret('citizen-user', 'CITIZEN_USERNAME'),
+    secret('citizen-password', 'CITIZEN_PASSWORD'),
+  ]
+]
+
+def buildPlaywrightCommand(tags) {
+  if (tags == null || tags.trim().isEmpty()) {
+    return;
+  }
+  def tagList = tags.split(',').collect { it.trim() }
+  def command = 'playwright test tests/'
+    tagList.each { tag ->
+    if (!tag.isEmpty()) {
+      command += " --grep ${tag}"
+    }
+  }
+  return command
+}
+
+def yarnBuilder = new uk.gov.hmcts.contino.YarnBuilder(this)
+
+withNightlyPipeline(type, product, component, 600) {
+  loadVaultSecrets(secrets)
+  env.CITIZEN_FRONTEND_BASE_URL = params.CITIZEN_FRONTEND_BASE_URL
+  env.MANAGE_CASES_BASE_URL = params.MANAGE_CASES_BASE_URL
+  env.FUNCTIONAL_TESTS_WORKERS = params.FUNCTIONAL_TESTS_WORKERS
+  enableSlackNotifications(channel)
+
+  afterAlways('DependencyCheckNightly') {
+    stage('Set up playwright') {
+      try {
+        yarnBuilder.yarn('setup')
+      } catch (Error) {
+        unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
+      }
+    }
+    if (!TAGS_TO_RUN.isEmpty()) {
+      try {
+        yarnBuilder.yarn(buildPlaywrightCommand(TAGS_TO_RUN))
+      } catch (Error) {
+        unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
+      } finally {
+        publishHTML([
+          allowMissing: true,
+          alwaysLinkToLastBuild: true,
+          keepAll: true,
+          reportDir: "playwright-report",
+          reportFiles: 'index.html',
+          reportName: "${TAGS_TO_RUN} E2E Tests"
+        ])
+      }
+    } else {
+      stage('Chrome E2E Tests') {
+        try {
+          yarnBuilder.yarn('test:chrome')
+        } catch (Error) {
+          unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
+        } finally {
+          publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "playwright-report",
+            reportFiles: 'index.html',
+            reportName: 'Chrome E2E Tests'
+          ])
+        }
+      }
+      stage('Firefox E2E Tests') {
+        try {
+          yarnBuilder.yarn('test:firefox')
+        } catch (Error) {
+          unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
+        } finally {
+          publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "playwright-report",
+            reportFiles: 'index.html',
+            reportName: 'Firefox E2E Tests'
+          ])
+        }
+      }
+      stage('Webkit E2E Tests') {
+        try {
+          yarnBuilder.yarn('test:webkit')
+        } catch (Error) {
+          unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
+        } finally {
+          publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "playwright-report",
+            reportFiles: 'index.html',
+            reportName: 'Webkit E2E Tests'
+          ])
+        }
+      }
+      stage('Edge E2E Tests') {
+        try {
+          yarnBuilder.yarn('test:edge')
+        } catch (Error) {
+          unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
+        } finally {
+          publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "playwright-report",
+            reportFiles: 'index.html',
+            reportName: 'Edge E2E Tests'
+          ])
+        }
+      }
+      stage('Accessibiity Tests') {
+        try {
+          yarnBuilder.yarn('test:a11y')
+        } catch (Error) {
+          unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
+        } finally {
+          publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "playwright-report",
+            reportFiles: 'index.html',
+            reportName: 'Accessibility Tests'
+          ])
+        }
+      }
+    }
+  }
+}

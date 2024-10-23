@@ -10,7 +10,7 @@ test.use({
     config.sessionStoragePath + `${config.users.citizen.username}.json`,
 });
 
-test.describe("Case List Tests - Citizen", () => {
+test.describe("Case List Tests - Citizen @cui", () => {
   test("View cases", async ({ cuiCaseListPage }) => {
     await expect(cuiCaseListPage.banner).toBeVisible();
     await cuiCaseListPage.cuiCaseListComponent.validateDraftTable();

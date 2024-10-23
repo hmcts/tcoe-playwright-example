@@ -79,13 +79,13 @@ export default defineConfig({
       dependencies: ["setup"],
     },
     {
-      name: "mobilechrome",
-      use: { ...devices["Pixel 5"] },
+      name: "tabletchrome",
+      use: { ...devices["iPad Pro 11"] },
       dependencies: ["setup"],
     },
     {
-      name: "mobilesafari",
-      use: { ...devices["iPhone 12"] },
+      name: "tabletwebkit",
+      use: { ...devices["iPad Pro 11"] },
       dependencies: ["setup"],
     },
   ],

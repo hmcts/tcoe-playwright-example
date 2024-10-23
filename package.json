@@ -23,7 +23,14 @@
   },
   "scripts": {
     "lint": "yarn tsc -p tsconfig.json && yarn eslint .",
-    "setup": "yarn playwright install && yarn playwright install msedge"
+    "setup": "yarn playwright install && yarn playwright install msedge",
+    "test:chrome": "yarn playwright test tests/ --project=chrome",
+    "test:firefox": "yarn playwright test tests/ --project=firefox",
+    "test:webkit": "yarn playwright test tests/ --project=webkit",
+    "test:edge": "yarn playwright test tests/ --project=edge",
+    "test:tabletchrome": "yarn playwright test tests/ --project=tabletchrome",
+    "test:tabletwebkit": "yarn playwright test tests/ --project=tabletwebkit",
+    "test:a11y": "yarn playwright test tests/ --grep @a11y --project=chrome"
   },
   "packageManager": "yarn@4.5.1"
 }

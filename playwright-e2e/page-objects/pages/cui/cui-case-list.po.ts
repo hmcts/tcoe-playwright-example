@@ -16,6 +16,6 @@ export class CuiCaseListPage extends Base {
   }
 
   async goto() {
-    await this.page.goto(config.urls.citizenUrl);
+    await this.page.goto(config.urls.citizenUrl + "dashboard?lng=en");
   }
 }
