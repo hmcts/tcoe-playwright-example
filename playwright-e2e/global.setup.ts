@@ -11,16 +11,10 @@ import { IdamPage } from "./page-objects/pages/idam.po";
  */
 setup("Setup exui user", async ({ page, config }) => {
   await page.goto(config.urls.manageCaseBaseUrl);
-  await new IdamPage(page).login(
-    config.users.exui.username,
-    config.users.exui.password
-  );
+  await new IdamPage(page).login(config.users.exui);
 });
 
 setup("Setup citizen user", async ({ page, config }) => {
   await page.goto(config.urls.citizenUrl);
-  await new IdamPage(page).login(
-    config.users.citizen.username,
-    config.users.citizen.password
-  );
+  await new IdamPage(page).login(config.users.citizen);
 });
