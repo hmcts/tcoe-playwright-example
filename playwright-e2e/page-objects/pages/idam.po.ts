@@ -1,5 +1,5 @@
 import { Page } from "@playwright/test";
-import { config } from "../../utils/";
+import { UserCredentials } from "../../utils/";
 import { Base } from "../base";
 
 export class IdamPage extends Base {
@@ -14,12 +14,14 @@ export class IdamPage extends Base {
     super(page);
   }
 
-  async login(username: string, password: string): Promise<void> {
-    await this.usernameInput.fill(username);
-    await this.passwordInput.fill(password);
+  async login(user: UserCredentials): Promise<void> {
+    await this.usernameInput.fill(user.username);
+    await this.passwordInput.fill(user.password);
     await this.submitBtn.click();
-    await this.page
-      .context()
-      .storageState({ path: config.sessionStoragePath + `${username}.json` });
+    await this.saveSession(user);
+  }
+
+  private async saveSession(user: UserCredentials) {
+    await this.page.context().storageState({ path: user.sessionFile });
   }
 }

@@ -1,4 +1,5 @@
 import { Page } from "@playwright/test";
+import { desktopConfig } from "lighthouse";
 import { playAudit } from "playwright-lighthouse";
 
 interface Thresholds {
@@ -21,6 +22,14 @@ export class LighthouseUtils {
       page: page,
       thresholds: thresholds ? thresholds : this.DEFAULT_THRESHOLDS,
       port: port,
+      config: desktopConfig,
+      reports: {
+        formats: {
+          html: true,
+        },
+        name: "lighthouse-report-" + Date.now().toString(),
+        directory: "./test-results",
+      },
     });
   }
 }

@@ -1,24 +1,14 @@
-import { playAudit } from "playwright-lighthouse";
 import { expect, test } from "../fixtures";
 import { config } from "../utils";
+import { LighthouseUtils } from "../utils/lighthouse.utils";
 
 test.use({
-  storageState:
-    config.sessionStoragePath + `${config.users.citizen.username}.json`,
+  storageState: config.users.citizen.sessionFile,
 });
 
 test.describe("Case List Tests - Citizen @cui @performance", () => {
-  test.only("View cases", async ({
-    lighthouseUtils,
-    cuiCaseListPage,
-    page,
-  }) => {
-    await page.pause();
+  test.only("View cases", async ({ cuiCaseListPage, page }) => {
     await expect(cuiCaseListPage.banner).toBeVisible();
-    await cuiCaseListPage.cuiCaseListComponent.validateDraftTable();
-    await playAudit({
-      page: page,
-      port: 9222,
-    });
+    await new LighthouseUtils().audit(page, 9222);
   });
 });
