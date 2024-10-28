@@ -48,6 +48,9 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         channel: "chrome",
         viewport: DEFAULT_VIEWPORT,
+        launchOptions: {
+          args: ["--remote-debugging-port=9222"],
+        },
       },
       dependencies: ["setup"],
     },

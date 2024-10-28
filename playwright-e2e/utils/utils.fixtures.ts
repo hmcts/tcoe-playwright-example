@@ -1,4 +1,6 @@
+import { chromium } from "@playwright/test";
 import { config, ConfigFixture } from "./config.utils";
+import { LighthouseUtils } from "./lighthouse.utils";
 import { TableUtils } from "./table.utils";
 import { ValidatorUtils } from "./validator.utils";
 import { WaitUtils } from "./wait.utils";
@@ -8,6 +10,7 @@ export interface UtilsFixtures {
   waitUtils: WaitUtils;
   tableUtils: TableUtils;
   config: ConfigFixture;
+  lighthouseUtils: LighthouseUtils;
 }
 
 export const utilsFixtures = {
@@ -23,4 +26,14 @@ export const utilsFixtures = {
   config: async ({}, use) => {
     await use(config);
   },
+  lighthouseUtils: [
+    async ({}, use) => {
+      const userDataDir = config.sessionStoragePath;
+      const context = await chromium.launchPersistentContext(userDataDir, {
+        args: [`--remote-debugging-port=9222`],
+      });
+      await use(context);
+    },
+    { scope: "test" },
+  ],
 };

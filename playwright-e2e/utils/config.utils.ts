@@ -1,4 +1,5 @@
 import path from "path";
+import { fileURLToPath } from "url";
 
 interface UserCredentials {
   username: string;
@@ -20,7 +21,10 @@ export interface ConfigFixture {
 }
 
 export const config: ConfigFixture = {
-  sessionStoragePath: path.join(__dirname, "../.sessions/"),
+  sessionStoragePath: path.join(
+    fileURLToPath(import.meta.url),
+    "../.sessions/"
+  ),
   users: {
     exui: {
       username: getEnvVar("EXUI_USERNAME"),
