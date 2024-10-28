@@ -4,13 +4,12 @@ import { ValidatorUtils } from "./validator.utils";
 import { WaitUtils } from "./wait.utils";
 import AxeBuilder from "@axe-core/playwright";
 
-// Extend UtilsFixtures to include makeAxeBuilder
 export interface UtilsFixtures {
   validatorUtils: ValidatorUtils;
   waitUtils: WaitUtils;
   tableUtils: TableUtils;
   config: ConfigFixture;
-  makeAxeBuilder: () => AxeBuilder; // Add makeAxeBuilder to the interface
+  makeAxeBuilder: () => AxeBuilder;
 }
 
 export const utilsFixtures = {
