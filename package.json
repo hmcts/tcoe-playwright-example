@@ -17,8 +17,6 @@
     "get-port": "^7.1.0",
     "globals": "^15.10.0",
     "lighthouse": "^12.2.1",
-    "playwright": "^1.48.2",
-    "playwright-core": "^1.48.2",
     "playwright-lighthouse": "^4.0.0",
     "typescript": "^5.6.2",
     "typescript-eslint": "^8.8.0"

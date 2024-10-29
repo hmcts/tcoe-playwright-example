@@ -1,6 +1,6 @@
+import { chromium, Page } from "@playwright/test";
 import os from "os";
 import path from "path";
-import { chromium, Page } from "playwright/test";
 import { config, Config, getCookies } from "./config.utils";
 import { LighthouseUtils } from "./lighthouse.utils";
 import { TableUtils } from "./table.utils";

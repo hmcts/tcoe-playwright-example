@@ -2330,7 +2330,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.48.2, playwright-core@npm:^1.48.2":
+"playwright-core@npm:1.48.2":
   version: 1.48.2
   resolution: "playwright-core@npm:1.48.2"
   bin:
@@ -2355,7 +2355,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:1.48.2, playwright@npm:^1.48.2":
+"playwright@npm:1.48.2":
   version: 1.48.2
   resolution: "playwright@npm:1.48.2"
   dependencies:
@@ -2767,8 +2767,6 @@ __metadata:
     get-port: "npm:^7.1.0"
     globals: "npm:^15.10.0"
     lighthouse: "npm:^12.2.1"
-    playwright: "npm:^1.48.2"
-    playwright-core: "npm:^1.48.2"
     playwright-lighthouse: "npm:^4.0.0"
     typescript: "npm:^5.6.2"
     typescript-eslint: "npm:^8.8.0"
