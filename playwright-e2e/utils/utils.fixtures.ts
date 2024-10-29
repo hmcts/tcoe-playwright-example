@@ -1,7 +1,6 @@
-import { chromium, Page } from "@playwright/test";
-import getPort from "get-port";
 import os from "os";
 import path from "path";
+import { chromium, Page } from "playwright/test";
 import { config, Config, getCookies } from "./config.utils";
 import { LighthouseUtils } from "./lighthouse.utils";
 import { TableUtils } from "./table.utils";
@@ -15,7 +14,6 @@ export interface UtilsFixtures {
   config: Config;
   lighthouseUtils: LighthouseUtils;
   lighthousePage: Page;
-  lighthousePort: number;
 }
 
 export const utilsFixtures = {
@@ -31,17 +29,14 @@ export const utilsFixtures = {
   config: async ({}, use) => {
     await use(config);
   },
-  lighthousePort: [
-    async ({}, use) => {
-      const port = await getPort();
-      await use(port);
-    },
-    { scope: "worker" },
-  ],
-  lighthousePage: [
-    async ({ lighthousePort }, use) => {
-      // Lighthouse opens a new page and as playwright doesn't share context we need to explicitly
-      // create a new browser with shared context
+  lighthouseUtils: async ({}, use) => {
+    await use(new LighthouseUtils());
+  },
+  lighthousePage: async ({ lighthousePort, page }, use, testInfo) => {
+    // Prevent creating performance page if not needed
+    if (testInfo.tags.includes("@performance")) {
+      // Lighthouse opens a new page and as playwright doesn't share context we need to
+      // explicitly create a new browser with shared context
       const userDataDir = path.join(os.tmpdir(), "pw", String(Math.random()));
       const context = await chromium.launchPersistentContext(userDataDir, {
         args: [`--remote-debugging-port=${lighthousePort}`],
@@ -51,10 +46,8 @@ export const utilsFixtures = {
       // Provide the page to the test
       await use(context.pages()[0]);
       await context.close();
-    },
-    { scope: "test" },
-  ],
-  lighthouseUtils: async ({}, use) => {
-    await use(new LighthouseUtils());
+    } else {
+      await use(page);
+    }
   },
 };
