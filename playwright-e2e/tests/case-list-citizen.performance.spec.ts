@@ -1,14 +1,35 @@
 import { expect, test } from "../fixtures";
-import { config } from "../utils";
-import { LighthouseUtils } from "../utils/lighthouse.utils";
+import { CuiCaseListPage } from "../page-objects/pages";
 
-test.use({
-  storageState: config.users.citizen.sessionFile,
-});
+/* Because lighthouse has to use a new page to run its tests
+ * the new page has to be passed to the test via a fixture (lighthousePage)
+ * unfortunately, this also means that using any page objects as a fixture will not work
+ * so must be instantiated separately instead using lighthousePage
+ *
+ * to enable parallelisation, the port must also be passed via a fixture (lighthousePort)
+ *
+ * lighthouseUtils provides the utils class which contains the common audit method
+ */
 
-test.describe("Case List Tests - Citizen @cui @performance", () => {
-  test.only("View cases", async ({ cuiCaseListPage, page }) => {
-    await expect(cuiCaseListPage.banner).toBeVisible();
-    await new LighthouseUtils().audit(page, 9222);
+test.describe("Case List UI Performance Tests - Citizen @cui @performance", () => {
+  test("Example performance test", async ({
+    lighthousePage,
+    lighthouseUtils,
+    lighthousePort,
+  }) => {
+    const casePage = new CuiCaseListPage(lighthousePage);
+    await casePage.goto();
+    await expect(casePage.banner).toBeVisible();
+    await lighthouseUtils.audit(lighthousePage, lighthousePort);
+  });
+  test("Example performance test no.2 ", async ({
+    lighthousePage,
+    lighthouseUtils,
+    lighthousePort,
+  }) => {
+    const casePage = new CuiCaseListPage(lighthousePage);
+    await casePage.goto();
+    await expect(casePage.banner).toBeVisible();
+    await lighthouseUtils.audit(lighthousePage, lighthousePort);
   });
 });

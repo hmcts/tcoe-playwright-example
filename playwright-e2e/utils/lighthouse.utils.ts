@@ -6,15 +6,13 @@ interface Thresholds {
   performance: number;
   accessibility: number;
   "best-practices": number;
-  pwa: number;
 }
 
 export class LighthouseUtils {
   private readonly DEFAULT_THRESHOLDS = {
     performance: 80,
     accessibility: 100,
-    "best-practices": 80,
-    pwa: 80,
+    "best-practices": 100,
   };
 
   public async audit(page: Page, port: number, thresholds?: Thresholds) {

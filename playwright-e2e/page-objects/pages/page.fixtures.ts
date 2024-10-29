@@ -10,9 +10,10 @@ export interface PageFixtures {
   idamPage: IdamPage;
 }
 
-// Instantiates pages and provides page to the test via use()
-// can also contain steps before or after providing the page
-// this is the same behaviour as a beforeEach/afterEach hook
+/* Instantiates pages and provides page to the test via use()
+ * can also contain steps before or after providing the page
+ * this is the same behaviour as a beforeEach/afterEach hook
+ */
 export const pageFixtures = {
   exuiCaseDetailsPage: async ({ page }, use) => {
     await use(new ExuiCaseDetailsPage(page));

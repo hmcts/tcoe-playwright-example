@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -49,4 +50,9 @@ function getEnvVar(name: string): string {
     throw new Error(`Error: ${name} environment variable is not set`);
   }
   return value;
+}
+
+export function getCookies(filepath: string) {
+  const data = fs.readFileSync(filepath, "utf8");
+  return JSON.parse(data).cookies;
 }
