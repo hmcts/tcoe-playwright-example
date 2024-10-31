@@ -2,7 +2,7 @@
   "name": "tcoe-playwright-example",
   "version": "1.0.0",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=20.11.1"
   },
   "type": "module",
   "devDependencies": {
@@ -34,5 +34,5 @@
     "test:tabletwebkit": "yarn playwright test tests/ --project=tabletwebkit",
     "test:a11y": "yarn playwright test tests/ --grep @a11y --project=chrome"
   },
-  "packageManager": "yarn@4.5.1"
+  "packageManager": "yarn@3.8.6"
 }
