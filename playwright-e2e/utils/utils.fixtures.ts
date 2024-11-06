@@ -1,6 +1,7 @@
 import os from "os";
 import path from "path";
 import { chromium, Page } from "playwright/test";
+import { AxeUtils } from "./axe.utils";
 import { config, Config, getCookies } from "./config.utils";
 import { LighthouseUtils } from "./lighthouse.utils";
 import { TableUtils } from "./table.utils";
@@ -11,6 +12,7 @@ export interface UtilsFixtures {
   validatorUtils: ValidatorUtils;
   waitUtils: WaitUtils;
   tableUtils: TableUtils;
+  axeUtils: AxeUtils;
   config: Config;
   lighthouseUtils: LighthouseUtils;
   lighthousePage: Page;
@@ -31,6 +33,9 @@ export const utilsFixtures = {
   },
   lighthouseUtils: async ({}, use) => {
     await use(new LighthouseUtils());
+  },
+  axeUtils: async ({ page }, use) => {
+    await use(new AxeUtils(page));
   },
   lighthousePage: async ({ lighthousePort, page }, use, testInfo) => {
     // Prevent creating performance page if not needed
