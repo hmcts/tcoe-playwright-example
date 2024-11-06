@@ -1,8 +1,11 @@
+import * as fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 
-interface UserCredentials {
+export interface UserCredentials {
   username: string;
   password: string;
+  sessionFile: string;
 }
 
 interface Urls {
@@ -10,8 +13,7 @@ interface Urls {
   citizenUrl: string;
 }
 
-export interface ConfigFixture {
-  sessionStoragePath: string;
+export interface Config {
   users: {
     exui: UserCredentials;
     citizen: UserCredentials;
@@ -19,16 +21,21 @@ export interface ConfigFixture {
   urls: Urls;
 }
 
-export const config: ConfigFixture = {
-  sessionStoragePath: path.join(__dirname, "../.sessions/"),
+export const config: Config = {
   users: {
     exui: {
       username: getEnvVar("EXUI_USERNAME"),
       password: getEnvVar("EXUI_PASSWORD"),
+      sessionFile:
+        path.join(fileURLToPath(import.meta.url), "../../.sessions/") +
+        `${getEnvVar("EXUI_USERNAME")}.json`,
     },
     citizen: {
       username: getEnvVar("CITIZEN_USERNAME"),
       password: getEnvVar("CITIZEN_PASSWORD"),
+      sessionFile:
+        path.join(fileURLToPath(import.meta.url), "../../.sessions/") +
+        `${getEnvVar("CITIZEN_USERNAME")}.json`,
     },
   },
   urls: {
@@ -43,4 +50,9 @@ function getEnvVar(name: string): string {
     throw new Error(`Error: ${name} environment variable is not set`);
   }
   return value;
+}
+
+export function getCookies(filepath: string) {
+  const data = fs.readFileSync(filepath, "utf8");
+  return JSON.parse(data).cookies;
 }
