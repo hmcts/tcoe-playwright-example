@@ -1,5 +1,5 @@
 {
-  "name": "tcoe-playwright-example",
+  "name": "tcoe-playwright-examples",
   "version": "1.0.0",
   "engines": {
     "node": ">=20.11.1"
