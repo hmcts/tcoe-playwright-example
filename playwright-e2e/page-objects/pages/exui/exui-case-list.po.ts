@@ -17,5 +17,6 @@ export class ExuiCaseListPage extends Base {
 
   async goto() {
     await this.page.goto(config.urls.manageCaseBaseUrl);
+    await this.exuiHeader.checkIsVisible();
   }
 }

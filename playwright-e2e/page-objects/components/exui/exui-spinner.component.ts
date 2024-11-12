@@ -1,18 +1,24 @@
-import { Page } from "@playwright/test";
-import { WaitUtils } from "../../../utils";
+import { Page, expect } from "@playwright/test";
 import { Base } from "../../base";
 
 export class ExuiSpinnerComponent extends Base {
   readonly spinner = this.page.locator("xuilib-loading-spinner");
-  private waitUtils = new WaitUtils();
 
   constructor(page: Page) {
     super(page);
   }
 
   async wait() {
-    await this.waitUtils.waitForLocatorVisibility(this.spinner, {
-      visibility: false,
-    });
+    await expect
+      .poll(
+        async () => {
+          const spinnerCount = await this.spinner.count();
+          return spinnerCount;
+        },
+        {
+          timeout: 30_000,
+        }
+      )
+      .toBe(0);
   }
 }

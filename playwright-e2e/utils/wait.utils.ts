@@ -7,8 +7,8 @@ interface WaitOptions {
 }
 
 export class WaitUtils {
-  private DEFAULT_DELAY = 1000;
-  private DEFAULT_TIMEOUT = 60000;
+  private DEFAULT_DELAY = 1_000;
+  private DEFAULT_TIMEOUT = 60_000;
 
   private async wait(ms: number): Promise<void> {
     return new Promise((resolve) => {

@@ -20,10 +20,9 @@ test.describe("Case List Tests - Professional @exui", () => {
     exuiCaseListPage,
     exuiCaseDetailsPage,
   }) => {
-    await exuiCaseListPage.exuiHeader.checkIsVisible();
-
     const caseName = "test";
     await exuiCaseListPage.exuiCaseListComponent.searchByCaseName(caseName);
+
     await exuiCaseListPage.exuiCaseListComponent.selectCaseByIndex(0);
     await expect(
       exuiCaseDetailsPage.exuiCaseDetailsComponent.caseHeader
@@ -33,3 +32,21 @@ test.describe("Case List Tests - Professional @exui", () => {
     ).toContainText(caseName, { ignoreCase: true });
   });
 });
+
+// Data driven parameterized tests
+[{ state: "Draft" }, { state: "Submitted" }, { state: "Pending" }].forEach(
+  ({ state }) => {
+    test(`Search for a case with state: ${state}`, async ({
+      exuiCaseListPage,
+      tableUtils,
+    }) => {
+      await exuiCaseListPage.exuiCaseListComponent.searchByCaseState(state);
+      const table = await tableUtils.mapTable(
+        exuiCaseListPage.exuiCaseListComponent.caseListTable
+      );
+      table.forEach((row) => {
+        expect(row["State"]).toEqual(state);
+      });
+    });
+  }
+);
