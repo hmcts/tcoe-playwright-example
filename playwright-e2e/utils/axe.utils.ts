@@ -24,10 +24,18 @@ export class AxeUtils {
    *
    */
   public async audit(options?: AuditOptions) {
-    const builder = new AxeBuilder({ page: this.page }).withTags(
+    let builder = new AxeBuilder({ page: this.page }).withTags(
       this.DEFAULT_TAGS
     );
-    if (options?.exclude && options) builder.exclude(options.exclude);
+    if (options && options?.exclude) {
+      if (Array.isArray(options.exclude)) {
+        for (const exclusion of options.exclude) {
+          builder = builder.exclude(exclusion);
+        }
+      } else {
+        builder = builder.exclude(options.exclude);
+      }
+    }
     const results = await builder.analyze();
     expect.soft(results.violations).toEqual([]);
   }
