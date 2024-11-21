@@ -24,16 +24,16 @@ export class AxeUtils {
    *
    */
   public async audit(options?: AuditOptions) {
-    let builder = new AxeBuilder({ page: this.page }).withTags(
+    const builder = new AxeBuilder({ page: this.page }).withTags(
       this.DEFAULT_TAGS
     );
     if (options && options?.exclude) {
       if (Array.isArray(options.exclude)) {
         for (const exclusion of options.exclude) {
-          builder = builder.exclude(exclusion);
+          builder.exclude(exclusion);
         }
       } else {
-        builder = builder.exclude(options.exclude);
+        builder.exclude(options.exclude);
       }
     }
     const results = await builder.analyze();
