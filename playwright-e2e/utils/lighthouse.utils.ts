@@ -9,17 +9,19 @@ interface Thresholds {
 }
 
 export class LighthouseUtils {
+  constructor(private lighthousePage: Page, private lighthousePort: number) {}
+
   private readonly DEFAULT_THRESHOLDS = {
     performance: 80,
     accessibility: 100,
     "best-practices": 100,
   };
 
-  public async audit(page: Page, port: number, thresholds?: Thresholds) {
+  public async audit(thresholds?: Thresholds) {
     await playAudit({
-      page: page,
+      page: this.lighthousePage,
       thresholds: thresholds ? thresholds : this.DEFAULT_THRESHOLDS,
-      port: port,
+      port: this.lighthousePort,
       config: desktopConfig,
       reports: {
         formats: {
