@@ -16,7 +16,14 @@ This repository serves as a template for UI test automation using [Playwright](h
 
 The repository follows a **Page Object Model (POM)** design pattern, ensuring that locators and actions are well-organized and reusable.
 
-See the [POM docs](https://github.com/hmcts/tcoe-playwright-example/blob/master/docs/PAGE_OBECT_MODEL.md) for more info
+```sh
+├── tests/                  # Test files
+├── page-objects/           # Page objects
+├─── components/            # Common components shared across pages
+├─── elements/              # Common elements that could be found in a page or in a component
+├─── pages/                 # Unique pages that may contain their own locators
+├── utils/                  # Utility functions or common tasks (e.g., login, API methods etc)
+```
 
 TCoE Best Practices for setting up playwright in your service can be found in the [playwright-e2e/readme.md](https://github.com/hmcts/tcoe-playwright-example/blob/master/docs/BEST_PRACTICE.md).
 
