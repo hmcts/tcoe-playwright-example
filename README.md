@@ -16,6 +16,8 @@ This repository serves as a template for UI test automation using [Playwright](h
 
 The repository follows a **Page Object Model (POM)** design pattern, ensuring that locators and actions are well-organized and reusable.
 
+See the [POM docs](https://github.com/hmcts/tcoe-playwright-example/blob/master/docs/PAGE_OBECT_MODEL.md) for more info
+
 ```sh
 ├── tests/                  # Test files
 ├── page-objects/           # Page objects
