@@ -31,8 +31,8 @@ export const utilsFixtures = {
   config: async ({}, use) => {
     await use(config);
   },
-  lighthouseUtils: async ({}, use) => {
-    await use(new LighthouseUtils());
+  lighthouseUtils: async ({ lighthousePage, lighthousePort }, use) => {
+    await use(new LighthouseUtils(lighthousePage, lighthousePort));
   },
   axeUtils: async ({ page }, use) => {
     await use(new AxeUtils(page));
