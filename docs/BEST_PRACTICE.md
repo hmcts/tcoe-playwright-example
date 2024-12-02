@@ -56,6 +56,9 @@ Also included in this template are implementations for supporting non-functional
 
 You can also choose to run Lighthouse tests on your page - however the Performance Team is also now running some UI automated tests therefore you should consider if there is any duplication prior to writing these tests.
 
+[Accessibility Docs](https://github.com/hmcts/tcoe-playwright-example/blob/master/docs/ACCESSIBILITY.md)
+[Performance Docs](https://github.com/hmcts/tcoe-playwright-example/blob/master/docs/PERFORMANCE.md)
+
 ## CI/CD Integration
 
 There is currently a few sample Jenkinsfile's that can be used and modified as required. Currently our testing environments are limited to a [auto-shutdown](https://hmcts.github.io/cloud-native-platform/environments/auto-shutdown.html) schedule and thus you should ensure that you choose a suitable time to run your nightly tests. You may also want to consider peak times to avoid (e.g. 9am).
