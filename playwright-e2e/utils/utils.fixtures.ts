@@ -7,6 +7,8 @@ import { LighthouseUtils } from "./lighthouse.utils";
 import { TableUtils } from "./table.utils";
 import { ValidatorUtils } from "./validator.utils";
 import { WaitUtils } from "./wait.utils";
+import { IdamAccessTokenUtils } from "./idam_access_token.utils";
+import { IdamCreateCitizenUtils } from "./idam_create_citizen_user.utils";
 
 export interface UtilsFixtures {
   validatorUtils: ValidatorUtils;
@@ -16,6 +18,8 @@ export interface UtilsFixtures {
   config: Config;
   lighthouseUtils: LighthouseUtils;
   lighthousePage: Page;
+  idamAccessTokenUtils: IdamAccessTokenUtils;
+  idamCitizenUserCreationUtils: IdamCreateCitizenUtils;
 }
 
 export const utilsFixtures = {
@@ -38,21 +42,22 @@ export const utilsFixtures = {
     await use(new AxeUtils(page));
   },
   lighthousePage: async ({ lighthousePort, page }, use, testInfo) => {
-    // Prevent creating performance page if not needed
     if (testInfo.tags.includes("@performance")) {
-      // Lighthouse opens a new page and as playwright doesn't share context we need to
-      // explicitly create a new browser with shared context
       const userDataDir = path.join(os.tmpdir(), "pw", String(Math.random()));
       const context = await chromium.launchPersistentContext(userDataDir, {
         args: [`--remote-debugging-port=${lighthousePort}`],
       });
-      // Using the cookies from global setup, inject to the new browser
       await context.addCookies(getCookies(config.users.citizen.sessionFile));
-      // Provide the page to the test
       await use(context.pages()[0]);
       await context.close();
     } else {
       await use(page);
     }
+  },
+  idamAccessTokenUtils: async ({}, use) => {
+    await use(new IdamAccessTokenUtils());
+  },
+  idamCitizenUserCreationUtils: async ({}, use) => {
+    await use(new IdamCreateCitizenUtils());
   },
 };
