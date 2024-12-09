@@ -1,5 +1,6 @@
 crash.log
 .swp
+.env
 .DS_Store
 *.lock.hcl
 .idea/
