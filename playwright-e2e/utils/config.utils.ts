@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import * as fs from "fs";
 import path from "path";
+import { Cookie } from "playwright-core";
 import { fileURLToPath } from "url";
 
 // This needs to be placed somewhere before attempting to access any environment variables
@@ -69,7 +70,7 @@ export function isSessionValid(path: string, cookieName: string): boolean {
   try {
     const data = JSON.parse(fs.readFileSync(path, "utf-8"));
     const cookie = data.cookies.find(
-      (cookie: any) => cookie.name === cookieName
+      (cookie: Cookie) => cookie.name === cookieName
     );
     const expiry = new Date(cookie.expires * 1000);
     return expiry.getTime() - Date.now() > expiryTime;
