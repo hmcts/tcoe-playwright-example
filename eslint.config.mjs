@@ -3,7 +3,15 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   tseslint.configs.recommended,
-  { ignores: [".yarn/**", "eslint.config.mjs", ".pnp.cjs", ".pnp.loader.mjs"] },
+  {
+    ignores: [
+      ".yarn/**",
+      "eslint.config.mjs",
+      ".pnp.cjs",
+      ".pnp.loader.mjs",
+      "format-v4-audit.js",
+    ],
+  },
   {
     files: ["**/*.ts"],
     plugins: {
