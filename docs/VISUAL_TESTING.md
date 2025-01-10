@@ -4,7 +4,7 @@ Visual testing is essentially comparing an expected screenshot of the page with 
 
 ## Recording snapshots
 
-In order to match screenshots, they need to be the same. Therefore things like OS, Browser and viewport need to be consistent when creating the snapshots and when running the tests.
+In order to match screenshots, they need to be the same. Therefore things like OS, Browser and viewport need to be consistent when creating the snapshots and when running the tests. This is also reflected in the way playwright names the screenshots (although you can choose your own names/rename the generated screenshots).
 As a solution to this, it's recommended to use Docker to both create the snapshots and run the tests (locally and on CI).
 
 ## Which feature to visual test?
