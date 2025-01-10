@@ -2,7 +2,6 @@
 
 PW_VERSION=v1.49.1-noble
 DOCKER_PW_IMAGE="mcr.microsoft.com/playwright:${PW_VERSION}"
-NODE_VERSION=20.11.1
 
 docker run --rm \
   --network host \
@@ -15,4 +14,5 @@ docker run --rm \
     yarn cache clean && \
     yarn install && \
     yarn playwright install --with-deps && \
+    yarn playwright install chrome && \
     bash"

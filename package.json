@@ -32,7 +32,9 @@
     "test:edge": "yarn playwright test tests/ --project=edge --grep-invert='(@a11y)|(@performance)'",
     "test:tabletchrome": "yarn playwright test tests/ --project=tabletchrome --grep-invert='(@a11y)|(@performance)'",
     "test:tabletwebkit": "yarn playwright test tests/ --project=tabletwebkit --grep-invert='(@a11y)|(@performance)'",
-    "test:a11y": "yarn playwright test tests/ --grep @a11y --project=chrome"
+    "test:a11y": "yarn playwright test tests/ --grep @a11y --project=chrome",
+    "test:visual": "yarn playwright test tests/ --grep @visual --project=chrome",
+    "test:update-snapshots": "yarn playwright test tests/ --grep @visual --project=chrome --update-snapshots"
   },
   "packageManager": "yarn@4.6.0"
 }
