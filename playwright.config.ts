@@ -31,6 +31,7 @@ export default defineConfig({
     video: "retain-on-failure",
     screenshot: "only-on-failure",
   },
+  snapshotDir: "./playwright-e2e/snapshots",
 
   /* Configure projects for major browsers. See https://playwright.dev/docs/browsers */
   projects: [
