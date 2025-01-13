@@ -21,4 +21,4 @@ Your feature may have dynamic data that could skew visual testing results, fortu
 - `mask` - This will mask a given locator(s) and be exempt from the comparison test.
 - `maxDiffPixelRatio` - This is the ratio of pixels that can be different, likewise `maxDiffPixels` can be used to provide a number of pixels rather than ratio.
 
-See examples in the [tests](https://github.com/hmcts/tcoe-playwright-example/blob/master/playwright-e2e/tests/visual-tests.spec.ts)
+See examples in the [tests](https://github.com/hmcts/tcoe-playwright-example/blob/master/playwright-e2e/tests/visual-tests.spec.ts) and the [playwright docs](https://playwright.dev/docs/api/class-pageassertions#page-assertions-to-have-screenshot-2) for other options.
