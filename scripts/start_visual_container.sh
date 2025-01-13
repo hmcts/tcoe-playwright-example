@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Starts the playwright container used for visual testing
+# Ensure your docker daemon is running
+
 PW_VERSION=v1.49.1-noble
 DOCKER_PW_IMAGE="mcr.microsoft.com/playwright:${PW_VERSION}"
 

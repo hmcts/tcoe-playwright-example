@@ -4,17 +4,10 @@ import { config } from "../utils";
 
 /*
   To update screenshots for these tests, run the below in order from root:
-  - ./scripts/run_visual_container.sh
+  - ./scripts/start_visual_container.sh
   - yarn test:update-snapshots
   - commit the new snapshots to the remote repo
 */
-
-test.describe("Visual Tests (guest user))@visual", () => {
-  test("Visual test for IDAM login page", async ({ page, config }) => {
-    await page.goto(config.urls.citizenUrl);
-    await expect(page).toHaveScreenshot();
-  });
-});
 
 test.describe("Visual Tests (citizen user) @visual", () => {
   test.use({
@@ -27,5 +20,24 @@ test.describe("Visual Tests (citizen user) @visual", () => {
   }) => {
     await cuiCaseListPage.activateAccessCodeLink.click();
     await expect(page).toHaveScreenshot();
+  });
+
+  test("Visual test using a mask", async ({
+    page,
+    cuiCaseListPage,
+    activateCasePinPage,
+  }) => {
+    await cuiCaseListPage.activateAccessCodeLink.click();
+
+    // Insert some dynamic data to the input field
+    const randomNumbers = Array.from({ length: 5 }, () =>
+      Math.floor(Math.random() * 10)
+    ).join("");
+    await activateCasePinPage.caseNumber.fill(randomNumbers);
+
+    // Check the screenshot, but provide a mask for the input field
+    await expect(page).toHaveScreenshot({
+      mask: [activateCasePinPage.caseNumber],
+    });
   });
 });
