@@ -40,4 +40,18 @@ test.describe("Visual Tests (citizen user) @visual", () => {
       mask: [activateCasePinPage.caseNumber],
     });
   });
+
+  test("Visual test using clip", async ({
+    page,
+    cuiCaseListPage,
+    activateCasePinPage,
+  }) => {
+    await cuiCaseListPage.activateAccessCodeLink.click();
+
+    // Clip the area so that only the form is captured
+    const boundingBox = await activateCasePinPage.form.boundingBox();
+    await expect(page).toHaveScreenshot({
+      clip: boundingBox!,
+    });
+  });
 });

@@ -17,7 +17,7 @@ Visual tests are better focused on features that are difficult to automate, wher
 
 Your feature may have dynamic data that could skew visual testing results, fortunately you can use the following options in `toHaveScreenshot()` to mitigate this.
 
-- `clip` - This is essentially choosing a select area to screenshot. You may use this if you have various areas you want to test, but not as a single screenshot/test.
+- `clip` - This will choose a select area to screenshot. Useful if you do not want to test the whole page.
 - `mask` - This will mask a given locator(s) and be exempt from the comparison test.
 - `maxDiffPixelRatio` - This is the ratio of pixels that can be different, likewise `maxDiffPixels` can be used to provide a number of pixels rather than ratio.
 

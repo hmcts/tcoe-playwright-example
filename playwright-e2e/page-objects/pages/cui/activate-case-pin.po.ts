@@ -4,6 +4,7 @@ import { Base } from "../../base";
 
 export class ActivateCasePinPage extends Base {
   readonly container = this.page.getByRole("main");
+  readonly form = this.page.locator("#main-form");
   readonly caseNumber = this.page.locator("#caseCode");
 
   constructor(page: Page) {
