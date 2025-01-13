@@ -41,7 +41,9 @@ export const pageFixtures = {
     await use(cuiCaseListPage);
   },
   activateCasePinPage: async ({ determinePage }, use) => {
-    await use(new ActivateCasePinPage(determinePage));
+    const activateCasePinPage = new ActivateCasePinPage(determinePage);
+    await activateCasePinPage.goto();
+    await use(activateCasePinPage);
   },
   idamPage: async ({ determinePage }, use) => {
     await use(new IdamPage(determinePage));

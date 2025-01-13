@@ -18,10 +18,11 @@ test.describe("Case List Tests - Citizen @cui", () => {
   // An example of obtaining config values via "config" fixture
   test("Navigate to the case list with Welsh language", async ({
     cuiCaseListPage,
-    page,
     config,
   }) => {
-    await page.goto(config.urls.citizenUrl + "dashboard?lng=cy");
+    await cuiCaseListPage.page.goto(
+      config.urls.citizenUrl + "dashboard?lng=cy"
+    );
     await expect(cuiCaseListPage.banner).toBeVisible();
     await cuiCaseListPage.cuiCaseListComponent.validateWelshDraftTable();
   });

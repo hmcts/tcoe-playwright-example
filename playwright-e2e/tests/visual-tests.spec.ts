@@ -15,20 +15,12 @@ test.describe("Visual Tests (citizen user) @visual", () => {
   });
 
   test("Visual test for activating an access code", async ({
-    page,
-    cuiCaseListPage,
-  }) => {
-    await cuiCaseListPage.activateAccessCodeLink.click();
-    await expect(page).toHaveScreenshot();
-  });
-
-  test("Visual test using a mask", async ({
-    page,
-    cuiCaseListPage,
     activateCasePinPage,
   }) => {
-    await cuiCaseListPage.activateAccessCodeLink.click();
+    await expect(activateCasePinPage.page).toHaveScreenshot();
+  });
 
+  test("Visual test using a mask", async ({ activateCasePinPage }) => {
     // Insert some dynamic data to the input field
     const randomNumbers = Array.from({ length: 5 }, () =>
       Math.floor(Math.random() * 10)
@@ -36,21 +28,15 @@ test.describe("Visual Tests (citizen user) @visual", () => {
     await activateCasePinPage.caseNumber.fill(randomNumbers);
 
     // Check the screenshot, but provide a mask for the input field
-    await expect(page).toHaveScreenshot({
+    await expect(activateCasePinPage.page).toHaveScreenshot({
       mask: [activateCasePinPage.caseNumber],
     });
   });
 
-  test("Visual test using clip", async ({
-    page,
-    cuiCaseListPage,
-    activateCasePinPage,
-  }) => {
-    await cuiCaseListPage.activateAccessCodeLink.click();
-
+  test("Visual test using clip", async ({ activateCasePinPage }) => {
     // Clip the area so that only the form is captured
     const boundingBox = await activateCasePinPage.form.boundingBox();
-    await expect(page).toHaveScreenshot({
+    await expect(activateCasePinPage.page).toHaveScreenshot({
       clip: boundingBox!,
     });
   });
