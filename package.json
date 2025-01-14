@@ -12,7 +12,7 @@
     "@types/node": "^22.6.1",
     "@typescript-eslint/eslint-plugin": "^8.8.0",
     "@typescript-eslint/parser": "^8.8.0",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "eslint": "^9.11.1",
     "eslint-plugin-playwright": "^1.6.2",
     "get-port": "^7.1.0",
@@ -36,5 +36,5 @@
     "test:tabletwebkit": "yarn playwright test tests/ --project=tabletwebkit --grep-invert='(@a11y)|(@performance)'",
     "test:a11y": "yarn playwright test tests/ --grep @a11y --project=chrome"
   },
-  "packageManager": "yarn@3.8.6"
+  "packageManager": "yarn@3.8.7"
 }

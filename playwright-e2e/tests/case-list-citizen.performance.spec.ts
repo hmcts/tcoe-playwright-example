@@ -12,21 +12,17 @@ import { expect, test } from "../fixtures";
 
 test.describe("Case List UI Performance Tests - Citizen @cui @performance", () => {
   test("Example performance test no.1", async ({
-    lighthousePage,
     lighthouseUtils,
-    lighthousePort,
     cuiCaseListPage,
   }) => {
     await expect(cuiCaseListPage.banner).toBeVisible();
-    await lighthouseUtils.audit(lighthousePage, lighthousePort);
+    await lighthouseUtils.audit();
   });
   test("Example performance test no.2", async ({
-    lighthousePage,
     lighthouseUtils,
-    lighthousePort,
     cuiCaseListPage,
   }) => {
     await expect(cuiCaseListPage.banner).toBeVisible();
-    await lighthouseUtils.audit(lighthousePage, lighthousePort);
+    await lighthouseUtils.audit();
   });
 });

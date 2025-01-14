@@ -1,26 +1,38 @@
-import typescript from "@typescript-eslint/eslint-plugin";
-import typescriptParser from "@typescript-eslint/parser";
 import playwright from "eslint-plugin-playwright";
-const { configs: typescriptConfigs } = typescript;
+import tseslint from "typescript-eslint";
 
-export default [
+export default tseslint.config(
+  tseslint.configs.recommended,
   {
-    ignores: [".yarn/**", ".pnp.cjs", ".pnp.loader.mjs"],
+    ignores: [
+      ".yarn/**",
+      "eslint.config.mjs",
+      ".pnp.cjs",
+      ".pnp.loader.mjs",
+      "format-v4-audit.js",
+    ],
   },
   {
     files: ["**/*.ts"],
     plugins: {
-      "@typescript-eslint": typescript,
-      playwright: playwright,
+      "@typescript-eslint": tseslint.plugin,
     },
     languageOptions: {
-      parser: typescriptParser,
-      parserOptions: { project: ["./tsconfig.json"] },
+      parser: tseslint.parser,
+      parserOptions: {
+        project: "./tsconfig.json",
+      },
     },
     rules: {
-      ...typescriptConfigs.recommended.rules,
-      ...playwright.configs["flat/recommended"].rules,
-      "@typescript-eslint/no-floating-promises": ["error"],
+      "@typescript-eslint/no-floating-promises": "error",
     },
   },
-];
+  {
+    ...playwright.configs["flat/recommended"],
+    rules: {
+      ...playwright.configs["flat/recommended"].rules,
+      "playwright/expect-expect": "off",
+    },
+    files: ["playwright-e2e/**/*.ts"],
+  }
+);
