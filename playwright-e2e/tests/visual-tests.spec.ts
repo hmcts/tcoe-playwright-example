@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "../fixtures";
+import { ExuiMediaViewerPage } from "../page-objects/pages";
 import { config } from "../utils";
 
 /*
@@ -39,5 +40,38 @@ test.describe("Visual Tests (citizen user) @visual", () => {
     await expect(activateCasePinPage.page).toHaveScreenshot({
       clip: boundingBox!,
     });
+  });
+});
+
+test.describe("Visual Tests (case manager) @visual", () => {
+  test.use({
+    storageState: config.users.caseManager.sessionFile,
+  });
+
+  /*
+    This test will open the media viewer and take screenshots of each page.
+    However, there may be some dynamic data that is intended to be ignored.
+    Therefore, the right side of the page is clipped out. If you also wanted
+    to check the data, you could remove the clipping but ensure the data is created
+    as you might expect.
+  */
+  test("Visual test for media viewer with clipping", async ({
+    exuiCaseListPage,
+    exuiCaseDetailsPage,
+    context,
+  }) => {
+    await exuiCaseListPage.exuiCaseListComponent.searchByCaseName(
+      "Applicant ApplLast & Dolores Smith"
+    );
+    await exuiCaseListPage.exuiCaseListComponent.searchByCaseState("Submitted");
+    await exuiCaseListPage.exuiCaseListComponent.selectCaseByIndex(0);
+    await exuiCaseDetailsPage.exuiCaseDetailsComponent.tabs.documentsTab.click();
+    const newPage = context.waitForEvent("page");
+    await exuiCaseDetailsPage.exuiCaseDetailsComponent.documentField
+      .first()
+      .click();
+
+    const mediaViewerPage = new ExuiMediaViewerPage(await newPage);
+    await mediaViewerPage.runVisualTestOnAllPages();
   });
 });

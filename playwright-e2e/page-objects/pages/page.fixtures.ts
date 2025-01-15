@@ -3,12 +3,14 @@ import { ActivateCasePinPage } from "./cui/activate-case-pin.po";
 import { CuiCaseListPage } from "./cui/cui-case-list.po";
 import { ExuiCaseDetailsPage } from "./exui/exui-case-details.po";
 import { ExuiCaseListPage } from "./exui/exui-case-list.po";
+import { ExuiMediaViewerPage } from "./exui/exui-media-viewer.po";
 import { IdamPage } from "./idam.po";
 
 export interface PageFixtures {
   determinePage: Page;
   exuiCaseDetailsPage: ExuiCaseDetailsPage;
   exuiCaseListPage: ExuiCaseListPage;
+  exuiMediaViewerPage: ExuiMediaViewerPage;
   cuiCaseListPage: CuiCaseListPage;
   activateCasePinPage: ActivateCasePinPage;
   idamPage: IdamPage;
@@ -34,6 +36,9 @@ export const pageFixtures = {
     const exuiCaseListPage = new ExuiCaseListPage(determinePage);
     await exuiCaseListPage.goto();
     await use(exuiCaseListPage);
+  },
+  exuiMediaViewerPage: async ({ determinePage }, use) => {
+    await use(new ExuiMediaViewerPage(determinePage));
   },
   cuiCaseListPage: async ({ determinePage }, use) => {
     const cuiCaseListPage = new CuiCaseListPage(determinePage);

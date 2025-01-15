@@ -17,6 +17,13 @@ setup("Setup exui user", async ({ page, config }) => {
   await new IdamPage(page).login(user);
 });
 
+setup("Setup case manager user", async ({ page, config }) => {
+  const user = config.users.caseManager;
+  if (isSessionValid(user.sessionFile, user.cookieName!)) return;
+  await page.goto(config.urls.manageCaseBaseUrl);
+  await new IdamPage(page).login(user);
+});
+
 setup("Setup citizen user", async ({ page, config }) => {
   await page.goto(config.urls.citizenUrl);
   await new IdamPage(page).login(config.users.citizen);
