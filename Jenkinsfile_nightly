@@ -52,6 +52,8 @@ def secrets = [
   'prl-${env}': [
     secret('solicitor-user', 'EXUI_USERNAME'),
     secret('solicitor-password', 'EXUI_PASSWORD'),
+    secret('case-manager-swansea-username', 'CASEMANAGER_USERNAME'),
+    secret('case-manager-swansea-password', 'CASEMANAGER_PASSWORD'),
     secret('citizen-user', 'CITIZEN_USERNAME'),
     secret('citizen-password', 'CITIZEN_PASSWORD'),
   ]
