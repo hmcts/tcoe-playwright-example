@@ -2,6 +2,7 @@ import os from "os";
 import path from "path";
 import { chromium, Page } from "playwright/test";
 import { AxeUtils } from "./axe.utils";
+import { BrowserUtils } from "./browser.utils";
 import { config, Config, getCookies } from "./config.utils";
 import { LighthouseUtils } from "./lighthouse.utils";
 import { TableUtils } from "./table.utils";
@@ -9,16 +10,20 @@ import { ValidatorUtils } from "./validator.utils";
 import { WaitUtils } from "./wait.utils";
 
 export interface UtilsFixtures {
+  config: Config;
   validatorUtils: ValidatorUtils;
   waitUtils: WaitUtils;
   tableUtils: TableUtils;
   axeUtils: AxeUtils;
-  config: Config;
+  browserUtils: BrowserUtils;
   lighthouseUtils: LighthouseUtils;
   lighthousePage: Page;
 }
 
 export const utilsFixtures = {
+  config: async ({}, use) => {
+    await use(config);
+  },
   waitUtils: async ({}, use) => {
     await use(new WaitUtils());
   },
@@ -28,14 +33,14 @@ export const utilsFixtures = {
   validatorUtils: async ({}, use) => {
     await use(new ValidatorUtils());
   },
-  config: async ({}, use) => {
-    await use(config);
-  },
   lighthouseUtils: async ({ lighthousePage, lighthousePort }, use) => {
     await use(new LighthouseUtils(lighthousePage, lighthousePort));
   },
   axeUtils: async ({ page }, use) => {
     await use(new AxeUtils(page));
+  },
+  browserUtils: async ({ browser }, use) => {
+    await use(new BrowserUtils(browser));
   },
   lighthousePage: async ({ lighthousePort, page }, use, testInfo) => {
     // Prevent creating performance page if not needed

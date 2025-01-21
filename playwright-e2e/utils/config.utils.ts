@@ -23,6 +23,7 @@ export interface Config {
   users: {
     exui: UserCredentials;
     caseManager: UserCredentials;
+    judge: UserCredentials;
     citizen: UserCredentials;
   };
   urls: Urls;
@@ -44,6 +45,14 @@ export const config: Config = {
       sessionFile:
         path.join(fileURLToPath(import.meta.url), "../../.sessions/") +
         `${getEnvVar("CASEMANAGER_USERNAME")}.json`,
+      cookieName: "xui-webapp",
+    },
+    judge: {
+      username: getEnvVar("JUDGE_USERNAME"),
+      password: getEnvVar("JUDGE_PASSWORD"),
+      sessionFile:
+        path.join(fileURLToPath(import.meta.url), "../../.sessions/") +
+        `${getEnvVar("JUDGE_USERNAME")}.json`,
       cookieName: "xui-webapp",
     },
     citizen: {

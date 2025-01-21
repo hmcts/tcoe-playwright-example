@@ -7,6 +7,7 @@ export class ExuiCaseListComponent extends Base {
   readonly caseListTable = this.root.locator("#search-result table");
   readonly filters = {
     caseNameFilter: this.root.locator("#applicantCaseName"),
+    caseNumberFilter: this.root.locator("#\\[CASE_REFERENCE\\]"),
     caseStateFilter: this.root.locator("select#wb-case-state"),
     applyFilterBtn: this.root.getByTitle("Apply filter"),
   };
@@ -19,6 +20,12 @@ export class ExuiCaseListComponent extends Base {
 
   public async searchByCaseName(caseName: string): Promise<void> {
     await this.filters.caseNameFilter.fill(caseName);
+    await this.filters.applyFilterBtn.click();
+    await this.spinnerComponent.wait();
+  }
+
+  public async searchByCaseNumber(caseNumber: string): Promise<void> {
+    await this.filters.caseNumberFilter.fill(caseNumber);
     await this.filters.applyFilterBtn.click();
     await this.spinnerComponent.wait();
   }
