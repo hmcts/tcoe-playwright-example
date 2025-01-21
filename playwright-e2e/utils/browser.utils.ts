@@ -4,9 +4,9 @@ export class BrowserUtils {
   constructor(protected readonly browser: Browser) {}
 
   /**
-   * Run the AxeBuilder checks using the pre-determined tags
+   * Opens a new browser context and returns the page
    *
-   * @param options {@link AuditOptions} - Optional config such as excluding element(s)
+   * @param sessionFile {@link string} - optionally provide a session file to use in the new browser context
    *
    */
   public async openNewBrowserContext(sessionFile?: string) {
