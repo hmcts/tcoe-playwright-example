@@ -1,14 +1,18 @@
 import { Page } from "@playwright/test";
+import { ActivateCasePinPage } from "./cui/activate-case-pin.po";
 import { CuiCaseListPage } from "./cui/cui-case-list.po";
 import { ExuiCaseDetailsPage } from "./exui/exui-case-details.po";
 import { ExuiCaseListPage } from "./exui/exui-case-list.po";
+import { ExuiMediaViewerPage } from "./exui/exui-media-viewer.po";
 import { IdamPage } from "./idam.po";
 
 export interface PageFixtures {
   determinePage: Page;
   exuiCaseDetailsPage: ExuiCaseDetailsPage;
   exuiCaseListPage: ExuiCaseListPage;
+  exuiMediaViewerPage: ExuiMediaViewerPage;
   cuiCaseListPage: CuiCaseListPage;
+  activateCasePinPage: ActivateCasePinPage;
   idamPage: IdamPage;
 }
 
@@ -33,10 +37,18 @@ export const pageFixtures = {
     await exuiCaseListPage.goto();
     await use(exuiCaseListPage);
   },
+  exuiMediaViewerPage: async ({ determinePage }, use) => {
+    await use(new ExuiMediaViewerPage(determinePage));
+  },
   cuiCaseListPage: async ({ determinePage }, use) => {
     const cuiCaseListPage = new CuiCaseListPage(determinePage);
     await cuiCaseListPage.goto();
     await use(cuiCaseListPage);
+  },
+  activateCasePinPage: async ({ determinePage }, use) => {
+    const activateCasePinPage = new ActivateCasePinPage(determinePage);
+    await activateCasePinPage.goto();
+    await use(activateCasePinPage);
   },
   idamPage: async ({ determinePage }, use) => {
     await use(new IdamPage(determinePage));

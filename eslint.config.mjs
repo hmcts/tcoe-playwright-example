@@ -9,7 +9,7 @@ export default tseslint.config(
       "eslint.config.mjs",
       ".pnp.cjs",
       ".pnp.loader.mjs",
-      "format-v4-audit.js",
+      "format-v4-audit.cjs",
     ],
   },
   {

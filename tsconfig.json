@@ -16,7 +16,5 @@
     "noImplicitAny": false,
     "outDir": "dist",
   },
-  "include":[
-      "**/*.ts"
-   ],
+  "include":["**/*.ts"],
 }

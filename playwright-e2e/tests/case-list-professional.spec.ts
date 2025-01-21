@@ -6,7 +6,7 @@ import { config } from "../utils";
  * Use test.use({ storageState: { cookies: [], origins: [] } }); to override if required
  */
 test.use({
-  storageState: config.users.exui.sessionFile,
+  storageState: config.users.solicitor.sessionFile,
 });
 
 // test.describe() is used to group a suite of tests
