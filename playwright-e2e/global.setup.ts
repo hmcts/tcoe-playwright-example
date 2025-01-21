@@ -15,8 +15,8 @@ setup("Setup citizen user", async ({ page, config }) => {
   await new IdamPage(page).login(config.users.citizen);
 });
 
-setup("Setup exui user", async ({ page, config }) => {
-  const user = config.users.exui;
+setup("Setup solicitor user", async ({ page, config }) => {
+  const user = config.users.solicitor;
   if (isSessionValid(user.sessionFile, user.cookieName!)) return;
   await page.goto(config.urls.manageCaseBaseUrl);
   await new IdamPage(page).login(user);

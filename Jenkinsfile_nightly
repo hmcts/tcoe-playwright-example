@@ -54,6 +54,8 @@ def secrets = [
     secret('solicitor-password', 'EXUI_PASSWORD'),
     secret('case-manager-swansea-username', 'CASEMANAGER_USERNAME'),
     secret('case-manager-swansea-password', 'CASEMANAGER_PASSWORD'),
+    secret('judge-testuser-one', 'JUDGE_USERNAME'),
+    secret('judge-testpassword', 'JUDGE_PASSWORD'),
     secret('citizen-user', 'CITIZEN_USERNAME'),
     secret('citizen-password', 'CITIZEN_PASSWORD'),
   ]

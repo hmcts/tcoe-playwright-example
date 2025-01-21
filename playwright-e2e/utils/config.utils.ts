@@ -21,7 +21,7 @@ interface Urls {
 
 export interface Config {
   users: {
-    exui: UserCredentials;
+    solicitor: UserCredentials;
     caseManager: UserCredentials;
     judge: UserCredentials;
     citizen: UserCredentials;
@@ -31,12 +31,12 @@ export interface Config {
 
 export const config: Config = {
   users: {
-    exui: {
-      username: getEnvVar("EXUI_USERNAME"),
-      password: getEnvVar("EXUI_PASSWORD"),
+    solicitor: {
+      username: getEnvVar("SOLICITOR_USERNAME"),
+      password: getEnvVar("SOLICITOR_PASSWORD"),
       sessionFile:
         path.join(fileURLToPath(import.meta.url), "../../.sessions/") +
-        `${getEnvVar("EXUI_USERNAME")}.json`,
+        `${getEnvVar("SOLICITOR_USERNAME")}.json`,
       cookieName: "xui-webapp",
     },
     caseManager: {
@@ -64,8 +64,12 @@ export const config: Config = {
     },
   },
   urls: {
-    manageCaseBaseUrl: getEnvVar("MANAGE_CASES_BASE_URL"),
-    citizenUrl: getEnvVar("CITIZEN_FRONTEND_BASE_URL"),
+    manageCaseBaseUrl:
+      process.env.MANAGE_CASES_BASE_URL ||
+      "https://manage-case.aat.platform.hmcts.net/cases",
+    citizenUrl:
+      process.env.CITIZEN_FRONTEND_BASE_URL ||
+      "https://privatelaw.aat.platform.hmcts.net/",
   },
 };
 
