@@ -1,3 +1,4 @@
+import { screenReaderConfig } from "@guidepup/playwright";
 import { defineConfig, devices } from "@playwright/test";
 
 const DEFAULT_VIEWPORT = { width: 1920, height: 1080 };
@@ -32,6 +33,7 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   snapshotDir: "./playwright-e2e/snapshots",
+  ...screenReaderConfig,
 
   /* Configure projects for major browsers. See https://playwright.dev/docs/browsers */
   projects: [

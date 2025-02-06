@@ -9,20 +9,23 @@ export type CustomFixtures = PageFixtures & UtilsFixtures;
 // Extend 'test' object using custom fixtures
 // Test scoped fixtures are the first template parameter
 // Worker scoped fixtures are the second template
-export const test = baseTest.extend<CustomFixtures, { lighthousePort: number }>(
+export const test = baseTest.extend<
+  CustomFixtures,
   {
-    ...pageFixtures,
-    ...utilsFixtures,
-    // Worker scoped fixtures need to be defined separately
-    lighthousePort: [
-      async ({}, use) => {
-        const port = await getPort();
-        await use(port);
-      },
-      { scope: "worker" },
-    ],
+    lighthousePort: number;
   }
-);
+>({
+  ...pageFixtures,
+  ...utilsFixtures,
+  // Worker scoped fixtures need to be defined separately
+  lighthousePort: [
+    async ({}, use) => {
+      const port = await getPort();
+      await use(port);
+    },
+    { scope: "worker" },
+  ],
+});
 
 // If you were extending assertions, you would also import the "expect" property from this file
 export const expect = test.expect;

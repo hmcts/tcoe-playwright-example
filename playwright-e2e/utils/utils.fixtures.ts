@@ -1,3 +1,5 @@
+import { CommandOptions, macOSActivate, voiceOver } from "@guidepup/guidepup";
+import { VoiceOverPlaywright } from "@guidepup/playwright";
 import os from "os";
 import path from "path";
 import { chromium, Page } from "playwright/test";
@@ -18,6 +20,8 @@ export interface UtilsFixtures {
   browserUtils: BrowserUtils;
   lighthouseUtils: LighthouseUtils;
   lighthousePage: Page;
+  voiceOver: VoiceOverPlaywright;
+  voiceOverStartOptions: CommandOptions;
 }
 
 export const utilsFixtures = {
@@ -58,6 +62,47 @@ export const utilsFixtures = {
       await context.close();
     } else {
       await use(page);
+    }
+  },
+  voiceOverStartOptions: {},
+  voiceOver: async ({ browserName, page, voiceOverStartOptions }, use) => {
+    const voiceOverPlaywright = voiceOver as VoiceOverPlaywright;
+    try {
+      const applicationName = "chromium";
+
+      if (!applicationName) {
+        throw new Error(`Browser ${browserName} is not installed.`);
+      }
+
+      voiceOverPlaywright.navigateToWebContent = async () => {
+        // Ensure application is brought to front and focused.
+        await macOSActivate(applicationName);
+
+        // Ensure the document is ready and focused.
+        await page.bringToFront();
+        await page.locator("body").waitFor();
+        await page.locator("body").focus();
+
+        // Navigate to the beginning of the web content.
+        await voiceOverPlaywright.interact();
+        await voiceOverPlaywright.perform(
+          voiceOverPlaywright.keyboardCommands.jumpToLeftEdge
+        );
+
+        // Clear out logs.
+        await voiceOverPlaywright.clearItemTextLog();
+        await voiceOverPlaywright.clearSpokenPhraseLog();
+      };
+
+      await voiceOverPlaywright.start(voiceOverStartOptions);
+      await macOSActivate(applicationName);
+      await use(voiceOverPlaywright);
+    } finally {
+      try {
+        await voiceOverPlaywright.stop();
+      } catch {
+        // swallow stop failure
+      }
     }
   },
 };
