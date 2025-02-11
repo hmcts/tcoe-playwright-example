@@ -42,8 +42,8 @@ You also need to create a list of those secrets in your Jenkinsfile e.g:
 ```groovy
 def secrets = [
   'prl-${env}': [
-    secret('solicitor-user', 'EXUI_USERNAME'),
-    secret('solicitor-password', 'EXUI_PASSWORD'),
+    secret('solicitor-user', 'SOLICITOR_USERNAME'),
+    secret('solicitor-password', 'SOLICITOR_PASSWORD'),
     ...
   ]
 ]
@@ -58,6 +58,8 @@ withNightlyPipeline(type, product, component, 600) {
   ...
 }
 ```
+
+For local usage, there is a [script](../scripts/get_secrets.sh) that can be used to populate your .env file.
 
 ## Publishing reports
 
