@@ -15,3 +15,4 @@ node_modules/
 !.yarn/releases
 .vscode/*
 .sessions/
+.env
