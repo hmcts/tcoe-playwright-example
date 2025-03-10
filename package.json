@@ -33,8 +33,10 @@
     "test:tabletchrome": "yarn playwright test tests/ --project=tabletchrome --grep-invert='(@a11y)|(@performance)|(@visual)'",
     "test:tabletwebkit": "yarn playwright test tests/ --project=tabletwebkit --grep-invert='(@a11y)|(@performance)|(@visual)'",
     "test:a11y": "yarn playwright test tests/ --grep @a11y --project=chrome",
+    "build-container": "docker build -t playwright-container .",
+    "start-container": "docker run --rm -it --network host --ipc=host -v \"$(pwd)\":/playwright -w /playwright playwright-container /bin/bash",
     "test:visual": "yarn playwright test tests/ --grep @visual --project=chrome",
     "test:update-snapshots": "yarn playwright test tests/ --grep @visual --project=chrome --update-snapshots"
   },
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@4.7.0"
 }
