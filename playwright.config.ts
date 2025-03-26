@@ -1,3 +1,4 @@
+import { Projects } from "@hmcts/playwright-common";
 import { defineConfig, devices } from "@playwright/test";
 
 const DEFAULT_VIEWPORT = { width: 1920, height: 1080 };
@@ -44,12 +45,7 @@ export default defineConfig({
       testMatch: /global\.teardown\.ts/,
     },
     {
-      name: "chrome",
-      use: {
-        ...devices["Desktop Chrome"],
-        channel: "chrome",
-        viewport: DEFAULT_VIEWPORT,
-      },
+      ...Projects.chrome,
       dependencies: ["setup"],
     },
     {
