@@ -18,7 +18,9 @@ export class cuiCaseListComponent extends Base {
   }
 
   async getDraftTable() {
-    return await new TableUtils().mapTable(this.draftCases.locator("table"));
+    return await new TableUtils().mapCitizenTable(
+      this.draftCases.locator("table")
+    );
   }
 
   async validateDraftTable() {

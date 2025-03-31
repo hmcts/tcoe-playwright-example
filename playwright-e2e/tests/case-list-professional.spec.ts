@@ -41,7 +41,7 @@ test.describe("Case List Tests - Professional @exui", () => {
       tableUtils,
     }) => {
       await exuiCaseListPage.exuiCaseListComponent.searchByCaseState(state);
-      const table = await tableUtils.mapTable(
+      const table = await tableUtils.mapExuiTable(
         exuiCaseListPage.exuiCaseListComponent.caseListTable
       );
       table.forEach((row) => {
