@@ -1,7 +1,6 @@
 import { Page } from "@playwright/test";
 import { config } from "../../../utils/";
 import { Base } from "../../base";
-import { cuiCaseListComponent } from "../../components/";
 
 export class CuiCaseListPage extends Base {
   readonly container = this.page.getByRole("main");
@@ -9,10 +8,6 @@ export class CuiCaseListPage extends Base {
   readonly activateAccessCodeLink = this.page.getByRole("link", {
     name: "Activate access code",
   });
-  readonly cuiCaseListComponent = new cuiCaseListComponent(
-    this.page,
-    this.container
-  );
 
   constructor(page: Page) {
     super(page);

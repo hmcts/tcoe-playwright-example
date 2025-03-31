@@ -1,5 +1,5 @@
+import { IdamPage } from "@hmcts/playwright-common";
 import { test as setup } from "./fixtures";
-import { IdamPage } from "./page-objects/pages/idam.po";
 import { isSessionValid } from "./utils";
 
 /*

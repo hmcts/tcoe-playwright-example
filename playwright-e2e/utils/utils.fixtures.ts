@@ -1,10 +1,12 @@
+import {
+  AxeUtils,
+  BrowserUtils,
+  LighthouseUtils,
+} from "@hmcts/playwright-common";
 import os from "os";
 import path from "path";
 import { chromium, Page } from "playwright/test";
-import { AxeUtils } from "./axe.utils";
-import { BrowserUtils } from "./browser.utils";
 import { config, Config, getCookies } from "./config.utils";
-import { LighthouseUtils } from "./lighthouse.utils";
 import { TableUtils } from "./table.utils";
 import { ValidatorUtils } from "./validator.utils";
 import { WaitUtils } from "./wait.utils";
