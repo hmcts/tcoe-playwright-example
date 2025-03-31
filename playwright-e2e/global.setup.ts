@@ -1,6 +1,5 @@
-import { IdamPage } from "@hmcts/playwright-common";
+import { IdamPage, SessionUtils } from "@hmcts/playwright-common";
 import { test as setup } from "./fixtures";
-import { isSessionValid } from "./utils";
 
 /*
  * Logs in as all users and saves the session data
@@ -17,21 +16,21 @@ setup("Setup citizen user", async ({ page, config }) => {
 
 setup("Setup solicitor user", async ({ page, config }) => {
   const user = config.users.solicitor;
-  if (isSessionValid(user.sessionFile, user.cookieName!)) return;
+  if (SessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
   await page.goto(config.urls.manageCaseBaseUrl);
   await new IdamPage(page).login(user);
 });
 
 setup("Setup case manager user", async ({ page, config }) => {
   const user = config.users.caseManager;
-  if (isSessionValid(user.sessionFile, user.cookieName!)) return;
+  if (SessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
   await page.goto(config.urls.manageCaseBaseUrl);
   await new IdamPage(page).login(user);
 });
 
 setup("Setup judge user", async ({ page, config }) => {
   const user = config.users.judge;
-  if (isSessionValid(user.sessionFile, user.cookieName!)) return;
+  if (SessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
   await page.goto(config.urls.manageCaseBaseUrl);
   await new IdamPage(page).login(user);
 });

@@ -2,11 +2,12 @@ import {
   AxeUtils,
   BrowserUtils,
   LighthouseUtils,
+  SessionUtils,
 } from "@hmcts/playwright-common";
 import os from "os";
 import path from "path";
 import { chromium, Page } from "playwright/test";
-import { config, Config, getCookies } from "./config.utils";
+import { config, Config } from "./config.utils";
 import { TableUtils } from "./table.utils";
 import { ValidatorUtils } from "./validator.utils";
 import { WaitUtils } from "./wait.utils";
@@ -54,7 +55,9 @@ export const utilsFixtures = {
         args: [`--remote-debugging-port=${lighthousePort}`],
       });
       // Using the cookies from global setup, inject to the new browser
-      await context.addCookies(getCookies(config.users.citizen.sessionFile));
+      await context.addCookies(
+        SessionUtils.getCookies(config.users.citizen.sessionFile)
+      );
       // Provide the page to the test
       await use(context.pages()[0]);
       await context.close();
