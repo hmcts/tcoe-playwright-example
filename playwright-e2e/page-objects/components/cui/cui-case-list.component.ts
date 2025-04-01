@@ -2,7 +2,7 @@ import { TableUtils } from "@hmcts/playwright-common";
 import { Page } from "@playwright/test";
 import { ValidatorUtils } from "../../../utils";
 
-export class cuiCaseListComponent {
+export class CuiCaseListComponent {
   readonly caseList = this.page.locator("[data-module='govuk-tabs']");
   readonly tabList = this.page.getByRole("tablist");
   readonly draftTab = this.tabList.locator("#tab_draft-cases");
