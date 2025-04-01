@@ -25,7 +25,7 @@
   },
   "scripts": {
     "lint": "yarn tsc -p tsconfig.json && yarn eslint .",
-    "setup": "yarn playwright install",
+    "setup": "yarn playwright install --with-deps",
     "test:chrome": "yarn playwright test tests/ --project=chrome --grep-invert='(@a11y)|(@performance)|(@visual)'",
     "test:firefox": "yarn playwright test tests/ --project=firefox --grep-invert='(@a11y)|(@performance)|(@visual)'",
     "test:webkit": "yarn playwright test tests/ --project=webkit --grep-invert='(@a11y)|(@performance)|(@visual)'",
