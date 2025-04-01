@@ -1,5 +1,6 @@
+import { TableUtils } from "@hmcts/playwright-common";
 import { Page } from "@playwright/test";
-import { TableUtils, ValidatorUtils } from "../../../utils";
+import { ValidatorUtils } from "../../../utils";
 
 export class cuiCaseListComponent {
   readonly caseList = this.page.locator("[data-module='govuk-tabs']");

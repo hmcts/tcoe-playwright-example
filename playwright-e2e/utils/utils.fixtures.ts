@@ -3,14 +3,14 @@ import {
   BrowserUtils,
   LighthouseUtils,
   SessionUtils,
+  TableUtils,
+  WaitUtils,
 } from "@hmcts/playwright-common";
 import os from "os";
 import path from "path";
 import { chromium, Page } from "playwright/test";
 import { config, Config } from "./config.utils";
-import { TableUtils } from "./table.utils";
 import { ValidatorUtils } from "./validator.utils";
-import { WaitUtils } from "./wait.utils";
 
 export interface UtilsFixtures {
   config: Config;

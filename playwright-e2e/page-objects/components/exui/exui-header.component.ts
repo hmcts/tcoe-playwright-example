@@ -1,5 +1,5 @@
+import { WaitUtils } from "@hmcts/playwright-common";
 import { expect, Page } from "@playwright/test";
-import { WaitUtils } from "../../../utils";
 
 export class ExuiHeaderComponent {
   readonly header = this.page.locator("exui-header");
