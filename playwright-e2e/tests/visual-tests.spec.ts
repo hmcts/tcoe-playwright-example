@@ -1,6 +1,6 @@
+import { ExuiMediaViewerPage } from "@hmcts/playwright-common";
 import { expect } from "@playwright/test";
 import { test } from "../fixtures";
-import { ExuiMediaViewerPage } from "../page-objects/pages";
 import { config } from "../utils";
 
 /*

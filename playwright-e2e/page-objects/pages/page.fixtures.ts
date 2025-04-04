@@ -1,10 +1,9 @@
+import { ExuiMediaViewerPage, IdamPage } from "@hmcts/playwright-common";
 import { Page } from "@playwright/test";
 import { ActivateCasePinPage } from "./cui/activate-case-pin.po";
 import { CuiCaseListPage } from "./cui/cui-case-list.po";
 import { ExuiCaseDetailsPage } from "./exui/exui-case-details.po";
 import { ExuiCaseListPage } from "./exui/exui-case-list.po";
-import { ExuiMediaViewerPage } from "./exui/exui-media-viewer.po";
-import { IdamPage } from "./idam.po";
 
 export interface PageFixtures {
   determinePage: Page;

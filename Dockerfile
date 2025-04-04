@@ -4,10 +4,8 @@ WORKDIR /playwright/
 
 COPY package.json ./
 
-RUN corepack enable && \
-  yarn install && \
-  npx playwright install --with-deps && \
-  npx playwright install chrome
+RUN corepack enable
+RUN yarn install
 
 COPY . .
 
