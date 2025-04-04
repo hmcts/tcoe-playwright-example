@@ -6,8 +6,6 @@ COPY package.json ./
 
 RUN corepack enable
 RUN yarn install
-RUN yarn playwright install --with-deps
-RUN yarn playwright install chromium
 
 COPY . .
 

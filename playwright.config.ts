@@ -23,6 +23,10 @@ export default defineConfig({
       dependencies: ["setup"],
     },
     {
+      ...ProjectsConfig.chromium,
+      dependencies: ["setup"],
+    },
+    {
       ...ProjectsConfig.edge,
       dependencies: ["setup"],
     },
