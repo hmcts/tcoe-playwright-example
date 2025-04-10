@@ -1,4 +1,3 @@
-import { IdamPage, SessionUtils } from "@hmcts/playwright-common";
 import { test as setup } from "./fixtures";
 
 /*
@@ -9,28 +8,34 @@ import { test as setup } from "./fixtures";
  * Currently, the session is valid for 8 hours (for exui users)
  */
 
-setup("Setup citizen user", async ({ page, config }) => {
+setup("Setup citizen user", async ({ page, config, idamPage }) => {
   await page.goto(config.urls.citizenUrl);
-  await new IdamPage(page).login(config.users.citizen);
+  await idamPage.login(config.users.citizen);
 });
 
-setup("Setup solicitor user", async ({ page, config }) => {
-  const user = config.users.solicitor;
-  if (SessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
-  await page.goto(config.urls.manageCaseBaseUrl);
-  await new IdamPage(page).login(user);
-});
+setup(
+  "Setup solicitor user",
+  async ({ page, config, idamPage, sessionUtils }) => {
+    const user = config.users.solicitor;
+    if (sessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
+    await page.goto(config.urls.manageCaseBaseUrl);
+    await idamPage.login(user);
+  }
+);
 
-setup("Setup case manager user", async ({ page, config }) => {
-  const user = config.users.caseManager;
-  if (SessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
-  await page.goto(config.urls.manageCaseBaseUrl);
-  await new IdamPage(page).login(user);
-});
+setup(
+  "Setup case manager user",
+  async ({ page, config, idamPage, sessionUtils }) => {
+    const user = config.users.caseManager;
+    if (sessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
+    await page.goto(config.urls.manageCaseBaseUrl);
+    await idamPage.login(user);
+  }
+);
 
-setup("Setup judge user", async ({ page, config }) => {
+setup("Setup judge user", async ({ page, config, idamPage, sessionUtils }) => {
   const user = config.users.judge;
-  if (SessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
+  if (sessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
   await page.goto(config.urls.manageCaseBaseUrl);
-  await new IdamPage(page).login(user);
+  await idamPage.login(user);
 });

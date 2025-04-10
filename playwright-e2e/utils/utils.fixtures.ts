@@ -18,6 +18,7 @@ export interface UtilsFixtures {
   waitUtils: WaitUtils;
   tableUtils: TableUtils;
   axeUtils: AxeUtils;
+  sessionUtils: typeof SessionUtils;
   browserUtils: BrowserUtils;
   lighthouseUtils: LighthouseUtils;
   lighthousePage: Page;
@@ -41,6 +42,9 @@ export const utilsFixtures = {
   },
   axeUtils: async ({ page }, use) => {
     await use(new AxeUtils(page));
+  },
+  sessionUtils: async ({}, use) => {
+    await use(SessionUtils);
   },
   browserUtils: async ({ browser }, use) => {
     await use(new BrowserUtils(browser));
