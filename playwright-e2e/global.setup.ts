@@ -15,9 +15,9 @@ setup("Setup citizen user", async ({ page, config, idamPage }) => {
 
 setup(
   "Setup solicitor user",
-  async ({ page, config, idamPage, sessionUtils }) => {
+  async ({ page, config, idamPage, SessionUtils }) => {
     const user = config.users.solicitor;
-    if (sessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
+    if (SessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
     await page.goto(config.urls.manageCaseBaseUrl);
     await idamPage.login(user);
   }
@@ -25,17 +25,17 @@ setup(
 
 setup(
   "Setup case manager user",
-  async ({ page, config, idamPage, sessionUtils }) => {
+  async ({ page, config, idamPage, SessionUtils }) => {
     const user = config.users.caseManager;
-    if (sessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
+    if (SessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
     await page.goto(config.urls.manageCaseBaseUrl);
     await idamPage.login(user);
   }
 );
 
-setup("Setup judge user", async ({ page, config, idamPage, sessionUtils }) => {
+setup("Setup judge user", async ({ page, config, idamPage, SessionUtils }) => {
   const user = config.users.judge;
-  if (sessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
+  if (SessionUtils.isSessionValid(user.sessionFile, user.cookieName!)) return;
   await page.goto(config.urls.manageCaseBaseUrl);
   await idamPage.login(user);
 });
