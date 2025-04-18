@@ -38,5 +38,5 @@
     "test:visual": "yarn playwright test tests/ --grep @visual --project=chrome",
     "test:update-snapshots": "yarn playwright test tests/ --grep @visual --project=chrome --update-snapshots"
   },
-  "packageManager": "yarn@4.7.0"
+  "packageManager": "yarn@4.9.1"
 }
