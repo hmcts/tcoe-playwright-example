@@ -10,10 +10,12 @@ import os from "os";
 import path from "path";
 import { chromium, Page } from "playwright/test";
 import { config, Config } from "./config.utils";
+import { CookieUtils } from "./cookie.utils";
 import { ValidatorUtils } from "./validator.utils";
 
 export interface UtilsFixtures {
   config: Config;
+  cookieUtils: CookieUtils;
   validatorUtils: ValidatorUtils;
   waitUtils: WaitUtils;
   tableUtils: TableUtils;
@@ -27,6 +29,9 @@ export interface UtilsFixtures {
 export const utilsFixtures = {
   config: async ({}, use) => {
     await use(config);
+  },
+  cookieUtils: async ({}, use) => {
+    await use(new CookieUtils());
   },
   waitUtils: async ({}, use) => {
     await use(new WaitUtils());
