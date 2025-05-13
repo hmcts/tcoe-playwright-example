@@ -36,8 +36,8 @@
     "test:a11y": "yarn playwright test tests/ --grep @a11y --project=chrome",
     "build-container": "docker build -t playwright-container .",
     "start-container": "docker run --rm -it --network host --ipc=host -v \"$(pwd)\":/playwright -w /playwright playwright-container /bin/bash",
-    "test:visual": "yarn playwright test tests/ --grep @visual --project=chrome",
-    "test:update-snapshots": "yarn playwright test tests/ --grep @visual --project=chrome --update-snapshots"
+    "test:visual": "yarn playwright test tests/ --grep @visual --project=chromium",
+    "test:update-snapshots": "yarn playwright test tests/ --grep @visual --project=chromium --update-snapshots"
   },
   "packageManager": "yarn@4.9.1"
 }
