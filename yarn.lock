@@ -171,8 +171,8 @@ __metadata:
   linkType: hard
 
 "@hmcts/playwright-common@npm:^1.0.17":
-  version: 1.0.17
-  resolution: "@hmcts/playwright-common@npm:1.0.17"
+  version: 1.0.18
+  resolution: "@hmcts/playwright-common@npm:1.0.18"
   dependencies:
     "@axe-core/playwright": "npm:^4.10.0"
     "@playwright/test": "npm:^1.48.2"
@@ -182,7 +182,7 @@ __metadata:
     playwright: "npm:^1.48.2"
     playwright-core: "npm:^1.48.2"
     playwright-lighthouse: "npm:^4.0.0"
-  checksum: 10/51c0343db6f993f54112f6dced345a54e5ce498a109ce8018a91969d00e4b12b96b28cfe19d4b8d01c83d9f1d3e068f6d5fc68e808b0754ab949af5b7f0b0743
+  checksum: 10/2c3caf78a00b90d03e4501195e6ffbe1f5ae0fab42bf2cd1e92b23e5d423580040f1e27ef3e20d65576954bdc5377974ace6a8ef9ad24ebc3172a1ffe5083e5e
   languageName: node
   linkType: hard
 
