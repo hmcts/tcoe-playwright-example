@@ -12,6 +12,7 @@ import { chromium, Page } from "playwright/test";
 import { config, Config } from "./config.utils";
 import { CookieUtils } from "./cookie.utils";
 import { ValidatorUtils } from "./validator.utils";
+import { LoginUtils } from "./login.utils";
 
 export interface UtilsFixtures {
   config: Config;
@@ -24,6 +25,7 @@ export interface UtilsFixtures {
   browserUtils: BrowserUtils;
   lighthouseUtils: LighthouseUtils;
   lighthousePage: Page;
+  loginUtils: LoginUtils;
 }
 
 export const utilsFixtures = {
@@ -73,5 +75,8 @@ export const utilsFixtures = {
     } else {
       await use(page);
     }
+  },
+  loginUtils: async ({ page, cookieUtils }, use) => {
+    await use(new LoginUtils(page, cookieUtils));
   },
 };

@@ -1,18 +1,21 @@
-import { expect, test } from "../fixtures";
+import { expect, test } from '../fixtures';
 import { ExuiCaseDetailsPage, ExuiCaseListPage } from "../page-objects/pages";
-import { config } from "../utils";
+test("log in fixture @login", async ({
+  config,
+  loginUtils,
+}) => {
+  await loginUtils.loggedInAs(config.users.caseManager, "caseManager");
+});
 
 test.describe("Testing with multiple users @multiple-users", () => {
-  test.use({
-    storageState: config.users.caseManager.sessionFile,
-  });
-
   test("Both a case manager and judge can access the same case", async ({
+    config,
+    loginUtils,
     exuiCaseListPage,
     exuiCaseDetailsPage,
     browserUtils,
-    config,
   }) => {
+    await loginUtils.loggedInAs(config.users.caseManager, "caseManager");
     await exuiCaseListPage.exuiCaseListComponent.searchByCaseName(
       "Applicant ApplLast & Dolores Smith"
     );
@@ -21,6 +24,7 @@ test.describe("Testing with multiple users @multiple-users", () => {
     const caseNumber =
       await exuiCaseDetailsPage.exuiCaseDetailsComponent.getCaseNumber();
 
+    await loginUtils.loggedInAs(config.users.judge, "judge");
     const judgeBrowser = await browserUtils.openNewBrowserContext(
       config.users.judge.sessionFile
     );
