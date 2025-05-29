@@ -1,36 +1,49 @@
 import { Page } from '@playwright/test';
 import { CookieUtils } from './cookie.utils';
-import { SessionUtils } from '@hmcts/playwright-common';
+import { IdamPage } from '@hmcts/playwright-common';
 import { config } from './config.utils';
-import { IdamPage } from "@hmcts/playwright-common";
 
-type UserRole = 'citizen' | 'caseManager' | 'judge';
-
+export type UserRole = 'citizen' | 'caseManager' | 'judge';
 export interface User {
-    username: string;  
-    password: string;
-    sessionFile: string;
-    cookieName?: string;
-  }
+  username: string;
+  password: string;
+  sessionFile: string;
+  cookieName?: string;
+}
 
 export class LoginUtils {
-  constructor(private page: Page, private cookieUtils: CookieUtils) {}
+  constructor(
+    private page: Page, 
+    private cookieUtils: CookieUtils
+  ) {}
 
-  async loggedInAs(user: User, role: UserRole) {
-    const baseUrl =
-        role === 'citizen' ? config.urls.citizenUrl : config.urls.manageCaseBaseUrl;
+  async performLogin(user: User, role: UserRole): Promise<void> {
+    const baseUrl = this.getBaseUrlForRole(role);
     
-    const sessionValid = SessionUtils.isSessionValid(user.sessionFile, user.cookieName!);
-    console.log(`Checking session for ${user.username}, valid? ${sessionValid}`);
-    
-    if (sessionValid) {
-        console.log("Session valid - skipping login");
-        return;
+    try {
+      console.log(`Logging in user: ${user.username}`);
+      
+      await this.page.goto(baseUrl);
+      const idamPage = new IdamPage(this.page);
+      await idamPage.login(user);
+      await this.cookieUtils.addAnalyticsCookie(user);
+      
+      console.log(`Session saved for ${user.username} at ${user.sessionFile}`);
+    } catch (error) {
+      console.error(`Login failed for ${user.username}:`, error);
+      throw new Error(`Failed to login user ${user.username}: ${error}`);
     }
+  }
 
-    const idamPage = new IdamPage(this.page);
-    await this.page.goto(baseUrl);
-    await idamPage.login(user);
-    await this.cookieUtils.addAnalyticsCookie(user);
+  private getBaseUrlForRole(role: UserRole): string {
+    switch (role) {
+      case 'citizen':
+        return config.urls.citizenUrl;
+      case 'caseManager':
+      case 'judge':
+        return config.urls.manageCaseBaseUrl;
+      default:
+        throw new Error(`Unknown role: ${role}`);
+    }
   }
 }
