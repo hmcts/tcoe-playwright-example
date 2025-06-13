@@ -10,19 +10,19 @@ import { expect, test } from "../fixtures";
  * lighthouseUtils provides the utils class which contains the common audit method
  */
 
-test.describe("Case List UI Performance Tests - Citizen @cui @performance", () => {
+test.describe("EXUI Case List UI Performance Tests - Casemanager @exui @performance", () => {
   test("Example performance test no.1", async ({
     lighthouseUtils,
-    cuiCaseListPage,
+    exuiCaseListPage,
   }) => {
-    await expect(cuiCaseListPage.banner).toBeVisible();
+    await exuiCaseListPage.exuiHeader.checkIsVisible();
     await lighthouseUtils.audit();
   });
   test("Example performance test no.2", async ({
     lighthouseUtils,
-    cuiCaseListPage,
+    exuiCaseListPage,
   }) => {
-    await expect(cuiCaseListPage.banner).toBeVisible();
+    await exuiCaseListPage.exuiHeader.checkIsVisible();
     await lighthouseUtils.audit();
   });
 });

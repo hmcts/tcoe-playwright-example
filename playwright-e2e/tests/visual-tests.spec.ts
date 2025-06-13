@@ -11,8 +11,13 @@ import { config } from "../utils";
 */
 
 test.describe("Visual Tests (citizen user) @visual", () => {
-  test.use({
-    storageState: config.users.citizen.sessionFile,
+  test.beforeEach(async ({ page, config, citizenUserUtils, idamUtils, idamPage }) => {
+    const user = await citizenUserUtils.createUser({ idamUtils });
+    await page.goto(config.urls.citizenUrl);
+    await idamPage.login({
+      username: user.email,
+      password: user.password,
+    });
   });
 
   test("Visual test for activating an access code", async ({

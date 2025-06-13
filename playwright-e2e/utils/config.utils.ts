@@ -16,13 +16,14 @@ interface Urls {
   exuiDefaultUrl: string;
   manageCaseBaseUrl: string;
   citizenUrl: string;
+  idamWebUrl: string;
+  idamTestingSupportUrl: string;
 }
 
 export interface Config {
   users: {
     caseManager: UserCredentials;
     judge: UserCredentials;
-    citizen: UserCredentials;
   };
   urls: Urls;
 }
@@ -45,13 +46,6 @@ export const config: Config = {
         `${getEnvVar("JUDGE_USERNAME")}.json`,
       cookieName: "xui-webapp",
     },
-    citizen: {
-      username: getEnvVar("CITIZEN_USERNAME"),
-      password: getEnvVar("CITIZEN_PASSWORD"),
-      sessionFile:
-        path.join(fileURLToPath(import.meta.url), "../../.sessions/") +
-        `${getEnvVar("CITIZEN_USERNAME")}.json`,
-    },
   },
   urls: {
     exuiDefaultUrl: "https://manage-case.aat.platform.hmcts.net",
@@ -61,6 +55,13 @@ export const config: Config = {
     citizenUrl:
       process.env.CITIZEN_FRONTEND_BASE_URL ||
       "https://privatelaw.aat.platform.hmcts.net/",
+    idamWebUrl: 
+      process.env.IDAM_WEB_URL || 
+      "https://idam-web-public.aat.platform.hmcts.net",
+    idamTestingSupportUrl: 
+      process.env.IDAM_TESTING_SUPPORT_URL || 
+      "https://idam-testing-support-api.aat.platform.hmcts.net",
+
   },
 };
 
