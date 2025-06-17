@@ -8,6 +8,10 @@ export class CuiCaseListPage extends Base {
   readonly activateAccessCodeLink = this.page.getByRole("link", {
     name: "Activate access code",
   });
+  readonly textFixtures = {
+    en: { heading: "Child arrangements and family injunction cases" },
+    cy: { heading: "Achosion trefniadau plant a gwaharddebau teulu" },
+  };
 
   constructor(page: Page) {
     super(page);

@@ -1,19 +1,20 @@
 import {
   AxeUtils,
   BrowserUtils,
+  IdamUtils,
   LighthouseUtils,
+  LocaleUtils,
   SessionUtils,
   TableUtils,
   WaitUtils,
-  IdamUtils,
 } from "@hmcts/playwright-common";
 import os from "os";
 import path from "path";
 import { chromium, Page } from "playwright/test";
+import { CitizenUserUtils } from "./citizen-user.utils";
 import { config, Config } from "./config.utils";
 import { CookieUtils } from "./cookie.utils";
 import { ValidatorUtils } from "./validator.utils";
-import { CitizenUserUtils } from "./citizen-user.utils";
 
 export interface UtilsFixtures {
   config: Config;
@@ -28,6 +29,7 @@ export interface UtilsFixtures {
   lighthousePage: Page;
   idamUtils: IdamUtils;
   citizenUserUtils: CitizenUserUtils;
+  localeUtils: LocaleUtils;
 }
 
 export const utilsFixtures = {
@@ -63,8 +65,15 @@ export const utilsFixtures = {
   },
   citizenUserUtils: async ({ idamUtils }, use) => {
     await use(new CitizenUserUtils(idamUtils));
-  },  
-  lighthousePage: async ({ lighthousePort, page, SessionUtils }, use, testInfo) => {
+  },
+  localeUtils: async ({ page }, use) => {
+    await use(new LocaleUtils(page));
+  },
+  lighthousePage: async (
+    { lighthousePort, page, SessionUtils },
+    use,
+    testInfo
+  ) => {
     // Prevent creating performance page if not needed
     if (testInfo.tags.includes("@performance")) {
       // Lighthouse opens a new page and as playwright doesn't share context we need to
@@ -83,5 +92,5 @@ export const utilsFixtures = {
     } else {
       await use(page);
     }
-  }
+  },
 };
