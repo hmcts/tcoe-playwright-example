@@ -9,8 +9,8 @@ As a reminder: automated accessibility tests can detect some common accessibilit
 In this template, an accessibility test can be run by following the example test:
 [Example accessibility test](https://github.com/hmcts/tcoe-playwright-example/blob/master/playwright-e2e/tests/accessibility-example-test.spec.ts)
 
-And also implementing the Axe Core helper:
-[Axe Core Helper](https://github.com/hmcts/tcoe-playwright-example/blob/master/playwright-e2e/utils/axe.utils.ts)
+The axe core helper is imported from the playwright common library:
+[Axe Core Helper](https://github.com/hmcts/playwright-common/blob/master/src/utils/axe.utils.ts)
 
 Following the fixture pattern, no page is required to be passed to the axe core helper as this already happens when the fixture is instantiated by the test [here](https://github.com/hmcts/tcoe-playwright-example/blob/master/playwright-e2e/utils/utils.fixtures.ts#L38). The method will also take an element you wish to exclude from the check.
 
