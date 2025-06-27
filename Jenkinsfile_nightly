@@ -54,7 +54,7 @@ static Map < String, Object > secret(String secretName, String envVariable) {
 
 // Replace the key vault name with your own service
 def secrets = [
-  "prl-${env}": [
+  'prl-${env}': [
     secret('case-manager-swansea-username', 'CASEMANAGER_USERNAME'),
     secret('case-manager-swansea-password', 'CASEMANAGER_PASSWORD'),
     secret('judge-testuser-one', 'JUDGE_USERNAME'),
