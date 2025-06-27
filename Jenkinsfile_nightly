@@ -103,9 +103,9 @@ withNightlyPipeline(type, product, component, 600) {
       }
     }
     if (!TAGS_TO_RUN.isEmpty()) {
-      stage("${TAGS_TO_RUN} E2E Tests") {
+      stage("${TAGS_TO_RUN} E2E Tests for ${params.BROWSER_TO_RUN}") {
         try {
-          currentBuild.displayName = "${TAGS_TO_RUN} E2E Tests"
+          currentBuild.displayName = "${TAGS_TO_RUN} E2E Tests for ${params.BROWSER_TO_RUN}"
           yarnBuilder.yarn(buildPlaywrightCommand(TAGS_TO_RUN, params.BROWSER_TO_RUN))
         } catch (Error) {
           unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
