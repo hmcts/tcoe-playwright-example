@@ -27,6 +27,11 @@ properties([
       defaultValue: '',
       description: 'Optionally, run a single or multiple tags (comma separated e.g. @cui, @exui)'
     ),
+    choice(
+      name: 'BROWSERS_TO_RUN',
+      choices: ['chromium', 'chrome', 'firefox', 'webkit', 'tabletchrome', 'tabletwebkit'],
+      description: 'Choose what browsers will be run (only when a tag is specified)'
+    ),
   ])
 ])
 
@@ -64,12 +69,18 @@ def buildPlaywrightCommand(tags) {
     return;
   }
   def tagList = tags.split(',').collect { it.trim() }
+
   def command = 'playwright test tests/'
     tagList.each { tag ->
     if (!tag.isEmpty()) {
       command += " --grep ${tag}"
     }
   }
+
+  if (params.BROWSERS_TO_RUN) {
+    command += " --project=${params.BROWSERS_TO_RUN}"
+  }
+
   return command
 }
 
