@@ -28,7 +28,7 @@ properties([
       description: 'Optionally, run a single or multiple tags (comma separated e.g. @cui, @exui)'
     ),
     choice(
-      name: 'BROWSERS_TO_RUN',
+      name: 'BROWSER_TO_RUN',
       choices: ['chromium', 'chrome', 'firefox', 'webkit', 'tabletchrome', 'tabletwebkit'],
       description: 'Choose what browsers will be run (only when a tag is specified)'
     ),
@@ -61,10 +61,11 @@ def secrets = [
     secret('judge-testpassword', 'JUDGE_PASSWORD'),
     secret('prl-cos-idam-client-secret', 'IDAM_SECRET'),
     secret('idam-citizen-password', 'IDAM_CITIZEN_USER_PASSWORD'),
+    secret('idam-api-url', 'IDAM_API_URL'),
   ]
 ]
 
-def buildPlaywrightCommand(tags) {
+def buildPlaywrightCommand(tags, browser) {
   if (tags == null || tags.trim().isEmpty()) {
     return;
   }
@@ -77,8 +78,8 @@ def buildPlaywrightCommand(tags) {
     }
   }
 
-  if (params.BROWSERS_TO_RUN) {
-    command += " --project=${params.BROWSERS_TO_RUN}"
+  if (browser) {
+    command += " --project=${browser}"
   }
 
   return command
@@ -91,6 +92,8 @@ withNightlyPipeline(type, product, component, 600) {
   env.CITIZEN_FRONTEND_BASE_URL = params.CITIZEN_FRONTEND_BASE_URL
   env.MANAGE_CASES_BASE_URL = params.MANAGE_CASES_BASE_URL
   env.FUNCTIONAL_TESTS_WORKERS = params.FUNCTIONAL_TESTS_WORKERS
+  env.IDAM_WEB_URL = "https://idam-web-public.${env}.platform.hmcts.net"
+  env.IDAM_TESTING_SUPPORT_URL = "https://idam-testing-support-api.${env}.platform.hmcts.net"
   enableSlackNotifications(channel)
 
   afterAlways('DependencyCheckNightly') {
@@ -105,7 +108,7 @@ withNightlyPipeline(type, product, component, 600) {
       stage("${TAGS_TO_RUN} E2E Tests") {
         try {
           currentBuild.displayName = "${TAGS_TO_RUN} E2E Tests"
-          yarnBuilder.yarn(buildPlaywrightCommand(TAGS_TO_RUN))
+          yarnBuilder.yarn(buildPlaywrightCommand(TAGS_TO_RUN, BROWSER_TO_RUN))
         } catch (Error) {
           unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
         } finally {
@@ -115,7 +118,7 @@ withNightlyPipeline(type, product, component, 600) {
             keepAll: true,
             reportDir: "playwright-report",
             reportFiles: 'index.html',
-            reportName: "${TAGS_TO_RUN} E2E Tests"
+            reportName: "${TAGS_TO_RUN} E2E Tests for ${BROWSER_TO_RUN}"
           ])
         }
       }
