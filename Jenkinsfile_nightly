@@ -8,6 +8,11 @@ properties([
   disableConcurrentBuilds(),
   parameters([
     string(
+      name: 'ENVIRONMENT',
+      defaultValue: 'aat',
+      description: 'The environment e.g. aat, demo etc'
+    ),
+    string(
       name: 'CITIZEN_FRONTEND_BASE_URL',
       defaultValue: 'https://privatelaw.aat.platform.hmcts.net/',
       description: 'The Citizen URL to test against'
@@ -52,9 +57,19 @@ static Map < String, Object > secret(String secretName, String envVariable) {
   ]
 }
 
+if (params.ENVRIONMENT == 'preview') {
+  def env = 'aat' // AAT vault is used for preview environments
+} else if (params.ENVIRONMENT == 'aat') {
+  def env = 'aat'
+} else if (params.ENVIRONMENT == 'demo') {
+  def env = 'demo'
+} else {
+  error("Invalid environment specified: ${params.ENVIRONMENT}. Valid options are: aat, demo, preview.")
+}
+
 // Replace the key vault name with your own service
 def secrets = [
-  'prl-${env}': [
+  "prl-${env}": [
     secret('case-manager-swansea-username', 'CASEMANAGER_USERNAME'),
     secret('case-manager-swansea-password', 'CASEMANAGER_PASSWORD'),
     secret('judge-testuser-one', 'JUDGE_USERNAME'),
@@ -108,7 +123,7 @@ withNightlyPipeline(type, product, component, 600) {
       stage("${TAGS_TO_RUN} E2E Tests") {
         try {
           currentBuild.displayName = "${TAGS_TO_RUN} E2E Tests"
-          yarnBuilder.yarn(buildPlaywrightCommand(TAGS_TO_RUN, BROWSER_TO_RUN))
+          yarnBuilder.yarn(buildPlaywrightCommand(TAGS_TO_RUN, params.BROWSER_TO_RUN))
         } catch (Error) {
           unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
         } finally {
@@ -118,7 +133,7 @@ withNightlyPipeline(type, product, component, 600) {
             keepAll: true,
             reportDir: "playwright-report",
             reportFiles: 'index.html',
-            reportName: "${TAGS_TO_RUN} E2E Tests for ${BROWSER_TO_RUN}"
+            reportName: "${TAGS_TO_RUN} E2E Tests for ${params.BROWSER_TO_RUN}"
           ])
         }
       }
