@@ -8,11 +8,6 @@ properties([
   disableConcurrentBuilds(),
   parameters([
     string(
-      name: 'ENVIRONMENT',
-      defaultValue: 'aat',
-      description: 'The environment e.g. aat, demo etc'
-    ),
-    string(
       name: 'CITIZEN_FRONTEND_BASE_URL',
       defaultValue: 'https://privatelaw.aat.platform.hmcts.net/',
       description: 'The Citizen URL to test against'
@@ -57,16 +52,6 @@ static Map < String, Object > secret(String secretName, String envVariable) {
   ]
 }
 
-if (params.ENVRIONMENT == 'preview') {
-  def env = 'aat' // AAT vault is used for preview environments
-} else if (params.ENVIRONMENT == 'aat') {
-  def env = 'aat'
-} else if (params.ENVIRONMENT == 'demo') {
-  def env = 'demo'
-} else {
-  error("Invalid environment specified: ${params.ENVIRONMENT}. Valid options are: aat, demo, preview.")
-}
-
 // Replace the key vault name with your own service
 def secrets = [
   "prl-${env}": [
@@ -107,8 +92,6 @@ withNightlyPipeline(type, product, component, 600) {
   env.CITIZEN_FRONTEND_BASE_URL = params.CITIZEN_FRONTEND_BASE_URL
   env.MANAGE_CASES_BASE_URL = params.MANAGE_CASES_BASE_URL
   env.FUNCTIONAL_TESTS_WORKERS = params.FUNCTIONAL_TESTS_WORKERS
-  env.IDAM_WEB_URL = "https://idam-web-public.${env}.platform.hmcts.net"
-  env.IDAM_TESTING_SUPPORT_URL = "https://idam-testing-support-api.${env}.platform.hmcts.net"
   enableSlackNotifications(channel)
 
   afterAlways('DependencyCheckNightly') {
