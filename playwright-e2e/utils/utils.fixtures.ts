@@ -48,7 +48,11 @@ export const utilsFixtures = {
   cookieUtils: async ({}, use) => {
     await use(new CookieUtils());
   },
-  idamUtils: async ({}, use) => {
+  idamUtils: async ({ config }, use) => {
+    // Set required env vars for IDAM
+    process.env.IDAM_WEB_URL = config.urls.idamWebUrl;
+    process.env.IDAM_TESTING_SUPPORT_URL = config.urls.idamTestingSupportUrl;
+    process.env.IDAM_S2S_URL = config.urls.idamServiceAuthUrl;
     await use(new IdamUtils());
   },
   lighthousePage: async (

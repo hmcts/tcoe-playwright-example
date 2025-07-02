@@ -27,6 +27,11 @@ properties([
       defaultValue: '',
       description: 'Optionally, run a single or multiple tags (comma separated e.g. @cui, @exui)'
     ),
+    choice(
+      name: 'BROWSER_TO_RUN',
+      choices: ['chromium', 'chrome', 'firefox', 'webkit', 'tabletchrome', 'tabletwebkit'],
+      description: 'Choose what browsers will be run (only when a tag is specified)'
+    ),
   ])
 ])
 
@@ -59,17 +64,23 @@ def secrets = [
   ]
 ]
 
-def buildPlaywrightCommand(tags) {
+def buildPlaywrightCommand(tags, browser) {
   if (tags == null || tags.trim().isEmpty()) {
     return;
   }
   def tagList = tags.split(',').collect { it.trim() }
+
   def command = 'playwright test tests/'
     tagList.each { tag ->
     if (!tag.isEmpty()) {
       command += " --grep ${tag}"
     }
   }
+
+  if (browser) {
+    command += " --project=${browser}"
+  }
+
   return command
 }
 
@@ -91,10 +102,10 @@ withNightlyPipeline(type, product, component, 600) {
       }
     }
     if (!TAGS_TO_RUN.isEmpty()) {
-      stage("${TAGS_TO_RUN} E2E Tests") {
+      stage("${TAGS_TO_RUN} E2E Tests for ${params.BROWSER_TO_RUN}") {
         try {
-          currentBuild.displayName = "${TAGS_TO_RUN} E2E Tests"
-          yarnBuilder.yarn(buildPlaywrightCommand(TAGS_TO_RUN))
+          currentBuild.displayName = "${TAGS_TO_RUN} E2E Tests for ${params.BROWSER_TO_RUN}"
+          yarnBuilder.yarn(buildPlaywrightCommand(TAGS_TO_RUN, params.BROWSER_TO_RUN))
         } catch (Error) {
           unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
         } finally {
@@ -104,7 +115,7 @@ withNightlyPipeline(type, product, component, 600) {
             keepAll: true,
             reportDir: "playwright-report",
             reportFiles: 'index.html',
-            reportName: "${TAGS_TO_RUN} E2E Tests"
+            reportName: "${TAGS_TO_RUN} E2E Tests for ${params.BROWSER_TO_RUN}"
           ])
         }
       }
