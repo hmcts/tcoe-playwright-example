@@ -18,6 +18,7 @@ interface Urls {
   citizenUrl: string;
   idamWebUrl: string;
   idamTestingSupportUrl: string;
+  idamServiceAuthUrl: string;
 }
 
 export interface Config {
@@ -55,13 +56,15 @@ export const config: Config = {
     citizenUrl:
       process.env.CITIZEN_FRONTEND_BASE_URL ||
       "https://privatelaw.aat.platform.hmcts.net/",
-    idamWebUrl: 
-      process.env.IDAM_WEB_URL || 
+    idamWebUrl:
+      process.env.IDAM_WEB_URL ||
       "https://idam-web-public.aat.platform.hmcts.net",
-    idamTestingSupportUrl: 
-      process.env.IDAM_TESTING_SUPPORT_URL || 
+    idamTestingSupportUrl:
+      process.env.IDAM_TESTING_SUPPORT_URL ||
       "https://idam-testing-support-api.aat.platform.hmcts.net",
-
+    idamServiceAuthUrl:
+      process.env.IDAM_S2S_URL ||
+      "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal/testing-support/lease",
   },
 };
 

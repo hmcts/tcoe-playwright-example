@@ -23,7 +23,7 @@ export interface UtilsFixtures {
   waitUtils: WaitUtils;
   tableUtils: TableUtils;
   axeUtils: AxeUtils;
-  SessionUtils: typeof SessionUtils;
+  sessionUtils: typeof SessionUtils;
   browserUtils: BrowserUtils;
   lighthouseUtils: LighthouseUtils;
   lighthousePage: Page;
@@ -33,14 +33,52 @@ export interface UtilsFixtures {
 }
 
 export const utilsFixtures = {
+  axeUtils: async ({ page }, use) => {
+    await use(new AxeUtils(page));
+  },
+  browserUtils: async ({ browser }, use) => {
+    await use(new BrowserUtils(browser));
+  },
+  citizenUserUtils: async ({ idamUtils }, use) => {
+    await use(new CitizenUserUtils(idamUtils));
+  },
   config: async ({}, use) => {
     await use(config);
   },
   cookieUtils: async ({}, use) => {
     await use(new CookieUtils());
   },
-  waitUtils: async ({}, use) => {
-    await use(new WaitUtils());
+  idamUtils: async ({}, use) => {
+    await use(new IdamUtils());
+  },
+  lighthousePage: async (
+    { lighthousePort, page, sessionUtils },
+    use,
+    testInfo
+  ) => {
+    // Prevent creating performance page if not needed
+    if (testInfo.tags.includes("@performance")) {
+      const userDataDir = path.join(os.tmpdir(), "pw", String(Math.random()));
+      const context = await chromium.launchPersistentContext(userDataDir, {
+        args: [`--remote-debugging-port=${lighthousePort}`],
+      });
+      await context.addCookies(
+        sessionUtils.getCookies(config.users.caseManager.sessionFile)
+      );
+      await use(context.pages()[0]);
+      await context.close();
+    } else {
+      await use(page);
+    }
+  },
+  lighthouseUtils: async ({ lighthousePage, lighthousePort }, use) => {
+    await use(new LighthouseUtils(lighthousePage, lighthousePort));
+  },
+  localeUtils: async ({ page }, use) => {
+    await use(new LocaleUtils(page));
+  },
+  sessionUtils: async ({}, use) => {
+    await use(SessionUtils);
   },
   tableUtils: async ({}, use) => {
     await use(new TableUtils());
@@ -48,49 +86,8 @@ export const utilsFixtures = {
   validatorUtils: async ({}, use) => {
     await use(new ValidatorUtils());
   },
-  lighthouseUtils: async ({ lighthousePage, lighthousePort }, use) => {
-    await use(new LighthouseUtils(lighthousePage, lighthousePort));
+  waitUtils: async ({}, use) => {
+    await use(new WaitUtils());
   },
-  axeUtils: async ({ page }, use) => {
-    await use(new AxeUtils(page));
-  },
-  SessionUtils: async ({}, use) => {
-    await use(SessionUtils);
-  },
-  browserUtils: async ({ browser }, use) => {
-    await use(new BrowserUtils(browser));
-  },
-  idamUtils: async ({}, use) => {
-    await use(new IdamUtils());
-  },
-  citizenUserUtils: async ({ idamUtils }, use) => {
-    await use(new CitizenUserUtils(idamUtils));
-  },
-  localeUtils: async ({ page }, use) => {
-    await use(new LocaleUtils(page));
-  },
-  lighthousePage: async (
-    { lighthousePort, page, SessionUtils },
-    use,
-    testInfo
-  ) => {
-    // Prevent creating performance page if not needed
-    if (testInfo.tags.includes("@performance")) {
-      // Lighthouse opens a new page and as playwright doesn't share context we need to
-      // explicitly create a new browser with shared context
-      const userDataDir = path.join(os.tmpdir(), "pw", String(Math.random()));
-      const context = await chromium.launchPersistentContext(userDataDir, {
-        args: [`--remote-debugging-port=${lighthousePort}`],
-      });
-      // Using the cookies from global setup, inject to the new browser
-      await context.addCookies(
-        SessionUtils.getCookies(config.users.caseManager.sessionFile)
-      );
-      // Provide the page to the test
-      await use(context.pages()[0]);
-      await context.close();
-    } else {
-      await use(page);
-    }
-  },
+  
 };

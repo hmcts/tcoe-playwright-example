@@ -33,9 +33,9 @@ setup.describe("Set up users and retrieve tokens", () => {
    */
   setup(
     "Set up case manager user",
-    async ({ page, config, idamPage, SessionUtils, cookieUtils }) => {
+    async ({ page, config, idamPage, sessionUtils, cookieUtils }) => {
       const user = config.users.caseManager;
-      if (SessionUtils.isSessionValid(user.sessionFile, user.cookieName!))
+      if (sessionUtils.isSessionValid(user.sessionFile, user.cookieName!))
         return;
       await page.goto(config.urls.manageCaseBaseUrl);
       await idamPage.login(user);
@@ -49,13 +49,22 @@ setup.describe("Set up users and retrieve tokens", () => {
    */
   setup(
     "Set up judge user",
-    async ({ page, config, idamPage, SessionUtils, cookieUtils }) => {
+    async ({ page, config, idamPage, sessionUtils, cookieUtils }) => {
       const user = config.users.judge;
-      if (SessionUtils.isSessionValid(user.sessionFile, user.cookieName!))
+      if (sessionUtils.isSessionValid(user.sessionFile, user.cookieName!))
         return;
       await page.goto(config.urls.manageCaseBaseUrl);
       await idamPage.login(user);
       await cookieUtils.addManageCasesAnalyticsCookie(user.sessionFile);
+    }
+  );
+
+  setup(
+    "Get service auth token",
+    async ({ idamUtils }) => {
+      const token = await idamUtils.retrieveServiceAuthToken({ microservice: "prl-cos-api" });
+      process.env.S2S_TOKEN = token;
+      console.log(token);
     }
   );
 });
