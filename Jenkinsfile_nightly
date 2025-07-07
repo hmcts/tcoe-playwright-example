@@ -61,7 +61,6 @@ def secrets = [
     secret('judge-testpassword', 'JUDGE_PASSWORD'),
     secret('prl-cos-idam-client-secret', 'IDAM_SECRET'),
     secret('idam-citizen-password', 'IDAM_CITIZEN_USER_PASSWORD'),
-    secret('idam-api-url', 'IDAM_API_URL'),
   ]
 ]
 
