@@ -97,6 +97,7 @@ withNightlyPipeline(type, product, component, 600) {
   afterAlways('DependencyCheckNightly') {
     stage('Set up playwright') {
       try {
+        env.PLAYWRIGHT_BROWSERS_PATH=0 // Use hermetic installation
         yarnBuilder.yarn('setup')
       } catch (Error) {
         unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
@@ -167,6 +168,22 @@ withNightlyPipeline(type, product, component, 600) {
             reportDir: "playwright-report",
             reportFiles: 'index.html',
             reportName: 'Webkit E2E Tests'
+          ])
+        }
+      }
+      stage('Edge E2E Tests') {
+        try {
+          yarnBuilder.yarn('test:edge')
+        } catch (Error) {
+          unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
+        } finally {
+          publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "playwright-report",
+            reportFiles: 'index.html',
+            reportName: 'Edge E2E Tests'
           ])
         }
       }
