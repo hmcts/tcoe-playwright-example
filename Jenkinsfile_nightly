@@ -173,7 +173,7 @@ withNightlyPipeline(type, product, component, 600) {
       }
       stage('Edge E2E Tests') {
         try {
-          yarnBuilder.yarn('setup-edge') // Use hermetic install for edge
+          yarnBuilder.yarn('setup:edge') // Use hermetic install for edge
           yarnBuilder.yarn('test:edge')
         } catch (Error) {
           unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
