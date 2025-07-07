@@ -29,7 +29,7 @@ properties([
     ),
     choice(
       name: 'BROWSER_TO_RUN',
-      choices: ['chromium', 'chrome', 'firefox', 'webkit', 'tabletchrome', 'tabletwebkit'],
+      choices: ['chromium', 'chrome', 'firefox', 'webkit', 'edge', 'tabletchrome', 'tabletwebkit'],
       description: 'Choose what browsers will be run (only when a tag is specified)'
     ),
   ])
@@ -106,6 +106,7 @@ withNightlyPipeline(type, product, component, 600) {
       stage("${TAGS_TO_RUN} E2E Tests for ${params.BROWSER_TO_RUN}") {
         try {
           currentBuild.displayName = "${TAGS_TO_RUN} E2E Tests for ${params.BROWSER_TO_RUN}"
+          if (params.BROWSER_TO_RUN == 'edge') yarnBuilder.yarn('setup:edge')
           yarnBuilder.yarn(buildPlaywrightCommand(TAGS_TO_RUN, params.BROWSER_TO_RUN))
         } catch (Error) {
           unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
