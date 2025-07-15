@@ -59,12 +59,10 @@ setup.describe("Set up users and retrieve tokens", () => {
     }
   );
 
-  setup(
-    "Get service auth token",
-    async ({ idamUtils }) => {
-      const token = await idamUtils.retrieveServiceAuthToken({ microservice: "prl-cos-api" });
-      process.env.S2S_TOKEN = token;
-      console.log(token);
-    }
-  );
+  setup("Get service auth token", async ({ caseUtils }) => {
+    const token = await caseUtils.retrieveServiceAuthToken({
+      microservice: "prl-cos-api",
+    });
+    process.env.S2S_TOKEN = token;
+  });
 });

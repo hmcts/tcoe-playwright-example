@@ -7,6 +7,7 @@ import {
   SessionUtils,
   TableUtils,
   WaitUtils,
+  CaseUtils,
 } from "@hmcts/playwright-common";
 import os from "os";
 import path from "path";
@@ -30,6 +31,7 @@ export interface UtilsFixtures {
   idamUtils: IdamUtils;
   citizenUserUtils: CitizenUserUtils;
   localeUtils: LocaleUtils;
+  caseUtils: CaseUtils;
 }
 
 export const utilsFixtures = {
@@ -52,7 +54,7 @@ export const utilsFixtures = {
     // Set required env vars for IDAM
     process.env.IDAM_WEB_URL = config.urls.idamWebUrl;
     process.env.IDAM_TESTING_SUPPORT_URL = config.urls.idamTestingSupportUrl;
-    process.env.IDAM_S2S_URL = config.urls.idamServiceAuthUrl;
+    
     await use(new IdamUtils());
   },
   lighthousePage: async (
@@ -93,5 +95,9 @@ export const utilsFixtures = {
   waitUtils: async ({}, use) => {
     await use(new WaitUtils());
   },
-  
+  caseUtils: async ({}, use) => {
+    // Set required env vars for caseUtils
+    process.env.S2S_URL = config.urls.serviceAuthUrl;
+    await use(new CaseUtils());
+  },
 };
