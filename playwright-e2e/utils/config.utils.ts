@@ -63,7 +63,7 @@ export const config: Config = {
       process.env.IDAM_TESTING_SUPPORT_URL ||
       "https://idam-testing-support-api.aat.platform.hmcts.net",
     serviceAuthUrl:
-      process.env.IDAM_S2S_URL ||
+      process.env.S2S_URL ||
       "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal/testing-support/lease",
   },
 };
