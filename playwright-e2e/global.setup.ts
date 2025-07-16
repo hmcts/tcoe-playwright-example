@@ -59,8 +59,8 @@ setup.describe("Set up users and retrieve tokens", () => {
     }
   );
 
-  setup("Get service auth token", async ({ caseUtils }) => {
-    const token = await caseUtils.retrieveServiceAuthToken({
+  setup("Get service auth token", async ({ serviceAuthUtils }) => {
+    const token = await serviceAuthUtils.retrieveToken({
       microservice: "prl-cos-api",
     });
     process.env.S2S_TOKEN = token;
