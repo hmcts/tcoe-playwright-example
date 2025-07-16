@@ -162,9 +162,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hmcts/playwright-common@file:/Users/abigailsmith/HMCTS/playwright-common/package.tgz::locator=tcoe-playwright-example%40workspace%3A.":
+"@hmcts/playwright-common@npm:^1.0.30":
   version: 1.0.30
-  resolution: "@hmcts/playwright-common@file:/Users/abigailsmith/HMCTS/playwright-common/package.tgz#/Users/abigailsmith/HMCTS/playwright-common/package.tgz::hash=138152&locator=tcoe-playwright-example%40workspace%3A."
+  resolution: "@hmcts/playwright-common@npm:1.0.30"
   dependencies:
     "@axe-core/playwright": "npm:^4.10.0"
     "@eslint/js": "npm:^9.11.1"
@@ -2756,7 +2756,7 @@ __metadata:
   dependencies:
     "@axe-core/playwright": "npm:^4.10.0"
     "@eslint/js": "npm:^9.11.1"
-    "@hmcts/playwright-common": /Users/abigailsmith/HMCTS/playwright-common/package.tgz
+    "@hmcts/playwright-common": "npm:^1.0.30"
     "@playwright/test": "npm:^1.48.2"
     "@types/node": "npm:^22.15.34"
     "@typescript-eslint/eslint-plugin": "npm:^8.8.0"
