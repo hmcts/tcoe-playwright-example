@@ -33,9 +33,9 @@ setup.describe("Set up users and retrieve tokens", () => {
    */
   setup(
     "Set up case manager user",
-    async ({ page, config, idamPage, sessionUtils, cookieUtils }) => {
+    async ({ page, config, idamPage, SessionUtils, cookieUtils }) => {
       const user = config.users.caseManager;
-      if (sessionUtils.isSessionValid(user.sessionFile, user.cookieName!))
+      if (SessionUtils.isSessionValid(user.sessionFile, user.cookieName!))
         return;
       await page.goto(config.urls.manageCaseBaseUrl);
       await idamPage.login(user);
@@ -49,9 +49,9 @@ setup.describe("Set up users and retrieve tokens", () => {
    */
   setup(
     "Set up judge user",
-    async ({ page, config, idamPage, sessionUtils, cookieUtils }) => {
+    async ({ page, config, idamPage, SessionUtils, cookieUtils }) => {
       const user = config.users.judge;
-      if (sessionUtils.isSessionValid(user.sessionFile, user.cookieName!))
+      if (SessionUtils.isSessionValid(user.sessionFile, user.cookieName!))
         return;
       await page.goto(config.urls.manageCaseBaseUrl);
       await idamPage.login(user);
