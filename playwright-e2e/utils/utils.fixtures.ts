@@ -7,6 +7,7 @@ import {
   SessionUtils,
   TableUtils,
   WaitUtils,
+  ServiceAuthUtils
 } from "@hmcts/playwright-common";
 import os from "os";
 import path from "path";
@@ -30,6 +31,7 @@ export interface UtilsFixtures {
   idamUtils: IdamUtils;
   citizenUserUtils: CitizenUserUtils;
   localeUtils: LocaleUtils;
+  serviceAuthUtils: ServiceAuthUtils;
 }
 
 export const utilsFixtures = {
@@ -96,5 +98,10 @@ export const utilsFixtures = {
     } else {
       await use(page);
     }
+  },
+  serviceAuthUtils: async ({ config }, use) => {
+    // Set required env vars for Service auth (S2S_URL)
+    process.env.S2S_URL = config.urls.serviceAuthUrl;
+    await use(new ServiceAuthUtils());
   },
 };

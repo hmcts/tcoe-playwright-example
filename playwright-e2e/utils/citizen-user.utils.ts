@@ -6,6 +6,7 @@ type UserInfo = {
   password: string;
   forename: string;
   surname: string;
+  id?: string;
   sessionFile?: string;
 };
 
@@ -33,6 +34,7 @@ export class CitizenUserUtils {
     });
 
     return {
+      id: user.id,
       email: user.email,
       password: user.password,
       forename,

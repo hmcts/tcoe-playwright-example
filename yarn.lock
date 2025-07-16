@@ -162,26 +162,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hmcts/playwright-common@npm:^1.0.26":
-  version: 1.0.26
-  resolution: "@hmcts/playwright-common@npm:1.0.26"
+"@hmcts/playwright-common@npm:^1.0.30":
+  version: 1.0.30
+  resolution: "@hmcts/playwright-common@npm:1.0.30"
   dependencies:
     "@axe-core/playwright": "npm:^4.10.0"
     "@eslint/js": "npm:^9.11.1"
-    "@playwright/test": "npm:^1.48.2"
-    "@types/node": "npm:^22.6.1"
     "@typescript-eslint/eslint-plugin": "npm:^8.8.0"
     eslint: "npm:^9.11.1"
     eslint-plugin-playwright: "npm:^1.6.2"
     get-port: "npm:^7.1.0"
     globals: "npm:^15.10.0"
     lighthouse: "npm:^12.2.1"
-    playwright: "npm:^1.48.2"
-    playwright-core: "npm:^1.48.2"
     playwright-lighthouse: "npm:^4.0.0"
     typescript: "npm:^5.6.2"
     typescript-eslint: "npm:^8.8.0"
-  checksum: 10/c2dbc448ba51c99d45f53dbda63015b4424f72c57423f8ab30b15e539323ebfef4faad47b9972e18e346b47bf7ba9781619e1388fa2b58ee3b775289fbf3069e
+  peerDependencies:
+    "@playwright/test": ^1.53.0
+  checksum: 10/7d39d68d1261dd90b6c9b72e1e99bfb4c0a910e9b40b9e1a86991146de038327c1181bf06868a00b4d5d0cdc11565caab9c486d00e973911da7165b1fe59079d
   languageName: node
   linkType: hard
 
@@ -423,12 +421,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^22.15.32, @types/node@npm:^22.6.1":
-  version: 22.15.32
-  resolution: "@types/node@npm:22.15.32"
+"@types/node@npm:*, @types/node@npm:^22.15.34":
+  version: 22.15.34
+  resolution: "@types/node@npm:22.15.34"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10/10b4c106d0c512a1d35ec08142bd7fb5cf2e1df93fc5627b3c69dd843dec4be07a47f1fa7ede232ad84762d75a372ea35028b79ee1e753b6f2adecd0b2cb2f71
+  checksum: 10/b0fb6674f6c17e3d515531d7f787ccd6676641ba161a6a0e6a93a2d5bc2089fde492eac24b5152a11413bf07a818055a9ec9077d3200b03cf7ea9718470a8417
   languageName: node
   linkType: hard
 
@@ -2758,9 +2756,9 @@ __metadata:
   dependencies:
     "@axe-core/playwright": "npm:^4.10.0"
     "@eslint/js": "npm:^9.11.1"
-    "@hmcts/playwright-common": "npm:^1.0.26"
+    "@hmcts/playwright-common": "npm:^1.0.30"
     "@playwright/test": "npm:^1.48.2"
-    "@types/node": "npm:^22.15.32"
+    "@types/node": "npm:^22.15.34"
     "@typescript-eslint/eslint-plugin": "npm:^8.8.0"
     dotenv: "npm:^16.4.7"
     eslint: "npm:^9.11.1"
@@ -2786,10 +2784,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"third-party-web@npm:^0.26.6, third-party-web@npm:latest":
+"third-party-web@npm:^0.26.6":
   version: 0.26.6
   resolution: "third-party-web@npm:0.26.6"
   checksum: 10/61d48d33bddb04db8cbdddddc6cf8b454ab1ce0491779b51584b7000b31c857d214c5bfbe11de7caf25f795bc76812367262962b1f5c74154590109e218361c9
+  languageName: node
+  linkType: hard
+
+"third-party-web@npm:latest":
+  version: 0.27.0
+  resolution: "third-party-web@npm:0.27.0"
+  checksum: 10/8b40294e00740c9e11af2d497a36a16e713337db81eac88328a2c361e90803151682e49be08ae39b11283cf21d86b9ce479c3401e21053e5c554fa5bd1d5b35b
   languageName: node
   linkType: hard
 
