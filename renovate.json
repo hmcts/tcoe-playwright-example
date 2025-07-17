@@ -23,7 +23,7 @@
       "matchFileNames": [
         ".nvmrc"
       ],
-      "enabled": false
+      "enabled": true
     }
   ]
 }
