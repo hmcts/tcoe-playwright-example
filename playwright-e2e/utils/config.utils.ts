@@ -3,7 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 // This needs to be placed somewhere before attempting to access any environment variables
-dotenv.config();
+dotenv.config({ quiet: true });
 
 export interface UserCredentials {
   username: string;
