@@ -155,7 +155,7 @@ __metadata:
 
 "@hmcts/playwright-common@file:/Users/abigailsmith/HMCTS/playwright-common/package.tgz::locator=tcoe-playwright-example%40workspace%3A.":
   version: 1.0.33
-  resolution: "@hmcts/playwright-common@file:/Users/abigailsmith/HMCTS/playwright-common/package.tgz#/Users/abigailsmith/HMCTS/playwright-common/package.tgz::hash=14fd99&locator=tcoe-playwright-example%40workspace%3A."
+  resolution: "@hmcts/playwright-common@file:/Users/abigailsmith/HMCTS/playwright-common/package.tgz#/Users/abigailsmith/HMCTS/playwright-common/package.tgz::hash=4d1c17&locator=tcoe-playwright-example%40workspace%3A."
   dependencies:
     "@axe-core/playwright": "npm:^4.10.0"
     "@eslint/js": "npm:^9.11.1"
@@ -170,7 +170,7 @@ __metadata:
     typescript-eslint: "npm:^8.8.0"
   peerDependencies:
     "@playwright/test": ^1.53.0
-  checksum: 10/d21c46b171ea023544905540b9c8f266c2d6e487f44588547e4a6657d89245e168b3a5a281aef7a94b2103f42c796db829ac36a1d18b6d0e63b7553d0aee393b
+  checksum: 10/287351f1c58d09f131bf15bb6acfc01ec3a1013f4ef25c9992ae2b372ffb2294a5114291da7721b3aaa7b884339b844daefcbfaa0ad11a079bef210942fd553a
   languageName: node
   linkType: hard
 

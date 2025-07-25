@@ -1,4 +1,4 @@
-import { expect, test } from "../fixtures";
+import { test } from "../fixtures";
 
 test.describe("User tests using idam utils", () => {
   test("Update user", async ({
@@ -27,7 +27,7 @@ test.describe("User tests using idam utils", () => {
     console.log(userInfo);
 
     //update user with new forename and surname
-    await idamUtils.updateUser({
+    const userUpdate = await idamUtils.updateUser({
       id: userInfo.id,
       bearerToken: token,
       password: user.password,
@@ -38,5 +38,6 @@ test.describe("User tests using idam utils", () => {
         roleNames: ["citizen"],
       },
     });
+    console.log(userUpdate);
   });
 });
