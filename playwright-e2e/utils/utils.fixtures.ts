@@ -7,7 +7,7 @@ import {
   SessionUtils,
   TableUtils,
   WaitUtils,
-  ServiceAuthUtils
+  ServiceAuthUtils,
 } from "@hmcts/playwright-common";
 import os from "os";
 import path from "path";
@@ -16,6 +16,7 @@ import { CitizenUserUtils } from "./citizen-user.utils";
 import { config, Config } from "./config.utils";
 import { CookieUtils } from "./cookie.utils";
 import { ValidatorUtils } from "./validator.utils";
+import { CaseManagerUserUtils } from "./case-manager-user.utils";
 
 export interface UtilsFixtures {
   config: Config;
@@ -103,5 +104,8 @@ export const utilsFixtures = {
     // Set required env vars for Service auth (S2S_URL)
     process.env.S2S_URL = config.urls.serviceAuthUrl;
     await use(new ServiceAuthUtils());
+  },
+  caseManagerUserUtils: async ({ page, cookieUtils, config }, use) => {
+    await use(new CaseManagerUserUtils(page, cookieUtils, config));
   },
 };
