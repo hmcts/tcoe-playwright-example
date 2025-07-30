@@ -10,10 +10,19 @@ When writing tests, the following factors should be taken into account:
 
 - **Test Requirement**: Confirm whether the test is necessary, especially if it's a UI test. It may already be covered at a lower level.
 - **Test Descriptions**: Test names should clearly describe what is being tested, and each test should have a clear objective.
-- **Assertions**: Tests should contain assertions aimed at proving or disproving the test objective. Tests should run as quickly as possible.
+- **Assertions**: Tests should contain assertions aimed at proving or disproving the test objective. Ensure assertions are present in key areas and thoughout your test to avoid red herrings (e.g. if a test is failing because an element is not found - is that because the previous step failed or is it legitimately not present) - [assertions guide](http://playwright.dev/docs/test-assertions)
 - **Test Isolation**: Each test must be able to run independently. No test should depend on another.
 - **Test Data**: Unique test data should be used for each test to avoid conflicts, including data like user profiles.
 - **Locators**: Use stable locators, ensuring the application provides element properties that are easily targeted, such as Test IDs or accessibility roles. Avoid relying on CSS classes or traversing the DOM hierarchy to locate elements (these can easily change).
+
+### Waiting
+
+There are times where a test script might have to wait. There are a few options for doing this:
+
+- Implicit waits (e.g. `page.waitForTimeout(5000)`) - Avoid these where possible, there are limited cases where these might be useful/required.
+- Explicit waits (e.g. `expect().toBeVisible()` and `expect.poll`) - Use a polling approach to ensure the condition you are waiting for is achieved and if not provide a clear error pointing to the failure location. The majority of assertions will auto-retry, see assertion guide above.
+
+Playwright also has a list of actionability checks for various types of actions: [actionability matrix](https://playwright.dev/docs/actionability)
 
 ## Project Structure & Page Object Patterns
 
