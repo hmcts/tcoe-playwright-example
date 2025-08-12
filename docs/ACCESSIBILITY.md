@@ -27,3 +27,24 @@ Often in pages there is dynamic content, so you should ensure this content is al
 ### Soft Assertions
 
 Also, you may choose to integrate accessibility checks into your journey tests (rather than having separate accessibility tests) or you may have tests which test more than one page per test. If you do this, you may also want to consider using [soft assertions](https://playwright.dev/docs/test-assertions#soft-assertions). If one of these fail, it will still mark the test as failed however it will continue test execution. So if it fails on Page 1, it will still continue to Page 2, 3 etc and run assertions which you can view in your report.
+
+## Accessibility Report
+The test framework now generates a consolidated HTML accessibility report for all audited pages in each test run.
+
+### How it works:
+Accessibility checks are performed using the axeUtils fixture.
+After each test, results are automatically combined into a single HTML report and attached to the test run.
+### Features:
+- Each page’s results appear as a separate section.
+- Expand/collapse controls work independently for each section.
+### Usage:
+Use the axeUtils fixture in your Playwright tests and call await axeUtils.audit() on pages you want to audit.
+
+**For Report Generation**, ensure the axeUtils fixture is included in your test setup. The report will be generated automatically after each test run.
+```
+axeUtils: async ({ page }, use, testInfo) => {
+    const axeUtils = new AxeUtils(page);
+    await use(axeUtils);
+    await axeUtils.generateReport(testInfo);
+  }
+  ```
