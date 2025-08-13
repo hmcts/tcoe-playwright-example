@@ -53,8 +53,10 @@ export const utilsFixtures = {
   lighthouseUtils: async ({ lighthousePage, lighthousePort }, use) => {
     await use(new LighthouseUtils(lighthousePage, lighthousePort));
   },
-  axeUtils: async ({ page }, use) => {
-    await use(new AxeUtils(page));
+  axeUtils: async ({ page }, use, testInfo) => {
+    const axeUtils = new AxeUtils(page);
+    await use(axeUtils);
+    await axeUtils.generateReport(testInfo);
   },
   SessionUtils: async ({}, use) => {
     await use(SessionUtils);

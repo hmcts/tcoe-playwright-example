@@ -153,7 +153,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hmcts/playwright-common@npm:^1.0.30":
+"@hmcts/playwright-common@npm:^1.0.34":
   version: 1.0.34
   resolution: "@hmcts/playwright-common@npm:1.0.34"
   dependencies:
@@ -3397,7 +3397,7 @@ __metadata:
   dependencies:
     "@axe-core/playwright": "npm:^4.10.0"
     "@eslint/js": "npm:^9.11.1"
-    "@hmcts/playwright-common": "npm:^1.0.30"
+    "@hmcts/playwright-common": "npm:^1.0.34"
     "@playwright/test": "npm:^1.48.2"
     "@types/node": "npm:^22.15.34"
     "@typescript-eslint/eslint-plugin": "npm:^8.8.0"
