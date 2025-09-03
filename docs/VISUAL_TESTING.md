@@ -5,7 +5,11 @@ Visual testing in playwright is the process of comparing an expected screenshot 
 ## Recording snapshots
 
 In order to match screenshots, they need to be the same. Therefore things like OS, Browser and viewport need to be consistent when creating the snapshots and when running the tests. This is also reflected in the way playwright names the screenshots (although you can choose your own names/rename the generated screenshots).
-As a solution to this, it's recommended to use Docker to both create the snapshots and run the tests (locally and on CI). See the [`Dockerfile`](https://github.com/hmcts/tcoe-playwright-example/blob/master/Dockerfile).
+As a solution to this, it's recommended to use Docker to both create the snapshots and run the tests (locally and on CI).
+
+To create and run the docker container you need to run the command `yarn start-container`. This will build the docker image using the [`Dockerfile`](https://github.com/hmcts/tcoe-playwright-example/blob/master/Dockerfile) _and_ start the docker container using the [`docker-compose.yaml`](https://github.com/hmcts/tcoe-playwright-example/blob/master/docker-compose.yaml).
+
+Once the docker container is running you can run tests in it the same way you would through a standard terminal.
 
 You may also have some UI changes to your service, in which you will need to re-generate any snapshots. Playwright provides a `--update-snapshots` flag to do this.
 

@@ -1,0 +1,13 @@
+services:
+  playwright:
+    build: .
+    image: playwright-container
+    container_name: playwright
+    stdin_open: true
+    tty: true
+    network_mode: host
+    ipc: host
+    working_dir: /playwright
+    volumes:
+      - .:/playwright
+    entrypoint: ["/bin/bash"]
