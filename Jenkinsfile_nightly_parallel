@@ -94,6 +94,13 @@ withNightlyPipeline(type, product, component, 600) {
   enableSlackNotifications(channel)
 
   afterAlways('DependencyCheckNightly') {
+    stage('Delete nightly dev branch') {
+      try {
+        yarnBuilder.yarn('delete-nightly-dev-branch tcoe-playwright-example')
+      } catch (Error) {
+        unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
+      }
+    }
     stage('Set up playwright') {
       try {
         yarnBuilder.yarn('setup')
