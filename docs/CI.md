@@ -59,7 +59,7 @@ withNightlyPipeline(type, product, component, 600) {
 }
 ```
 
-For local usage, there is a [script](../scripts/get_secrets.sh) that can be used to populate your .env file.
+For local usage, you can run `yarn load-secrets` [(see package.json)](https://github.com/hmcts/tcoe-playwright-example/blob/master/package.json#L31) which runs a script that comes directly from the playwright-common library which will populate your .env file based on your .env.example file.
 
 ## Publishing reports
 

@@ -164,9 +164,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hmcts/playwright-common@npm:^1.0.34":
-  version: 1.0.35
-  resolution: "@hmcts/playwright-common@npm:1.0.35"
+"@hmcts/playwright-common@npm:^1.0.36":
+  version: 1.0.36
+  resolution: "@hmcts/playwright-common@npm:1.0.36"
   dependencies:
     "@axe-core/playwright": "npm:^4.10.0"
     "@eslint/js": "npm:^9.11.1"
@@ -182,7 +182,10 @@ __metadata:
     typescript-eslint: "npm:^8.8.0"
   peerDependencies:
     "@playwright/test": ^1.53.0
-  checksum: 10/d4f8e4d1f3e8dda6d66b2dd789deb7f449843764ff7382971809cd23e464788db5929ef1b4d4ccf38e3971b5fc8265f106efcb3ea736b874142f5f01efba5f1d
+  bin:
+    delete-nightly-dev-branch: ./dist/scripts/delete-nightly-dev-branch.js
+    get-secrets: ./dist/scripts/get-secrets.js
+  checksum: 10/8fcf95e0202da832f211da8059d7be3beeb6c953c4d99971a9c4147ea47387ccb05bf1170cf0cfc9857594ba27548cdc3c88bf242f5713adbbcf5599eb3c4e51
   languageName: node
   linkType: hard
 
@@ -3398,7 +3401,7 @@ __metadata:
   dependencies:
     "@axe-core/playwright": "npm:^4.10.0"
     "@eslint/js": "npm:^9.11.1"
-    "@hmcts/playwright-common": "npm:^1.0.34"
+    "@hmcts/playwright-common": "npm:^1.0.36"
     "@playwright/test": "npm:^1.48.2"
     "@types/node": "npm:^22.15.34"
     "@typescript-eslint/eslint-plugin": "npm:^8.8.0"
