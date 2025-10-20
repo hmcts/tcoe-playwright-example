@@ -19,7 +19,7 @@
     "get-port": "^7.1.0",
     "globals": "^16.0.0",
     "lighthouse": "^12.2.1",
-    "playwright": "^1.48.2",
+    "playwright": "^1.55.1",
     "playwright-core": "^1.48.2",
     "playwright-lighthouse": "^4.0.0",
     "typescript": "^5.6.2",
