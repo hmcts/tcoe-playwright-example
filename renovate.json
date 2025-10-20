@@ -1,6 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
+    "github>hmcts/.github//renovate/automerge-all",
     "local>hmcts/.github:renovate-config"
   ],
   "major": {
@@ -16,8 +17,7 @@
       "groupSlug": "All-minor-patch",
       "addLabels": [
         "Renovate All-minor-patch"
-      ],
-      "automerge": false
+      ]
     },
     {
       "matchFileNames": [
