@@ -1,16 +1,23 @@
 import { LintingConfig } from "@hmcts/playwright-common";
 import tseslint from "typescript-eslint";
 
-// If path to tests is different, directly overwride the path:
-// const tsConfig = LintingConfig.tseslintPlugin;
-// const pwConfig = LintingConfig.playwright;
-// tsConfig.files = ["tests/**/*.ts"];
-// pwConfig.files = ["tests/**/*.ts"];
-// tseslint.config(..., config, ...)
+const ignored = {
+  ignores: [
+    ...LintingConfig.ignored.ignores,
+    "playwright-report/**",
+    "test-results/**",
+    "functional-output/**",
+  ],
+};
+
+const playwrightConfig = {
+  ...LintingConfig.playwright,
+  files: ["playwright-e2e/**/*.ts"],
+};
 
 export default tseslint.config(
   LintingConfig.tseslintRecommended,
-  LintingConfig.ignored,
+  ignored,
   LintingConfig.tseslintPlugin,
-  LintingConfig.playwright
+  playwrightConfig
 );

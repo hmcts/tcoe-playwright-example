@@ -8,24 +8,28 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.10.0",
     "@eslint/js": "^9.11.1",
-    "@hmcts/playwright-common": "^1.0.36",
-    "@playwright/test": "^1.48.2",
+    "@hmcts/playwright-common": "link:../playwright-common",
+    "@playwright/test": "^1.56.1",
     "@types/node": "^22.15.34",
     "@typescript-eslint/eslint-plugin": "^8.8.0",
+    "@typescript-eslint/parser": "^8.8.0",
     "axios": "^1.7.4",
+    "cross-env": "^7.0.3",
     "dotenv": "^17.0.0",
     "eslint": "^9.11.1",
     "eslint-plugin-playwright": "^2.0.0",
     "get-port": "^7.1.0",
     "globals": "^16.0.0",
     "lighthouse": "^12.2.1",
-    "playwright": "^1.48.2",
-    "playwright-core": "^1.48.2",
+    "playwright": "^1.56.1",
+    "playwright-core": "^1.56.1",
     "playwright-lighthouse": "^4.0.0",
     "typescript": "^5.6.2",
-    "typescript-eslint": "^8.8.0"
+    "typescript-eslint": "^8.8.0",
+    "vitest": "^1.6.1"
   },
   "scripts": {
+    "playwright": "node ./scripts/cleanup-playwright.mjs && cross-env NODE_OPTIONS= playwright",
     "lint": "yarn tsc -p tsconfig.json && yarn eslint .",
     "setup": "yarn playwright install --with-deps",
     "setup:edge": "PLAYWRIGHT_BROWSERS_PATH=0 yarn playwright install msedge --with-deps",
@@ -39,7 +43,8 @@
     "test:a11y": "yarn playwright test tests/ --grep @a11y --project=chrome",
     "start-container": "docker compose run --rm playwright",
     "test:visual": "yarn playwright test tests/ --grep @visual --project=chromium",
-    "test:update-snapshots": "yarn playwright test tests/ --grep @visual --project=chromium --update-snapshots"
+    "test:update-snapshots": "yarn playwright test tests/ --grep @visual --project=chromium --update-snapshots",
+    "test:unit": "vitest run"
   },
   "packageManager": "yarn@4.9.4",
   "dependencies": {

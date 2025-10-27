@@ -19,7 +19,7 @@ setup.describe("Set up users and retrieve tokens", () => {
     async ({ idamUtils }) => {
       const token = await idamUtils.generateIdamToken({
         grantType: "client_credentials",
-        clientId: "prl-cos-api", // Change this to reflect the service you are working in, speak to a team member to find your client id
+        clientId: process.env.CLIENT_ID as string , // Change this to reflect the service you are working in, speak to a team member to find your client id
         clientSecret: process.env.IDAM_SECRET as string, // Make sure your client secret is pulled correctly from azure key vault
         scope: "profile roles",
       });

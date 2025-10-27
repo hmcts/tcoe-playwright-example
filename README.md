@@ -11,6 +11,7 @@ This repository serves as a template for UI test automation using [Playwright](h
 - **Performance tests**: Provides an implementation of Lighthouse which can be used for quick feedback on UI performance.
 - **CI/CD ready**: Sample Jenkinsfile included for integrating with your CI pipeline.
 - **Test tagging**: Use tags like `@a11y` for accessibility, `@smoke` for smoke tests, and more.
+- **Structured logging**: Shared Winston logger + API client factory automatically attach sanitised call details to Playwright reports.
 
 ## Project Structure
 
@@ -39,8 +40,8 @@ We all share the responsibility of ensuring this repo is up to date and accurate
 
 Ensure you have the following installed on your machine:
 
-- Node.js (v14+)
-- Yarn
+- Node.js (v20.11.1 or later)
+- Yarn (Berry)
 
 ### Installation
 
@@ -58,6 +59,14 @@ Run all tests using the Playwright test runner:
 
 ```bash
 yarn playwright test
+```
+
+> `yarn playwright` automatically tidies the local link to `@hmcts/playwright-common` so that Playwright is only required once. This avoids the "Requiring @playwright/test second time" error when developing against the linked package.
+
+Run unit tests that cover shared utilities:
+
+```bash
+yarn test:unit
 ```
 
 To run a specific test file:
@@ -91,6 +100,81 @@ yarn playwright test --trace on --video on --screenshot on
 ```
 
 Alternatively, you can use `page.pause()` inside your test whilst in `--headed` mode to pause execution at a specific point.
+
+### Environment configuration
+
+Copy `.env.example` to `.env` and fill in the blanks. At minimum you need:
+
+```env
+# Required user credentials (grab them from Azure KeyVault)
+CASEMANAGER_USERNAME=<idam email>
+CASEMANAGER_PASSWORD=<password>
+JUDGE_USERNAME=<idam email>
+JUDGE_PASSWORD=<password>
+
+# IDAM + S2S endpoints (already defaulted for AAT)
+IDAM_SECRET=<client secret from KV>
+CLIENT_ID=<service client id e.g. prl-cos-api>
+```
+
+Optional logging toggles (defaults shown in the template):
+
+```env
+LOG_LEVEL=info
+LOG_FORMAT=json
+LOG_REDACTION=on
+PLAYWRIGHT_DEBUG_API=0
+```
+
+Setting `PLAYWRIGHT_DEBUG_API=1` includes raw API payloads in test attachments. Leave it disabled for CI so secrets stay obfuscated.
+
+### API Telemetry & Logging
+
+- Use the `createApiClient` fixture to spin up sanitised API clients in your tests. Every call is logged via Winston and attached to your Playwright report as `api-calls.json`.
+- Toggle log verbosity through optional environment variables (see the previous section).
+- Global setup utilities (`IdamUtils`, `ServiceAuthUtils`) share the same logger and feed telemetry into the same attachment for complete visibility.
+
+#### Concrete usage example
+
+```ts
+// playwright-e2e/tests/api/sample.spec.ts
+import { expect, test } from "../fixtures";
+
+test.describe("@api smoke checks", () => {
+  test("token endpoint returns 200", async ({ createApiClient }) => {
+    const client = createApiClient({
+      baseUrl: process.env.SERVICE_BASE_URL,
+      name: "token-api",
+    });
+
+    const { status, data } = await client.post<{ access_token: string }>(
+      "/oauth/token",
+      {
+        data: {
+          grant_type: "client_credentials",
+          scope: "openid profile",
+        },
+        throwOnError: true,
+      }
+    );
+
+    expect(status).toBe(200);
+    expect(data.access_token).toBeTruthy();
+  });
+});
+```
+
+After the test finishes you will see an `api-calls.json` attachment in the Playwright HTML report. Sensitive headers/body fields (`token`, `secret`, `password`, etc.) are automatically masked. Flip `PLAYWRIGHT_DEBUG_API=1` if you need the raw payload locally.
+
+#### Cleaning duplicate Playwright installations
+
+When linked to the local `@hmcts/playwright-common` workspace, Yarn can hoist a second copy of `@playwright/test`. The helper script `yarn playwright …` runs `scripts/cleanup-playwright.mjs` before every test run to replace nested copies with symlinks to the top-level install. You can also execute it manually:
+
+```bash
+node scripts/cleanup-playwright.mjs
+```
+
+This is safe to run repeatedly (the script is idempotent) and keeps Playwright from complaining about being required twice.
 
 ### Accessibility Tests
 

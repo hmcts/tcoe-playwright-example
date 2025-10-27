@@ -1,13 +1,18 @@
 import {
+  ApiClient,
+  ApiClientOptions,
+  ApiLogEntry,
   AxeUtils,
   BrowserUtils,
   IdamUtils,
   LighthouseUtils,
   LocaleUtils,
+  ServiceAuthUtils,
   SessionUtils,
   TableUtils,
   WaitUtils,
-  ServiceAuthUtils
+  createChildLogger,
+  createLogger,
 } from "@hmcts/playwright-common";
 import os from "os";
 import path from "path";
@@ -16,6 +21,11 @@ import { CitizenUserUtils } from "./citizen-user.utils";
 import { config, Config } from "./config.utils";
 import { CookieUtils } from "./cookie.utils";
 import { ValidatorUtils } from "./validator.utils";
+import { ApiRecorder, shouldIncludeRawBodies } from "./api-telemetry";
+
+type LoggerInstance = ReturnType<typeof createLogger>;
+
+export type ApiClientFactory = (options: ApiClientOptions) => ApiClient;
 
 export interface UtilsFixtures {
   config: Config;
@@ -32,9 +42,51 @@ export interface UtilsFixtures {
   citizenUserUtils: CitizenUserUtils;
   localeUtils: LocaleUtils;
   serviceAuthUtils: ServiceAuthUtils;
+  logger: LoggerInstance;
+  apiRecorder: ApiRecorder;
+  createApiClient: ApiClientFactory;
 }
 
 export const utilsFixtures = {
+  logger: async ({}, use, testInfo) => {
+    const logger = createLogger({
+      serviceName: "tcoe-playwright-example",
+      defaultMeta: {
+        testId: `${testInfo.project.name}::${testInfo.title}`,
+      },
+    });
+    await use(logger);
+  },
+  apiRecorder: async ({}, use, testInfo) => {
+    const recorder = new ApiRecorder(shouldIncludeRawBodies(process.env));
+    await use(recorder);
+    if (recorder.hasEntries()) {
+      await testInfo.attach("api-calls.json", {
+        body: recorder.toJson(),
+        contentType: "application/json",
+      });
+      recorder.clear();
+    }
+  },
+  createApiClient: async ({ logger, apiRecorder }, use, testInfo) => {
+    const clients: ApiClient[] = [];
+    await use((options) => {
+      const clientLogger = createChildLogger(logger, {
+        testId: `${testInfo.project.name}::${testInfo.title}`,
+        apiName: options.name ?? "api-client",
+      });
+      const client = new ApiClient({
+        logger: clientLogger,
+        captureRawBodies: apiRecorder.includeRawBodies,
+        onResponse: (entry: ApiLogEntry) => apiRecorder.record(entry),
+        ...options,
+      });
+      clients.push(client);
+      return client;
+    });
+
+    await Promise.all(clients.map((client) => client.dispose()));
+  },
   config: async ({}, use) => {
     await use(config);
   },
@@ -64,12 +116,20 @@ export const utilsFixtures = {
   browserUtils: async ({ browser }, use) => {
     await use(new BrowserUtils(browser));
   },
-  idamUtils: async ({ config }, use) => {
+  idamUtils: async ({ config, logger, apiRecorder }, use) => {
     // Set required env vars for IDAM
     process.env.IDAM_WEB_URL = config.urls.idamWebUrl;
     process.env.IDAM_TESTING_SUPPORT_URL = config.urls.idamTestingSupportUrl;
 
-    await use(new IdamUtils());
+    await use(
+      new IdamUtils({
+        logger: createChildLogger(logger, { component: "IdamUtils" }),
+        apiClientOptions: {
+          captureRawBodies: apiRecorder.includeRawBodies,
+          onResponse: (entry: ApiLogEntry) => apiRecorder.record(entry),
+        },
+      })
+    );
   },
   citizenUserUtils: async ({ idamUtils }, use) => {
     await use(new CitizenUserUtils(idamUtils));
@@ -101,9 +161,17 @@ export const utilsFixtures = {
       await use(page);
     }
   },
-  serviceAuthUtils: async ({ config }, use) => {
+  serviceAuthUtils: async ({ config, logger, apiRecorder }, use) => {
     // Set required env vars for Service auth (S2S_URL)
     process.env.S2S_URL = config.urls.serviceAuthUrl;
-    await use(new ServiceAuthUtils());
+    await use(
+      new ServiceAuthUtils({
+        logger: createChildLogger(logger, { component: "ServiceAuthUtils" }),
+        apiClientOptions: {
+          captureRawBodies: apiRecorder.includeRawBodies,
+          onResponse: (entry: ApiLogEntry) => apiRecorder.record(entry),
+        },
+      })
+    );
   },
 };
