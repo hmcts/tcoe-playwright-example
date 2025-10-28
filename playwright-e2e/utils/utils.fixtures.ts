@@ -21,7 +21,12 @@ import { CitizenUserUtils } from "./citizen-user.utils";
 import { config, Config } from "./config.utils";
 import { CookieUtils } from "./cookie.utils";
 import { ValidatorUtils } from "./validator.utils";
-import { ApiRecorder, shouldIncludeRawBodies } from "./api-telemetry";
+import {
+  ApiRecorder,
+  shouldAttachApiLogs,
+  shouldEmitApiLogsToStdout,
+  shouldIncludeRawBodies,
+} from "./api-telemetry";
 
 type LoggerInstance = ReturnType<typeof createLogger>;
 
@@ -58,13 +63,23 @@ export const utilsFixtures = {
     await use(logger);
   },
   apiRecorder: async ({}, use, testInfo) => {
-    const recorder = new ApiRecorder(shouldIncludeRawBodies(process.env));
+    const includeRawBodies = shouldIncludeRawBodies(process.env);
+    const recorder = new ApiRecorder(includeRawBodies);
     await use(recorder);
     if (recorder.hasEntries()) {
-      await testInfo.attach("api-calls.json", {
-        body: recorder.toJson(),
-        contentType: "application/json",
-      });
+      if (shouldAttachApiLogs(process.env)) {
+        await testInfo.attach("api-calls.json", {
+          body: recorder.toJson(),
+          contentType: "application/json",
+        });
+      }
+
+      if (shouldEmitApiLogsToStdout(process.env, testInfo.project.name)) {
+        const header = `[API CALLS][${testInfo.project.name}] ${testInfo.title}`;
+        // Emit the payload to stdout so the Odhín reporter can capture it.
+        console.log(`${header}\n${recorder.toJson(includeRawBodies)}\n[API CALLS][END]`);
+      }
+
       recorder.clear();
     }
   },

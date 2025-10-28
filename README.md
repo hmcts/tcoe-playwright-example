@@ -113,8 +113,11 @@ JUDGE_USERNAME=<idam email>
 JUDGE_PASSWORD=<password>
 
 # IDAM + S2S endpoints (already defaulted for AAT)
-IDAM_SECRET=<client secret from KV>
-CLIENT_ID=<service client id e.g. prl-cos-api>
+IDAM_SECRET=<S2S client secret for your IdAM app (Azure Key Vault)>
+CLIENT_ID=<IdAM OAuth2 client id e.g. prl-cos-api>
+S2S_SECRET=<S2S microservice secret from Key Vault>
+S2S_MICROSERVICE_NAME=<registered microservice name e.g. xui_webapp>
+S2S_URL=http://rpe-service-auth-provider-aat.service.core-compute-aat.internal/testing-support/lease
 ```
 
 Optional logging toggles (defaults shown in the template):
@@ -128,11 +131,44 @@ PLAYWRIGHT_DEBUG_API=0
 
 Setting `PLAYWRIGHT_DEBUG_API=1` includes raw API payloads in test attachments. Leave it disabled for CI so secrets stay obfuscated.
 
+### Selecting reporters
+
+- Set `PLAYWRIGHT_DEFAULT_REPORTER=list` (or `dot`, `html`, etc.) to control the single reporter that is used when you **don't** specify anything else. The default is `list` locally and `dot` on CI.
+- Override the entire reporter list with `PLAYWRIGHT_REPORTERS=list,html` (comma-separated). Each entry goes through the same helper shown in `playwright.config.ts` so you can mix built-ins with custom reporters.
+- Built-in reporters supported out of the box: `list`, `dot`, `line`, `html`, `junit`.
+- To enable [Odhín reports](https://playwright-odhin-reports-1f6b7a95ad42468d7d90f7962fbe172f83b229.gitlab.io/#/v1/install):
+  1. Add `odhin-reports-playwright` to `devDependencies`.
+  2. Run with `PLAYWRIGHT_REPORTERS=odhin` (or pair it with others, e.g. `PLAYWRIGHT_REPORTERS=list,odhin`).
+  3. Configure as needed with the environment variables below (defaults in parentheses):
+     - `PW_ODHIN_OUTPUT` (`test-results/odhin-report`) – folder where the report is written.
+     - `PW_ODHIN_INDEX` (`playwright-odhin.html`) – report filename.
+     - `PW_ODHIN_TITLE` (`tcoe-playwright-example Playwright`) – title shown in the UI.
+     - `PW_ODHIN_ENV` (`TEST_ENVIRONMENT` or `ci|local`) – environment label in the header.
+     - `PW_ODHIN_PROJECT` (`tcoe-playwright-example`) – project name displayed in the report.
+     - `PW_ODHIN_RELEASE` (`<package version> | branch=<branch>`) – release metadata.
+     - `PW_ODHIN_START_SERVER` (`false`) – set to `true` to auto-serve the report locally and print the URL after each run.
+     - `PW_ODHIN_CONSOLE_LOG`/`PW_ODHIN_CONSOLE_ERROR` (`true`) – control reporter stdout/stderr.
+     - `PW_ODHIN_TEST_OUTPUT` (`only-on-failure`) – choose when stdout/stderr tabs appear (`true`, `false`, or `only-on-failure`).
+     - `PW_ODHIN_API_LOGS` (`api`) – mirror API telemetry to stdout: `off`, `api` (API projects only), or `all`.
+     - `PLAYWRIGHT_API_LOG_ATTACH` (`on`) – disable to skip the `api-calls.json` attachment and rely solely on the Odhín stdout tab.
+  4. To preview the report automatically, run e.g.  
+     ```bash
+     PW_ODHIN_START_SERVER=true PLAYWRIGHT_REPORTERS=list,odhin yarn playwright test
+     ```
+     Otherwise open `test-results/odhin-report/playwright-odhin.html` (or your customised path) manually.
+
 ### API Telemetry & Logging
 
 - Use the `createApiClient` fixture to spin up sanitised API clients in your tests. Every call is logged via Winston and attached to your Playwright report as `api-calls.json`.
 - Toggle log verbosity through optional environment variables (see the previous section).
 - Global setup utilities (`IdamUtils`, `ServiceAuthUtils`) share the same logger and feed telemetry into the same attachment for complete visibility.
+- Required secrets:
+  - `IDAM_SECRET` – OAuth2 client secret for `CLIENT_ID`, stored in Azure Key Vault.
+  - `CLIENT_ID` – OAuth2 client ID for the UI/API under test (defaults to `prl-cos-api` in the template).
+  - `S2S_SECRET` – HMCTS Service-to-Service shared secret (fetch from Key Vault).
+  - `S2S_MICROSERVICE_NAME` – name registered with the S2S provider (e.g. `xui_webapp`).
+  - `S2S_URL` – S2S lease endpoint (defaults to the AAT URL, override per environment).
+- Control how much of this telemetry ends up in Odhín: set `PW_ODHIN_API_LOGS=all` (default `api`) to mirror logs to stdout for the report, or `off` to disable it entirely; pair with `PLAYWRIGHT_API_LOG_ATTACH=off` if you want to keep artefacts lean.
 
 #### Concrete usage example
 

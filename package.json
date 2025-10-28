@@ -21,9 +21,11 @@
     "get-port": "^7.1.0",
     "globals": "^16.0.0",
     "lighthouse": "^12.2.1",
+    "odhin-reports-playwright": "1.1.8",
     "playwright": "^1.56.1",
     "playwright-core": "^1.56.1",
     "playwright-lighthouse": "^4.0.0",
+    "postcss": "^8.4.49",
     "typescript": "^5.6.2",
     "typescript-eslint": "^8.8.0",
     "vitest": "^1.6.1"
@@ -44,7 +46,8 @@
     "start-container": "docker compose run --rm playwright",
     "test:visual": "yarn playwright test tests/ --grep @visual --project=chromium",
     "test:update-snapshots": "yarn playwright test tests/ --grep @visual --project=chromium --update-snapshots",
-    "test:unit": "vitest run"
+    "test:unit": "vitest run",
+    "test:api": "yarn playwright test --project=api"
   },
   "packageManager": "yarn@4.9.4",
   "dependencies": {
