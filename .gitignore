@@ -8,6 +8,7 @@ crash.log
 node_modules/
 /test-results/
 /playwright-report/
+/playwright-e2e/snapshots/
 /blob-report/
 /playwright/.cache/
 .pnp.*
