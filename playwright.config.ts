@@ -143,6 +143,8 @@ const resolveReporters = (): ReporterDescription[] => {
             release:
               process.env.PW_ODHIN_RELEASE ??
               `${appVersion} | branch=${process.env.GIT_BRANCH ?? "local"}`,
+            testFolder:
+              process.env.PW_ODHIN_TEST_FOLDER ?? "playwright-e2e",
             startServer: safeBoolean(process.env.PW_ODHIN_START_SERVER, false),
             consoleLog: safeBoolean(process.env.PW_ODHIN_CONSOLE_LOG, true),
             consoleError: safeBoolean(

@@ -136,26 +136,42 @@ Setting `PLAYWRIGHT_DEBUG_API=1` includes raw API payloads in test attachments. 
 - Set `PLAYWRIGHT_DEFAULT_REPORTER=list` (or `dot`, `html`, etc.) to control the single reporter that is used when you **don't** specify anything else. The default is `list` locally and `dot` on CI.
 - Override the entire reporter list with `PLAYWRIGHT_REPORTERS=list,html` (comma-separated). Each entry goes through the same helper shown in `playwright.config.ts` so you can mix built-ins with custom reporters.
 - Built-in reporters supported out of the box: `list`, `dot`, `line`, `html`, `junit`.
-- To enable [Odhín reports](https://playwright-odhin-reports-1f6b7a95ad42468d7d90f7962fbe172f83b229.gitlab.io/#/v1/install):
-  1. Add `odhin-reports-playwright` to `devDependencies`.
-  2. Run with `PLAYWRIGHT_REPORTERS=odhin` (or pair it with others, e.g. `PLAYWRIGHT_REPORTERS=list,odhin`).
-  3. Configure as needed with the environment variables below (defaults in parentheses):
-     - `PW_ODHIN_OUTPUT` (`test-results/odhin-report`) – folder where the report is written.
-     - `PW_ODHIN_INDEX` (`playwright-odhin.html`) – report filename.
-     - `PW_ODHIN_TITLE` (`tcoe-playwright-example Playwright`) – title shown in the UI.
-     - `PW_ODHIN_ENV` (`TEST_ENVIRONMENT` or `ci|local`) – environment label in the header.
-     - `PW_ODHIN_PROJECT` (`tcoe-playwright-example`) – project name displayed in the report.
-     - `PW_ODHIN_RELEASE` (`<package version> | branch=<branch>`) – release metadata.
-     - `PW_ODHIN_START_SERVER` (`false`) – set to `true` to auto-serve the report locally and print the URL after each run.
-     - `PW_ODHIN_CONSOLE_LOG`/`PW_ODHIN_CONSOLE_ERROR` (`true`) – control reporter stdout/stderr.
-     - `PW_ODHIN_TEST_OUTPUT` (`only-on-failure`) – choose when stdout/stderr tabs appear (`true`, `false`, or `only-on-failure`).
-     - `PW_ODHIN_API_LOGS` (`api`) – mirror API telemetry to stdout: `off`, `api` (API projects only), or `all`.
-     - `PLAYWRIGHT_API_LOG_ATTACH` (`on`) – disable to skip the `api-calls.json` attachment and rely solely on the Odhín stdout tab.
-  4. To preview the report automatically, run e.g.  
-     ```bash
-     PW_ODHIN_START_SERVER=true PLAYWRIGHT_REPORTERS=list,odhin yarn playwright test
-     ```
-     Otherwise open `test-results/odhin-report/playwright-odhin.html` (or your customised path) manually.
+
+#### Built-in Playwright HTML report
+
+- Enable via `PLAYWRIGHT_REPORTERS=list,html` (or pass `--reporter=html` on the CLI).  
+- Controls:
+  - `PLAYWRIGHT_HTML_OUTPUT` (`playwright-report`) – output directory.
+  - `PLAYWRIGHT_HTML_OPEN` (`never`) – one of `never`, `on-failure`, `always`.
+- The report is written to `playwright-report/index.html`; open it in a browser after each run or let Playwright auto-open it when `PLAYWRIGHT_HTML_OPEN=always`.
+
+#### JUnit XML (for CI integrations)
+
+- Enable with `PLAYWRIGHT_REPORTERS=junit` or add it alongside others: `PLAYWRIGHT_REPORTERS=list,junit`.  
+- Configure output path using `PLAYWRIGHT_JUNIT_OUTPUT` (defaults to `playwright-junit.xml`) then publish the XML to your CI system’s test results view.
+
+#### Odhín rich HTML report
+
+- Depends on [`odhin-reports-playwright`](https://playwright-odhin-reports-1f6b7a95ad42468d7d90f7962fbe172f83b229.gitlab.io/#/v1/install); the package is already listed in `devDependencies`.  
+- Run with `PLAYWRIGHT_REPORTERS=list,odhin` (or `PLAYWRIGHT_REPORTERS=odhin`) to generate a report under `test-results/odhin-report`.  
+- Key environment variables (defaults in parentheses):
+  - `PW_ODHIN_OUTPUT` (`test-results/odhin-report`) – folder where the report is written.
+  - `PW_ODHIN_INDEX` (`playwright-odhin.html`) – report filename.
+  - `PW_ODHIN_TITLE` (`tcoe-playwright-example Playwright`) – title shown in the UI.
+  - `PW_ODHIN_ENV` (`TEST_ENVIRONMENT` or `ci|local`) – header environment label.
+  - `PW_ODHIN_PROJECT` (`tcoe-playwright-example`) – project name displayed in the report.
+  - `PW_ODHIN_RELEASE` (`<package version> | branch=<branch>`) – release metadata.
+  - `PW_ODHIN_TEST_FOLDER` (`playwright-e2e`) – trims absolute paths in the File Summary to this folder (set to `tests` if your specs live there).
+  - `PW_ODHIN_START_SERVER` (`false`) – set to `true` to auto-serve the report locally and print the URL after each run.
+  - `PW_ODHIN_CONSOLE_LOG` / `PW_ODHIN_CONSOLE_ERROR` (`true`) – control reporter stdout/stderr.
+  - `PW_ODHIN_TEST_OUTPUT` (`only-on-failure`) – choose when stdout/stderr tabs appear (`true`, `false`, or `only-on-failure`).
+  - `PW_ODHIN_API_LOGS` (`api`) – mirror API telemetry to stdout: `off`, `api` (API projects only), or `all`.
+  - `PLAYWRIGHT_API_LOG_ATTACH` (`on`) – disable to skip the `api-calls.json` attachment and rely solely on the Odhín stdout tab.
+- To preview the report automatically:
+  ```bash
+  PW_ODHIN_START_SERVER=true PLAYWRIGHT_REPORTERS=list,odhin yarn playwright test
+  ```
+  Otherwise open `test-results/odhin-report/playwright-odhin.html` (or your customised path) manually.
 
 ### API Telemetry & Logging
 
