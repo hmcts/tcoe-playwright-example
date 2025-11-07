@@ -181,10 +181,10 @@ describe("resolveApiSummaryLimit", () => {
 });
 
 describe("buildApiLogSummary", () => {
-  const entries = Array.from({ length: 3 }, (_, index) => ({
+  const entries: ApiLogEntry[] = Array.from({ length: 3 }, (_, index) => ({
     ...baseEntry,
     id: `entry-${index}`,
-    method: index === 1 ? "POST" : "GET",
+    method: (index === 1 ? "POST" : "GET") as ApiLogEntry["method"],
     url: `https://example.com/resource/${index}`,
     status: index === 2 ? 500 : 200,
     ok: index !== 2,

@@ -28,23 +28,6 @@ const safeBoolean = (value: string | undefined, defaultValue: boolean) => {
   return defaultValue;
 };
 
-const resolveOdhinApiLogMode = (): "off" | "api-only" | "all" => {
-  const value = process.env.PW_ODHIN_API_LOGS?.trim().toLowerCase();
-  if (!value) {
-    return "api-only";
-  }
-  if (FALSY_FLAGS.has(value)) {
-    return "off";
-  }
-  if (value === "api" || value === "api-only") {
-    return "api-only";
-  }
-  if (TRUTHY_FLAGS.has(value) || value === "all") {
-    return "all";
-  }
-  return "api-only";
-};
-
 const resolveOdhinTestOutput = (): boolean | "only-on-failure" => {
   const configured = process.env.PW_ODHIN_TEST_OUTPUT;
   if (configured?.trim()) {
