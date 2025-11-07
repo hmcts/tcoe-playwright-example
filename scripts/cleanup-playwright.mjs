@@ -1,4 +1,4 @@
-import { existsSync, realpathSync, rmSync, symlinkSync } from "fs";
+import { lstatSync, realpathSync, rmSync, symlinkSync, unlinkSync } from "fs";
 import { pathToFileURL } from "url";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -33,19 +33,42 @@ export function cleanupPlaywrightModules(baseDir = path.join(__dirname, "..")) {
   ];
 
   for (const { nested, topLevel } of targets) {
-    if (!existsSync(topLevel)) continue;
+    const topLevelStats = safeLstat(topLevel);
+    if (!topLevelStats) continue;
 
-    if (existsSync(nested)) {
-      const resolved = realpathSync(nested);
-      if (resolved === topLevel) {
+    const nestedStats = safeLstat(nested);
+    if (nestedStats) {
+      const resolvedNested = safeRealpath(nested);
+      const resolvedTopLevel = safeRealpath(topLevel);
+      if (resolvedNested && resolvedTopLevel && resolvedNested === resolvedTopLevel) {
         continue;
       }
-      rmSync(nested, { recursive: true, force: true });
+      if (nestedStats.isSymbolicLink()) {
+        unlinkSync(nested);
+      } else {
+        rmSync(nested, { recursive: true, force: true });
+      }
     }
 
-    if (!existsSync(nested)) {
+    if (!safeLstat(nested)) {
       symlinkSync(topLevel, nested, "junction");
     }
+  }
+}
+
+function safeLstat(target) {
+  try {
+    return lstatSync(target);
+  } catch {
+    return undefined;
+  }
+}
+
+function safeRealpath(target) {
+  try {
+    return realpathSync(target);
+  } catch {
+    return undefined;
   }
 }
 

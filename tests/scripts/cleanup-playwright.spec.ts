@@ -1,14 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import {
-  join,
-  resolve,
-} from "path";
+import { basename, join, resolve } from "path";
 import {
   lstatSync,
   mkdtempSync,
   mkdirSync,
   realpathSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from "fs";
 import os from "os";
@@ -57,6 +55,24 @@ describe("cleanup-playwright script", () => {
     for (const target of firstTargets) {
       expect(lstatSync(target.nested).isSymbolicLink()).toBe(true);
       expect(realpathSync(target.nested)).toBe(target.resolved);
+    }
+  });
+
+  it("rebuilds dangling symlinks that point to stale locations", () => {
+    cleanupPlaywrightModules(tempDir);
+    const staleRoot = join(tempDir, "stale");
+
+    for (const { nested } of modulePairs(tempDir)) {
+      rmSync(nested, { recursive: true, force: true });
+      const staleTarget = join(staleRoot, basename(nested));
+      symlinkSync(staleTarget, nested, "junction");
+    }
+
+    cleanupPlaywrightModules(tempDir);
+
+    for (const { nested, topLevel } of modulePairs(tempDir)) {
+      expect(lstatSync(nested).isSymbolicLink()).toBe(true);
+      expect(realpathSync(nested)).toBe(realpathSync(topLevel));
     }
   });
 

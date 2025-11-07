@@ -20,12 +20,23 @@ import { chromium, Page } from "playwright/test";
 import { CitizenUserUtils } from "./citizen-user.utils";
 import { config, Config } from "./config.utils";
 import { CookieUtils } from "./cookie.utils";
+import { ProfessionalUserUtils } from "./professional-user.utils";
 import { ValidatorUtils } from "./validator.utils";
 import {
   ApiRecorder,
+  buildApiAttachmentPayload,
+  buildApiLogSummary,
+  formatBytes,
+  resolveApiAttachmentLimit,
+  resolveApiLogStdoutLimit,
+  resolveApiMaxFieldChars,
+  resolveApiMaxLogs,
+  resolveApiStdoutMode,
+  resolveApiSummaryLimit,
   shouldAttachApiLogs,
   shouldEmitApiLogsToStdout,
   shouldIncludeRawBodies,
+  truncateApiLogPayload,
 } from "./api-telemetry";
 
 type LoggerInstance = ReturnType<typeof createLogger>;
@@ -45,6 +56,7 @@ export interface UtilsFixtures {
   lighthousePage: Page;
   idamUtils: IdamUtils;
   citizenUserUtils: CitizenUserUtils;
+  professionalUserUtils: ProfessionalUserUtils;
   localeUtils: LocaleUtils;
   serviceAuthUtils: ServiceAuthUtils;
   logger: LoggerInstance;
@@ -64,20 +76,86 @@ export const utilsFixtures = {
   },
   apiRecorder: async ({}, use, testInfo) => {
     const includeRawBodies = shouldIncludeRawBodies(process.env);
-    const recorder = new ApiRecorder(includeRawBodies);
+    const recorder = new ApiRecorder(includeRawBodies, {
+      maxEntries: resolveApiMaxLogs(process.env),
+      maxFieldChars: resolveApiMaxFieldChars(process.env),
+    });
     await use(recorder);
     if (recorder.hasEntries()) {
-      if (shouldAttachApiLogs(process.env)) {
+      const attachLogs =
+        shouldAttachApiLogs(process.env) && testInfo.status === "failed";
+      const stats = recorder.stats();
+      if (attachLogs) {
+        const attachmentLimit = resolveApiAttachmentLimit(process.env);
+        const attachment = buildApiAttachmentPayload(recorder, {
+          includeRawBodies,
+          limitBytes: attachmentLimit,
+          summaryLimit: resolveApiSummaryLimit(process.env),
+        });
         await testInfo.attach("api-calls.json", {
-          body: recorder.toJson(),
+          body: attachment.payload,
           contentType: "application/json",
         });
+        const annotations: string[] = [];
+        if (attachment.note) {
+          annotations.push(attachment.note);
+        }
+        if (stats.droppedEntries > 0) {
+          annotations.push(
+            `${stats.droppedEntries} API entr${
+              stats.droppedEntries === 1 ? "y was" : "ies were"
+            } dropped after exceeding PW_ODHIN_API_MAX_LOGS.`
+          );
+        }
+        if (stats.trimmedFields > 0) {
+          annotations.push(
+            `${stats.trimmedFields} API field${
+              stats.trimmedFields === 1 ? "" : "s"
+            } were truncated to respect PW_ODHIN_API_MAX_FIELD_CHARS.`
+          );
+        }
+        for (const note of annotations) {
+          testInfo.annotations.push({
+            type: "info",
+            description: note,
+          });
+        }
       }
 
       if (shouldEmitApiLogsToStdout(process.env, testInfo.project.name)) {
         const header = `[API CALLS][${testInfo.project.name}] ${testInfo.title}`;
-        // Emit the payload to stdout so the Odhín reporter can capture it.
-        console.log(`${header}\n${recorder.toJson(includeRawBodies)}\n[API CALLS][END]`);
+      const stdoutMode = resolveApiStdoutMode(process.env);
+      const logLines = [header];
+
+      if (stdoutMode === "summary") {
+        const { summary, truncated } = buildApiLogSummary(
+          recorder.toArray(),
+          resolveApiSummaryLimit(process.env)
+        );
+          logLines.push(summary);
+          if (truncated > 0) {
+            const noun = truncated === 1 ? "entry" : "entries";
+            logLines.push(
+              `[API CALLS][TRUNCATED] ${truncated} ${noun} omitted from stdout. Review the attached api-calls.json for full details or raise PW_ODHIN_API_SUMMARY_LINES.`
+            );
+          }
+        } else {
+          const payload = recorder.toJson(includeRawBodies);
+          const limitBytes = resolveApiLogStdoutLimit(process.env);
+          const { payload: truncatedPayload, truncatedBytes } =
+            truncateApiLogPayload(payload, limitBytes);
+          logLines.push(truncatedPayload);
+          if (truncatedBytes > 0) {
+            logLines.push(
+              `[API CALLS][TRUNCATED] ${formatBytes(
+                truncatedBytes
+              )} omitted. Increase PW_ODHIN_API_STDOUT_KB or inspect api-calls.json.`
+            );
+          }
+        }
+
+        logLines.push("[API CALLS][END]");
+        console.log(logLines.filter(Boolean).join("\n"));
       }
 
       recorder.clear();
@@ -148,6 +226,9 @@ export const utilsFixtures = {
   },
   citizenUserUtils: async ({ idamUtils }, use) => {
     await use(new CitizenUserUtils(idamUtils));
+  },
+  professionalUserUtils: async ({ idamUtils }, use) => {
+    await use(new ProfessionalUserUtils(idamUtils));
   },
   localeUtils: async ({ page }, use) => {
     await use(new LocaleUtils(page));

@@ -60,7 +60,7 @@ const resolveOdhinTestOutput = (): boolean | "only-on-failure" => {
     }
   }
 
-  return resolveOdhinApiLogMode() === "off" ? "only-on-failure" : true;
+  return "only-on-failure";
 };
 
 const resolveWorkerCount = () => {
@@ -164,6 +164,25 @@ const resolveReporters = (): ReporterDescription[] => {
   return reporters;
 };
 
+const resolveVideoMode = ():
+  | "off"
+  | "on"
+  | "retain-on-failure"
+  | "on-first-retry" => {
+  const configured = process.env.PLAYWRIGHT_VIDEO_MODE?.trim().toLowerCase();
+  switch (configured) {
+    case "on":
+    case "retain-on-failure":
+    case "on-first-retry":
+      return configured;
+    case "true":
+    case "1":
+      return "retain-on-failure";
+    default:
+      return "off";
+  }
+};
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -172,6 +191,11 @@ export default defineConfig({
   snapshotDir: "./playwright-e2e/snapshots",
   ...CommonConfig.recommended,
   reporter: resolveReporters(),
+  use: {
+    trace: "retain-on-failure",
+    screenshot: "only-on-failure",
+    video: resolveVideoMode(),
+  },
 
   projects: [
     {
