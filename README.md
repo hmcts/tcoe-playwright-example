@@ -107,7 +107,7 @@ Screenshots are also stored automatically when a test fails. Videos are disabled
 
 ### Environment configuration
 
-Copy `.env.example` to `.env` and fill in the blanks. At minimum you need:
+Copy `.env.example` to `.env` and fill in the blanks (not required if you run `yarn load-secrets`, which wraps the `get-secrets` script and generates the file directly from Key Vault). At minimum you need:
 
 ```env
 # Required user credentials (grab them from Azure KeyVault)
