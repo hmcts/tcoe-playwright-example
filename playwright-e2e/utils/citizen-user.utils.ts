@@ -1,5 +1,6 @@
 import { IdamUtils } from "@hmcts/playwright-common";
 import { v4 as uuidv4 } from "uuid";
+import { requireEnvVar } from "./config.utils";
 
 type UserInfo = {
   email: string;
@@ -14,8 +15,8 @@ export class CitizenUserUtils {
   constructor(private idamUtils: IdamUtils) {}
 
   public async createUser(): Promise<UserInfo> {
-    const token = process.env.CREATE_USER_BEARER_TOKEN as string;
-    const password = process.env.IDAM_CITIZEN_USER_PASSWORD as string;
+    const token = requireEnvVar("CREATE_USER_BEARER_TOKEN");
+    const password = requireEnvVar("IDAM_CITIZEN_USER_PASSWORD");
     const uniqueId = uuidv4();
 
     const email = `TEST_PRL_USER_citizen.${uniqueId}@test.local`;

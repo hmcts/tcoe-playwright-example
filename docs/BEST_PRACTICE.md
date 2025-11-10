@@ -84,7 +84,14 @@ See [CI.md](https://github.com/hmcts/tcoe-playwright-example/blob/master/docs/CI
 
 ## Reporting
 
-Currently no additional reporters are configured in this template, we make use of the built-in playwright reports.
+This template wires Playwright reporters through `resolveReporters()` in `playwright.config.ts`. You can mix and match them via environment variables:
+
+- **Default console output** – `PLAYWRIGHT_DEFAULT_REPORTER` falls back to `list` locally and `dot` on CI. Override on demand.
+- **HTML report** – `PLAYWRIGHT_REPORTERS=list,html` writes `playwright-report/index.html`. Control behaviour with `PLAYWRIGHT_HTML_OUTPUT` and `PLAYWRIGHT_HTML_OPEN`.
+- **JUnit XML** – add `junit` to the reporter list for CI-friendly XML (`PLAYWRIGHT_JUNIT_OUTPUT` for custom path).
+- **Odhín** – `PLAYWRIGHT_REPORTERS=list,odhin` produces a rich HTML dashboard in `test-results/odhin-report`. Tune with `PW_ODHIN_*` variables (`PW_ODHIN_TEST_FOLDER`, `PW_ODHIN_START_SERVER`, etc.).
+
+See the root `README.md` or `agents.md` for a quick reference on command examples and environment mappings.
 
 # Other Best Practices
 

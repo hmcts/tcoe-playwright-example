@@ -11,6 +11,7 @@ This repository serves as a template for UI test automation using [Playwright](h
 - **Performance tests**: Provides an implementation of Lighthouse which can be used for quick feedback on UI performance.
 - **CI/CD ready**: Sample Jenkinsfile included for integrating with your CI pipeline.
 - **Test tagging**: Use tags like `@a11y` for accessibility, `@smoke` for smoke tests, and more.
+- **Structured logging**: Shared Winston logger + API client factory automatically attach sanitised call details to Playwright reports.
 
 ## Project Structure
 
@@ -39,8 +40,8 @@ We all share the responsibility of ensuring this repo is up to date and accurate
 
 Ensure you have the following installed on your machine:
 
-- Node.js (v14+)
-- Yarn
+- Node.js (v20.11.1 or later)
+- Yarn (Berry)
 
 ### Installation
 
@@ -58,6 +59,14 @@ Run all tests using the Playwright test runner:
 
 ```bash
 yarn playwright test
+```
+
+> `yarn playwright` automatically tidies the local link to `@hmcts/playwright-common` so that Playwright is only required once. This avoids the "Requiring @playwright/test second time" error when developing against the linked package.
+
+Run unit tests that cover shared utilities:
+
+```bash
+yarn test:unit
 ```
 
 To run a specific test file:
@@ -91,6 +100,180 @@ yarn playwright test --trace on --video on --screenshot on
 ```
 
 Alternatively, you can use `page.pause()` inside your test whilst in `--headed` mode to pause execution at a specific point.
+
+Traces are automatically captured for failing tests (`trace: "retain-on-failure"` in `playwright.config.ts`), so you can inspect the timeline in the HTML reporter without enabling traces globally.
+
+Screenshots are also stored automatically when a test fails. Videos are disabled by default; set `PLAYWRIGHT_VIDEO_MODE` to `retain-on-failure`, `on`, or `on-first-retry` if you need them for a debugging session.
+
+### Environment configuration
+
+Copy `.env.example` to `.env` and fill in the blanks (not required if you run `yarn load-secrets`, which wraps the `get-secrets` script and generates the file directly from Key Vault). At minimum you need:
+
+```env
+# Required user credentials (grab them from Azure KeyVault)
+CASEMANAGER_USERNAME=<idam email>
+CASEMANAGER_PASSWORD=<password>
+JUDGE_USERNAME=<idam email>
+JUDGE_PASSWORD=<password>
+
+# IDAM + S2S endpoints (already defaulted for AAT)
+IDAM_SECRET=<S2S client secret for your IdAM app (Azure Key Vault)>
+CLIENT_ID=<IdAM OAuth2 client id e.g. prl-cos-api>
+S2S_SECRET=<S2S microservice secret from Key Vault (optional since @hmcts/playwright-common@1.0.38)>
+S2S_MICROSERVICE_NAME=<registered microservice name e.g. xui_webapp>
+S2S_URL=http://rpe-service-auth-provider-aat.service.core-compute-aat.internal/testing-support/lease
+# Optional global setup toggles
+# SKIP_S2S_TOKEN_SETUP=false
+# ALLOW_S2S_TOKEN_FAILURE=false
+```
+
+Leaving `S2S_SECRET` blank is now supported with `@hmcts/playwright-common@1.0.38` and later: the shared `ServiceAuthUtils` logs that no secret was provided and calls the gateway without an `Authorization` header, which keeps local/stubbed gateways happy. Use `SKIP_S2S_TOKEN_SETUP` to bypass the lease request entirely or `ALLOW_S2S_TOKEN_FAILURE` to downgrade token failures to warnings when the gateway is flaky.
+
+Optional logging toggles (defaults shown in the template):
+
+```env
+LOG_LEVEL=info
+LOG_FORMAT=json
+LOG_REDACTION=on
+PLAYWRIGHT_DEBUG_API=0
+```
+
+Setting `PLAYWRIGHT_DEBUG_API=1` includes raw API payloads in test attachments. Leave it disabled for CI so secrets stay obfuscated.
+
+### Selecting reporters
+
+- Set `PLAYWRIGHT_DEFAULT_REPORTER=list` (or `dot`, `html`, etc.) to control the single reporter that is used when you **don't** specify anything else. The default is `list` locally and `dot` on CI.
+- Override the entire reporter list with `PLAYWRIGHT_REPORTERS=list,html` (comma-separated). Each entry goes through the same helper shown in `playwright.config.ts` so you can mix built-ins with custom reporters.
+- Built-in reporters supported out of the box: `list`, `dot`, `line`, `html`, `junit`.
+
+#### Built-in Playwright HTML report
+
+- Enable via `PLAYWRIGHT_REPORTERS=list,html` (or pass `--reporter=html` on the CLI).  
+- Controls:
+  - `PLAYWRIGHT_HTML_OUTPUT` (`playwright-report`) – output directory.
+  - `PLAYWRIGHT_HTML_OPEN` (`never`) – one of `never`, `on-failure`, `always`.
+- The report is written to `playwright-report/index.html`; open it in a browser after each run or let Playwright auto-open it when `PLAYWRIGHT_HTML_OPEN=always`.
+
+#### JUnit XML (for CI integrations)
+
+- Enable with `PLAYWRIGHT_REPORTERS=junit` or add it alongside others: `PLAYWRIGHT_REPORTERS=list,junit`.  
+- Configure output path using `PLAYWRIGHT_JUNIT_OUTPUT` (defaults to `playwright-junit.xml`) then publish the XML to your CI system’s test results view.
+
+#### Odhín rich HTML report
+
+- Depends on [`odhin-reports-playwright`](https://playwright-odhin-reports-1f6b7a95ad42468d7d90f7962fbe172f83b229.gitlab.io/#/v1/install); the package is already listed in `devDependencies`.  
+- **Bare-minimum command (safe for the whole test matrix):**
+
+  ```bash
+  PLAYWRIGHT_REPORTERS=list,odhin \
+  PW_ODHIN_API_LOGS=summary \
+  PW_ODHIN_TEST_OUTPUT=only-on-failure \
+  PLAYWRIGHT_VIDEO_MODE=off \
+  yarn playwright test
+  ```
+
+  This mirrors the stock HTML reporter footprint by keeping API summaries short, suppressing stdout tabs for passing tests, and skipping video capture. Use this profile for day-to-day CI runs.
+
+- **Focused diagnostics for a failing shard:**
+
+  ```bash
+  PW_ODHIN_API_LOGS=all \
+  PW_ODHIN_API_STDOUT_MODE=json \
+  PW_ODHIN_API_STDOUT_KB=128 \
+  PW_ODHIN_API_ATTACH_KB=512 \
+  PLAYWRIGHT_VIDEO_MODE=retain-on-failure \
+  PLAYWRIGHT_REPORTERS=list,odhin \
+  yarn playwright test tests/failing.spec.ts
+  ```
+
+  Apply these heavier flags sparingly—they inline far more data into the HTML and can trigger the `RangeError: Invalid string length` if you point them at the full cross-browser suite.
+
+- Key environment variables (defaults in parentheses):
+  - `PW_ODHIN_OUTPUT` (`test-results/odhin-report`) – folder where the report is written.
+  - `PW_ODHIN_INDEX` (`playwright-odhin.html`) – report filename.
+  - `PW_ODHIN_TITLE` (`tcoe-playwright-example Playwright`) – title shown in the UI.
+  - `PW_ODHIN_ENV` (`TEST_ENVIRONMENT` or `ci|local`) – header environment label.
+  - `PW_ODHIN_PROJECT` (`tcoe-playwright-example`) – project name displayed in the report.
+  - `PW_ODHIN_RELEASE` (`<package version> | branch=<branch>`) – release metadata.
+  - `PW_ODHIN_TEST_FOLDER` (`playwright-e2e`) – trims absolute paths in the File Summary to this folder (set to `tests` if your specs live there).
+  - `PW_ODHIN_START_SERVER` (`false`) – set to `true` to auto-serve the report locally and print the URL after each run.
+  - `PW_ODHIN_CONSOLE_LOG` / `PW_ODHIN_CONSOLE_ERROR` (`true`) – control reporter stdout/stderr.
+  - `PW_ODHIN_TEST_OUTPUT` (`only-on-failure`) – choose when stdout/stderr tabs appear (`true`, `false`, or `only-on-failure`).
+  - `PW_ODHIN_API_LOGS` (`api`) – mirror API telemetry to stdout: `off`, `api` (API projects only), or `all`.
+  - `PW_ODHIN_API_STDOUT_MODE` (`summary`) – choose between `summary` (compact per-request lines) or `json` (raw payload).
+  - `PW_ODHIN_API_SUMMARY_LINES` (`50`) – maximum number of summary lines mirrored to stdout (set to `0` for unlimited).
+  - `PW_ODHIN_API_STDOUT_KB` (`64`) – when `PW_ODHIN_API_STDOUT_MODE=json`, cap the size of the mirrored payload (set to `0` to disable truncation).
+  - `PW_ODHIN_API_ATTACH_KB` (`256`) – maximum size of the `api-calls.json` attachment before it is downgraded to a sanitised or summarised view (set to `0` for unlimited).
+  - `PW_ODHIN_API_MAX_LOGS` (`250`) – upper bound on the number of API calls captured per test; additional calls are counted and dropped to keep artefacts small.
+  - `PW_ODHIN_API_MAX_FIELD_CHARS` (`4000`) – clamps oversized request/response fields before they are serialised (affects stdout, attachments, and annotations).
+  - `PLAYWRIGHT_VIDEO_MODE` (`off`) – choose a Playwright video mode (`retain-on-failure`, `on-first-retry`, `on`, etc.); defaults to `off` so CI runs stay lean.
+  - `PLAYWRIGHT_API_LOG_ATTACH` (`on`) – disable to skip the `api-calls.json` attachment (attachments are only generated for failed tests).
+- Stdout/stderr panes default to `only-on-failure` to keep large runs stable; set `PW_ODHIN_TEST_OUTPUT=true` if you genuinely need output from passing tests.
+- Recommended usage: treat Odhín as a failure-analysis tool. Run the broad cross-browser matrix with the “safe” command above, then rerun just the failing specs with higher verbosity (videos, raw JSON, etc.). Pushing the heavy profile across every shard will reintroduce the string-length errors because Odhín embeds everything into a single HTML page.
+- To preview the report automatically:
+  ```bash
+  PW_ODHIN_START_SERVER=true PLAYWRIGHT_REPORTERS=list,odhin yarn playwright test
+  ```
+  Otherwise open `test-results/odhin-report/playwright-odhin.html` (or your customised path) manually.
+
+### API Telemetry & Logging
+
+- Use the `createApiClient` fixture to spin up sanitised API clients in your tests. Every call is logged via Winston and attached to your Playwright report as `api-calls.json`.
+- Toggle log verbosity through optional environment variables (see the previous section).
+- Global setup utilities (`IdamUtils`, `ServiceAuthUtils`) share the same logger and feed telemetry into the same attachment for complete visibility.
+- Required IDs/secrets:
+  - `IDAM_SECRET` – OAuth2 client secret for `CLIENT_ID`, stored in Azure Key Vault.
+  - `CLIENT_ID` – OAuth2 client ID for the UI/API under test (defaults to `prl-cos-api` in the template).
+  - `S2S_MICROSERVICE_NAME` – name registered with the S2S provider (e.g. `xui_webapp`).
+  - `S2S_URL` – S2S lease endpoint (defaults to the AAT URL, override per environment).
+- Optional:
+  - `S2S_SECRET` – HMCTS Service-to-Service shared secret; leave it blank to send the lease request without a Basic `Authorization` header (supported since `@hmcts/playwright-common@1.0.38`).
+- Service-auth toggles:
+  - `SKIP_S2S_TOKEN_SETUP` – set to `true`/`1` to skip the S2S call entirely (useful if the gateway is down in a local preview).
+  - `ALLOW_S2S_TOKEN_FAILURE` – when `true` the global setup records a warning instead of failing the suite if the S2S lease request is rejected.
+- Control how much of this telemetry ends up in Odhín: set `PW_ODHIN_API_LOGS=all` (default `api`) to mirror logs to stdout for the report, or `off` to disable it entirely; pair with `PLAYWRIGHT_API_LOG_ATTACH=off` if you want to keep artefacts lean. `PW_ODHIN_API_STDOUT_MODE=summary` keeps runs stable by printing compact request/response lines (tune the count with `PW_ODHIN_API_SUMMARY_LINES`). Switch to `json` if you genuinely need the raw payload inline—`PW_ODHIN_API_STDOUT_KB` (default `64` KB) controls how much of that JSON is streamed before falling back to the attached `api-calls.json`. Attachments are similarly guarded: `PW_ODHIN_API_ATTACH_KB` (default `256` KB) forces raw logs to downgrade to sanitised or summarised content once they exceed the limit, while `PW_ODHIN_API_MAX_LOGS` and `PW_ODHIN_API_MAX_FIELD_CHARS` set hard caps on how many calls/characters are retained per test to stop Odhín from trying to ingest unbounded payloads. We only persist `api-calls.json` for failed tests, so rely on stdout summaries for passing runs unless you explicitly rerun a failure with `PLAYWRIGHT_API_LOG_ATTACH` disabled.
+
+#### Concrete usage example
+
+```ts
+// playwright-e2e/tests/api/sample.spec.ts
+import { expect, test } from "../fixtures";
+
+test.describe("@api smoke checks", () => {
+  test("token endpoint returns 200", async ({ createApiClient }) => {
+    const client = createApiClient({
+      baseUrl: process.env.SERVICE_BASE_URL,
+      name: "token-api",
+    });
+
+    const { status, data } = await client.post<{ access_token: string }>(
+      "/oauth/token",
+      {
+        data: {
+          grant_type: "client_credentials",
+          scope: "openid profile",
+        },
+        throwOnError: true,
+      }
+    );
+
+    expect(status).toBe(200);
+    expect(data.access_token).toBeTruthy();
+  });
+});
+```
+
+After the test finishes you will see an `api-calls.json` attachment in the Playwright HTML report. Sensitive headers/body fields (`token`, `secret`, `password`, etc.) are automatically masked. Flip `PLAYWRIGHT_DEBUG_API=1` if you need the raw payload locally.
+
+#### Cleaning duplicate Playwright installations
+
+When linked to the local `@hmcts/playwright-common` workspace, Yarn can hoist a second copy of `@playwright/test`. The helper script `yarn playwright …` runs `scripts/cleanup-playwright.mjs` before every test run to replace nested copies with symlinks to the top-level install. You can also execute it manually:
+
+```bash
+node scripts/cleanup-playwright.mjs
+```
+
+This is safe to run repeatedly (the script is idempotent) and keeps Playwright from complaining about being required twice.
 
 ### Accessibility Tests
 

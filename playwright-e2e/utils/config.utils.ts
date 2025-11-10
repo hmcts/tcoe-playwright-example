@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 // This needs to be placed somewhere before attempting to access any environment variables
 dotenv.config({ quiet: true });
@@ -11,6 +11,9 @@ export interface UserCredentials {
   sessionFile: string;
   cookieName?: string;
 }
+
+const stripTrailingSlash = (value: string): string =>
+  value.replace(/\/+$/, "");
 
 interface Urls {
   exuiDefaultUrl: string;
@@ -49,7 +52,9 @@ export const config: Config = {
     },
   },
   urls: {
-    exuiDefaultUrl: "https://manage-case.aat.platform.hmcts.net",
+    exuiDefaultUrl:
+      process.env.EXUI_DEFAULT_URL ||
+      "https://manage-case.aat.platform.hmcts.net",
     manageCaseBaseUrl:
       process.env.MANAGE_CASES_BASE_URL ||
       "https://manage-case.aat.platform.hmcts.net/cases",
@@ -62,16 +67,31 @@ export const config: Config = {
     idamTestingSupportUrl:
       process.env.IDAM_TESTING_SUPPORT_URL ||
       "https://idam-testing-support-api.aat.platform.hmcts.net",
-    serviceAuthUrl:
+    serviceAuthUrl: stripTrailingSlash(
       process.env.S2S_URL ||
-      "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal/testing-support/lease",
+        "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal/testing-support/lease"
+    ),
   },
 };
 
-function getEnvVar(name: string): string {
+function getEnvVar(name: string, fallback = ""): string {
   const value = process.env[name];
   if (!value) {
-    throw new Error(`Error: ${name} environment variable is not set`);
+    if (fallback) {
+      return fallback;
+    }
+    console.warn(`Warning: ${name} environment variable is not set; using empty string.`);
+    return "";
+  }
+  return value;
+}
+
+export function requireEnvVar(name: string): string {
+  const value = process.env[name];
+  if (!value || !value.trim()) {
+    throw new Error(
+      `Missing required environment variable: ${name}. Ensure it is set before running the test suite.`
+    );
   }
   return value;
 }
