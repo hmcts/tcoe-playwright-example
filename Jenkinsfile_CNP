@@ -15,15 +15,26 @@ def yarnBuilder = new uk.gov.hmcts.contino.YarnBuilder(this)
 * Typically, withPipeline would be used as it contains additional steps needed to release & deploy
 * See https://github.com/hmcts/cnp-jenkins-library for more info on the opinionated pipeline
 */
-withNightlyPipeline(type, product, component) {
-  enableSlackNotifications(channel)
-  afterAlways('DependencyCheckNightly') {
-    stage('Lint') {
+  withNightlyPipeline(type, product, component) {
+    enableSlackNotifications(channel)
+    afterAlways('DependencyCheckNightly') {
+      stage('Lint') {
+          try {
+            yarnBuilder.yarn('lint')
+          } catch (Error) {
+            unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
+          }
+        }
+      stage('Generate coverage & endpoint reports') {
+        // Best-effort: skips quietly if coverage or api specs are absent
         try {
-          yarnBuilder.yarn('lint')
+          yarnBuilder.yarn('report:coverage')
+          yarnBuilder.yarn('report:api-endpoints')
+          archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/coverage-summary.txt'
+          archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/api-endpoints.json'
         } catch (Error) {
           unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
         }
       }
+    }
   }
-}

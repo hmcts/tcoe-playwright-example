@@ -210,6 +210,17 @@ withNightlyPipeline(type, product, component, 600) {
           ])
         }
       }
+      stage('Generate coverage & endpoint reports') {
+        // Best-effort: skips quietly if coverage or api specs are absent
+        try {
+          yarnBuilder.yarn('report:coverage')
+          yarnBuilder.yarn('report:api-endpoints')
+          archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/coverage-summary.txt'
+          archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/api-endpoints.json'
+        } catch (Error) {
+          unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
+        }
+      }
     }
   }
 }
