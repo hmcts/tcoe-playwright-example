@@ -12,6 +12,7 @@ This repository serves as a template for UI test automation using [Playwright](h
 - **CI/CD ready**: Sample Jenkinsfile included for integrating with your CI pipeline.
 - **Test tagging**: Use tags like `@a11y` for accessibility, `@smoke` for smoke tests, and more.
 - **Structured logging**: Shared Winston logger + API client factory automatically attach sanitised call details to Playwright reports.
+- **Coverage + endpoint insights**: Sample scripts to emit c8 summaries and API endpoint coverage from your Playwright specs.
 
 ## Project Structure
 
@@ -67,6 +68,24 @@ Run unit tests that cover shared utilities:
 
 ```bash
 yarn test:unit
+```
+
+Generate a coverage summary (expects c8 `coverage-summary.json`):
+
+```bash
+yarn report:coverage
+# optional overrides:
+#   COVERAGE_SUMMARY=./path/to/coverage-summary.json
+#   COVERAGE_SUMMARY_TXT=./path/to/output.txt
+```
+
+List API endpoints exercised by your Playwright API specs:
+
+```bash
+yarn report:api-endpoints
+# optional overrides:
+#   API_TEST_ROOT=./tests/api
+#   API_ENDPOINTS_REPORT=./coverage/api-endpoints.json
 ```
 
 To run a specific test file:
