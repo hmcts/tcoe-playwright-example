@@ -49,7 +49,7 @@
     "test:unit": "vitest run",
     "test:api": "yarn playwright test --project=api"
   },
-  "packageManager": "yarn@4.9.4",
+  "packageManager": "yarn@4.12.0",
   "dependencies": {
     "uuid": "^11.1.0"
   }
