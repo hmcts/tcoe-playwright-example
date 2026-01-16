@@ -76,4 +76,77 @@ describe("reporting scripts", () => {
       { endpoint: "/two", hits: 1, percent: "33.33" },
     ]);
   });
+
+  it("exits gracefully when coverage file does not exist", () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "tcoe-missing-"));
+    const summaryPath = path.join(tmp, "nonexistent.json");
+    const outTxt = path.join(tmp, "summary.txt");
+
+    const result = execFileSync("node", [coverageScript], {
+      env: { ...process.env, COVERAGE_SUMMARY: summaryPath, COVERAGE_SUMMARY_TXT: outTxt },
+      encoding: "utf8",
+    });
+
+    expect(result).toContain("no coverage file found");
+    expect(fs.existsSync(outTxt)).toBe(false);
+  });
+
+  it("exits gracefully when coverage JSON is malformed", () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "tcoe-malformed-"));
+    const summaryPath = path.join(tmp, "coverage-summary.json");
+    const outTxt = path.join(tmp, "summary.txt");
+
+    fs.writeFileSync(summaryPath, "{invalid json", "utf8");
+
+    const result = execFileSync("node", [coverageScript], {
+      env: { ...process.env, COVERAGE_SUMMARY: summaryPath, COVERAGE_SUMMARY_TXT: outTxt },
+      encoding: "utf8",
+    });
+
+    expect(result).toContain("unable to parse coverage file");
+    expect(fs.existsSync(outTxt)).toBe(false);
+  });
+
+  it("exits gracefully when API test folder does not exist", () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "tcoe-no-api-"));
+    const apiRoot = path.join(tmp, "nonexistent", "api");
+    const outJson = path.join(tmp, "endpoints.json");
+
+    const result = execFileSync("node", [endpointsScript], {
+      env: {
+        ...process.env,
+        API_TEST_ROOT: apiRoot,
+        API_ENDPOINTS_REPORT: outJson,
+      },
+      encoding: "utf8",
+    });
+
+    expect(result).toContain("no folder found");
+    expect(fs.existsSync(outJson)).toBe(false);
+  });
+
+  it("reports zero hits when no API calls found", () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "tcoe-empty-api-"));
+    const apiRoot = path.join(tmp, "tests", "api");
+    fs.mkdirSync(apiRoot, { recursive: true });
+    fs.writeFileSync(
+      path.join(apiRoot, "test.spec.ts"),
+      `test("no api calls", async () => { expect(true).toBe(true); });`,
+      "utf8"
+    );
+
+    const outJson = path.join(tmp, "endpoints.json");
+
+    const result = execFileSync("node", [endpointsScript], {
+      env: {
+        ...process.env,
+        API_TEST_ROOT: apiRoot,
+        API_ENDPOINTS_REPORT: outJson,
+      },
+      encoding: "utf8",
+    });
+
+    expect(result).toContain("no API calls found");
+    expect(fs.existsSync(outJson)).toBe(false);
+  });
 });

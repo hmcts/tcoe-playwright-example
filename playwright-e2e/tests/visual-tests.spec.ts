@@ -3,6 +3,10 @@ import { expect } from "@playwright/test";
 import { test } from "../fixtures";
 import { config } from "../utils";
 
+// Test data constants
+const CASE_NUMBER_LENGTH = 5;
+const MAX_RANDOM_DIGIT = 10;
+
 /*
   To update screenshots for these tests, run the below in order from root:
   - npm run build-container && npm run start-container
@@ -28,8 +32,8 @@ test.describe("Visual Tests (citizen user) @visual", () => {
 
   test("Visual test using a mask", async ({ activateCasePinPage }) => {
     // Insert some dynamic data to the input field
-    const randomNumbers = Array.from({ length: 5 }, () =>
-      Math.floor(Math.random() * 10)
+    const randomNumbers = Array.from({ length: CASE_NUMBER_LENGTH }, () =>
+      Math.floor(Math.random() * MAX_RANDOM_DIGIT)
     ).join("");
     await activateCasePinPage.caseNumber.fill(randomNumbers);
 

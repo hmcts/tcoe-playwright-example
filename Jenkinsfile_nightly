@@ -70,7 +70,7 @@ def buildPlaywrightCommand(tags, browser) {
   }
   def tagList = tags.split(',').collect { it.trim() }
 
-  def command = 'playwright test tests/'
+  def command = 'playwright test playwright-e2e/tests/'
     tagList.each { tag ->
     if (!tag.isEmpty()) {
       command += " --grep ${tag}"
@@ -85,6 +85,18 @@ def buildPlaywrightCommand(tags, browser) {
 }
 
 def yarnBuilder = new uk.gov.hmcts.contino.YarnBuilder(this)
+
+def archiveCoverageReports(yarnBuilder) {
+  // Best-effort: skips quietly if coverage or api specs are absent
+  try {
+    yarnBuilder.yarn('report:coverage')
+    yarnBuilder.yarn('report:api-endpoints')
+    archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/coverage-summary.txt'
+    archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/api-endpoints.json'
+  } catch (Error) {
+    unstable(message: "Coverage & endpoint archival is unstable: " + Error.toString())
+  }
+}
 
 withNightlyPipeline(type, product, component, 600) {
   loadVaultSecrets(secrets)
@@ -194,7 +206,7 @@ withNightlyPipeline(type, product, component, 600) {
           ])
         }
       }
-      stage('Accessibiity Tests') {
+      stage('Accessibility Tests') {
         try {
           yarnBuilder.yarn('test:a11y')
         } catch (Error) {
@@ -211,15 +223,7 @@ withNightlyPipeline(type, product, component, 600) {
         }
       }
       stage('Generate coverage & endpoint reports') {
-        // Best-effort: skips quietly if coverage or api specs are absent
-        try {
-          yarnBuilder.yarn('report:coverage')
-          yarnBuilder.yarn('report:api-endpoints')
-          archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/coverage-summary.txt'
-          archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/api-endpoints.json'
-        } catch (Error) {
-          unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
-        }
+        archiveCoverageReports(yarnBuilder)
       }
     }
   }

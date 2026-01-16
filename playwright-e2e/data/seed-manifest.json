@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "environment": "local",
+  "data": {
+    "caseId": "1111111111111111",
+    "taskId": "2222222222222222",
+    "userId": "user-12345",
+    "refData": {
+      "jurisdiction": "PRL",
+      "service": "xui"
+    }
+  }
+}

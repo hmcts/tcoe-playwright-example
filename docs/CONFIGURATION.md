@@ -45,3 +45,18 @@ yarn playwright test tests/failing.spec.ts
 Only use the heavier command when you’re investigating a specific failure. Videos, traces, and raw JSON blobs are processed inline by Odhín, so capturing them for every test/project will eventually hit Node’s string-size limit.
 
 The utils class has a [helper function](https://github.com/hmcts/tcoe-playwright-example/blob/master/playwright-e2e/utils/config.utils.ts#L47) to ensure the given environment variable is set when loaded (fail fast rather than wait until the specific variable is accessed).
+
+If you prefer the shared helper from `@hmcts/playwright-common`, use `ConfigUtils.getEnvVar`:
+
+```ts
+import { ConfigUtils } from "@hmcts/playwright-common";
+
+const serviceBaseUrl = ConfigUtils.getEnvVar("SERVICE_BASE_URL");
+```
+
+### Env cheatsheet (playwright-common)
+- Logging: `LOG_LEVEL`, `LOG_FORMAT`, `LOG_REDACTION`, `LOG_SERVICE_NAME`
+- API attachments: `PLAYWRIGHT_DEBUG_API` (`true`/`1` to allow raw bodies in attachments; keep off in CI)
+- Retry/breaker inputs: `S2S_RETRY_ATTEMPTS`, `S2S_RETRY_BASE_MS`, `IDAM_RETRY_ATTEMPTS`, `IDAM_RETRY_BASE_MS`
+- Workers: `FUNCTIONAL_TESTS_WORKERS`
+- Debug: `PWDEBUG` to emit extra Axe logging

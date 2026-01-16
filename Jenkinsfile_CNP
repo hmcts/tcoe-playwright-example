@@ -9,6 +9,18 @@ def channel = "#tcoe-builds"
 
 def yarnBuilder = new uk.gov.hmcts.contino.YarnBuilder(this)
 
+def archiveCoverageReports(yarnBuilder) {
+  // Best-effort: skips quietly if coverage or api specs are absent
+  try {
+    yarnBuilder.yarn('report:coverage')
+    yarnBuilder.yarn('report:api-endpoints')
+    archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/coverage-summary.txt'
+    archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/api-endpoints.json'
+  } catch (Error) {
+    unstable(message: "Coverage & endpoint archival is unstable: " + Error.toString())
+  }
+}
+
 
 /**
 * As this repo is not a part of any service or application, withNightlyPipeline is used
@@ -26,15 +38,7 @@ def yarnBuilder = new uk.gov.hmcts.contino.YarnBuilder(this)
           }
         }
       stage('Generate coverage & endpoint reports') {
-        // Best-effort: skips quietly if coverage or api specs are absent
-        try {
-          yarnBuilder.yarn('report:coverage')
-          yarnBuilder.yarn('report:api-endpoints')
-          archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/coverage-summary.txt'
-          archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/api-endpoints.json'
-        } catch (Error) {
-          unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
-        }
+        archiveCoverageReports(yarnBuilder)
       }
     }
   }

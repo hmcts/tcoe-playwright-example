@@ -1,0 +1,10 @@
+{
+  "totalHits": 1,
+  "endpoints": [
+    {
+      "endpoint": "/rate-limit",
+      "hits": 1,
+      "percent": "100.00"
+    }
+  ]
+}

@@ -3,7 +3,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { scanApiEndpoints } from "@hmcts/playwright-common";
 
-const root = path.resolve(process.env.API_TEST_ROOT ?? "./tests/api");
+const root = path.resolve(
+  process.env.API_TEST_ROOT ?? "./playwright-e2e/tests/api"
+);
 const outputPath = path.resolve(process.env.API_ENDPOINTS_REPORT ?? "./coverage/api-endpoints.json");
 
 if (!fs.existsSync(root)) {

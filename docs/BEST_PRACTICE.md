@@ -9,7 +9,11 @@ The below is best practice advice pertaining to Playwright automation frameworks
 When writing tests, the following factors should be taken into account:
 
 - **Test Requirement**: Confirm whether the test is necessary, especially if it's a UI test. It may already be covered at a lower level.
-- **Test Descriptions**: Test names should clearly describe what is being tested, and each test should have a clear objective.
+- **Test Descriptions**: Test names should clearly describe intent (what, when, expected outcome). Aim for names that "scream intent" so failures are self-explanatory.
+  - Pattern: `action + condition + expected outcome`.
+  - Include the system or boundary when useful (e.g., `API`, `UI`, `auth`).
+  - Prefer "does X when Y" or "returns Z for Y" over generic phrases.
+  - Example: `returns 401 with auth error body when token is missing`.
 - **Assertions**: Tests should contain assertions aimed at proving or disproving the test objective. Ensure assertions are present in key areas and thoughout your test to avoid red herrings (e.g. if a test is failing because an element is not found - is that because the previous step failed or is it legitimately not present) - [assertions guide](http://playwright.dev/docs/test-assertions)
 - **Test Isolation**: Each test must be able to run independently. No test should depend on another.
 - **Test Data**: Unique test data should be used for each test to avoid conflicts, including data like user profiles.
