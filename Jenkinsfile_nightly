@@ -84,6 +84,23 @@ def buildPlaywrightCommand(tags, browser) {
   return command
 }
 
+def buildReportEnv(String suiteDir, boolean skipApiEndpoints = false) {
+  def envVars = [
+    'PLAYWRIGHT_REPORTERS=list,html,odhin,junit',
+    "PLAYWRIGHT_HTML_OUTPUT=${suiteDir}/html-report",
+    "PW_ODHIN_OUTPUT=${suiteDir}/odhin-report",
+    "PW_ODHIN_TARGET=${suiteDir}/odhin-report",
+    "PLAYWRIGHT_JUNIT_OUTPUT=${suiteDir}/playwright-junit.xml",
+    'PW_ODHIN_LINK_COVERAGE=true'
+  ]
+
+  if (skipApiEndpoints) {
+    envVars.add('PW_ODHIN_SKIP_API_ENDPOINTS=true')
+  }
+
+  return envVars
+}
+
 def yarnBuilder = new uk.gov.hmcts.contino.YarnBuilder(this)
 
 def archiveCoverageReports(yarnBuilder) {
@@ -91,8 +108,7 @@ def archiveCoverageReports(yarnBuilder) {
   try {
     yarnBuilder.yarn('report:coverage')
     yarnBuilder.yarn('report:api-endpoints')
-    archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/coverage-summary.txt'
-    archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/api-endpoints.json'
+    archiveArtifacts allowEmptyArchive: true, artifacts: 'coverage/**'
   } catch (Error) {
     unstable(message: "Coverage & endpoint archival is unstable: " + Error.toString())
   }
@@ -122,104 +138,240 @@ withNightlyPipeline(type, product, component, 600) {
     }
     if (!TAGS_TO_RUN.isEmpty()) {
       stage("${TAGS_TO_RUN} E2E Tests for ${params.BROWSER_TO_RUN}") {
+        def safeTags = TAGS_TO_RUN.replaceAll(/[^A-Za-z0-9_.-]+/, "_")
+        def reportDir = "functional-output/tests/playwright-e2e/tags-${safeTags}-${params.BROWSER_TO_RUN}"
+        def reportEnv = buildReportEnv(reportDir, true)
         try {
           currentBuild.displayName = "${TAGS_TO_RUN} E2E Tests for ${params.BROWSER_TO_RUN}"
           if (params.BROWSER_TO_RUN == 'edge') yarnBuilder.yarn('setup:edge')
-          yarnBuilder.yarn(buildPlaywrightCommand(TAGS_TO_RUN, params.BROWSER_TO_RUN))
+          withEnv(reportEnv) {
+            yarnBuilder.yarn(buildPlaywrightCommand(TAGS_TO_RUN, params.BROWSER_TO_RUN))
+          }
         } catch (Error) {
           unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
         } finally {
+          withEnv(reportEnv) {
+            yarnBuilder.yarn('node ./scripts/copy-odhin-report.mjs')
+          }
           publishHTML([
             allowMissing: true,
             alwaysLinkToLastBuild: true,
             keepAll: true,
-            reportDir: "playwright-report",
+            reportDir: "${reportDir}/html-report",
             reportFiles: 'index.html',
-            reportName: "${TAGS_TO_RUN} E2E Tests for ${params.BROWSER_TO_RUN}"
+            reportName: "${TAGS_TO_RUN} E2E Tests for ${params.BROWSER_TO_RUN} (HTML)"
           ])
+          publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "${reportDir}/odhin-report",
+            reportFiles: 'playwright-odhin.html',
+            reportName: "${TAGS_TO_RUN} E2E Tests for ${params.BROWSER_TO_RUN} (Odhin)"
+          ])
+          junit(testResults: "${reportDir}/playwright-junit.xml", allowEmptyResults: true)
+          archiveArtifacts allowEmptyArchive: true, artifacts: "${reportDir}/**"
         }
       }
     } else {
       currentBuild.displayName = "All E2E Tests"
-      stage('Chrome E2E Tests') {
+      stage('API Tests') {
+        def reportDir = "functional-output/tests/api"
+        def reportEnv = buildReportEnv(reportDir)
         try {
-          yarnBuilder.yarn('test:chrome')
+          withEnv(reportEnv) {
+            yarnBuilder.yarn('test:api')
+          }
         } catch (Error) {
           unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
         } finally {
+          withEnv(reportEnv) {
+            yarnBuilder.yarn('node ./scripts/copy-odhin-report.mjs')
+          }
           publishHTML([
             allowMissing: true,
             alwaysLinkToLastBuild: true,
             keepAll: true,
-            reportDir: "playwright-report",
+            reportDir: "${reportDir}/html-report",
             reportFiles: 'index.html',
-            reportName: 'Chrome E2E Tests'
+            reportName: 'API Tests (HTML)'
           ])
+          publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "${reportDir}/odhin-report",
+            reportFiles: 'playwright-odhin.html',
+            reportName: 'API Tests (Odhin)'
+          ])
+          junit(testResults: "${reportDir}/playwright-junit.xml", allowEmptyResults: true)
+          archiveArtifacts allowEmptyArchive: true, artifacts: "${reportDir}/**"
+        }
+      }
+      stage('Chrome E2E Tests') {
+        def reportDir = "functional-output/tests/playwright-e2e/chrome"
+        def reportEnv = buildReportEnv(reportDir, true)
+        try {
+          withEnv(reportEnv) {
+            yarnBuilder.yarn('test:chrome')
+          }
+        } catch (Error) {
+          unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
+        } finally {
+          withEnv(reportEnv) {
+            yarnBuilder.yarn('node ./scripts/copy-odhin-report.mjs')
+          }
+          publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "${reportDir}/html-report",
+            reportFiles: 'index.html',
+            reportName: 'Chrome E2E Tests (HTML)'
+          ])
+          publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "${reportDir}/odhin-report",
+            reportFiles: 'playwright-odhin.html',
+            reportName: 'Chrome E2E Tests (Odhin)'
+          ])
+          junit(testResults: "${reportDir}/playwright-junit.xml", allowEmptyResults: true)
+          archiveArtifacts allowEmptyArchive: true, artifacts: "${reportDir}/**"
         }
       }
       stage('Firefox E2E Tests') {
+        def reportDir = "functional-output/tests/playwright-e2e/firefox"
+        def reportEnv = buildReportEnv(reportDir, true)
         try {
-          yarnBuilder.yarn('test:firefox')
+          withEnv(reportEnv) {
+            yarnBuilder.yarn('test:firefox')
+          }
         } catch (Error) {
           unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
         } finally {
+          withEnv(reportEnv) {
+            yarnBuilder.yarn('node ./scripts/copy-odhin-report.mjs')
+          }
           publishHTML([
             allowMissing: true,
             alwaysLinkToLastBuild: true,
             keepAll: true,
-            reportDir: "playwright-report",
+            reportDir: "${reportDir}/html-report",
             reportFiles: 'index.html',
-            reportName: 'Firefox E2E Tests'
+            reportName: 'Firefox E2E Tests (HTML)'
           ])
+          publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "${reportDir}/odhin-report",
+            reportFiles: 'playwright-odhin.html',
+            reportName: 'Firefox E2E Tests (Odhin)'
+          ])
+          junit(testResults: "${reportDir}/playwright-junit.xml", allowEmptyResults: true)
+          archiveArtifacts allowEmptyArchive: true, artifacts: "${reportDir}/**"
         }
       }
       stage('Webkit E2E Tests') {
+        def reportDir = "functional-output/tests/playwright-e2e/webkit"
+        def reportEnv = buildReportEnv(reportDir, true)
         try {
-          yarnBuilder.yarn('test:webkit')
+          withEnv(reportEnv) {
+            yarnBuilder.yarn('test:webkit')
+          }
         } catch (Error) {
           unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
         } finally {
+          withEnv(reportEnv) {
+            yarnBuilder.yarn('node ./scripts/copy-odhin-report.mjs')
+          }
           publishHTML([
             allowMissing: true,
             alwaysLinkToLastBuild: true,
             keepAll: true,
-            reportDir: "playwright-report",
+            reportDir: "${reportDir}/html-report",
             reportFiles: 'index.html',
-            reportName: 'Webkit E2E Tests'
+            reportName: 'Webkit E2E Tests (HTML)'
           ])
+          publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "${reportDir}/odhin-report",
+            reportFiles: 'playwright-odhin.html',
+            reportName: 'Webkit E2E Tests (Odhin)'
+          ])
+          junit(testResults: "${reportDir}/playwright-junit.xml", allowEmptyResults: true)
+          archiveArtifacts allowEmptyArchive: true, artifacts: "${reportDir}/**"
         }
       }
       stage('Edge E2E Tests') {
+        def reportDir = "functional-output/tests/playwright-e2e/edge"
+        def reportEnv = buildReportEnv(reportDir, true)
         try {
           yarnBuilder.yarn('setup:edge') // Use hermetic install for edge
-          yarnBuilder.yarn('test:edge')
+          withEnv(reportEnv) {
+            yarnBuilder.yarn('test:edge')
+          }
         } catch (Error) {
           unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
         } finally {
+          withEnv(reportEnv) {
+            yarnBuilder.yarn('node ./scripts/copy-odhin-report.mjs')
+          }
           publishHTML([
             allowMissing: true,
             alwaysLinkToLastBuild: true,
             keepAll: true,
-            reportDir: "playwright-report",
+            reportDir: "${reportDir}/html-report",
             reportFiles: 'index.html',
-            reportName: 'Edge E2E Tests'
+            reportName: 'Edge E2E Tests (HTML)'
           ])
+          publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "${reportDir}/odhin-report",
+            reportFiles: 'playwright-odhin.html',
+            reportName: 'Edge E2E Tests (Odhin)'
+          ])
+          junit(testResults: "${reportDir}/playwright-junit.xml", allowEmptyResults: true)
+          archiveArtifacts allowEmptyArchive: true, artifacts: "${reportDir}/**"
         }
       }
       stage('Accessibility Tests') {
+        def reportDir = "functional-output/tests/playwright-e2e/a11y"
+        def reportEnv = buildReportEnv(reportDir, true)
         try {
-          yarnBuilder.yarn('test:a11y')
+          withEnv(reportEnv) {
+            yarnBuilder.yarn('test:a11y')
+          }
         } catch (Error) {
           unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
         } finally {
+          withEnv(reportEnv) {
+            yarnBuilder.yarn('node ./scripts/copy-odhin-report.mjs')
+          }
           publishHTML([
             allowMissing: true,
             alwaysLinkToLastBuild: true,
             keepAll: true,
-            reportDir: "playwright-report",
+            reportDir: "${reportDir}/html-report",
             reportFiles: 'index.html',
-            reportName: 'Accessibility Tests'
+            reportName: 'Accessibility Tests (HTML)'
           ])
+          publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: "${reportDir}/odhin-report",
+            reportFiles: 'playwright-odhin.html',
+            reportName: 'Accessibility Tests (Odhin)'
+          ])
+          junit(testResults: "${reportDir}/playwright-junit.xml", allowEmptyResults: true)
+          archiveArtifacts allowEmptyArchive: true, artifacts: "${reportDir}/**"
         }
       }
       stage('Generate coverage & endpoint reports') {

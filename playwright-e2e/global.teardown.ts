@@ -15,8 +15,8 @@ import { test as teardown } from "@playwright/test";
  * @see https://playwright.dev/docs/test-global-setup-teardown
  */
 
-teardown("teardown case data", async ({}) => {
-  // TODO: Implement teardown logic
+teardown("teardown case data", async () => {
+  // Implementation needed: add teardown logic here
   // Example:
   // const apiClient = new ApiClient({ baseUrl: process.env.CCD_API_URL });
   // await apiClient.delete("/cases/test-data");

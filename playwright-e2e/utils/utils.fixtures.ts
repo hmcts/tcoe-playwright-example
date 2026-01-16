@@ -168,6 +168,7 @@ export const utilsFixtures = {
    * Test-scoped: creates a new logger for each test with test metadata.
    */
    
+   
   logger: async ({}, use, testInfo) => {
     const logger = createLogger({
       serviceName: "tcoe-playwright-example",
@@ -195,6 +196,7 @@ export const utilsFixtures = {
    * @see {@link shouldAttachApiLogs} for attachment logic
    * @see {@link shouldIncludeRawBodies} for security controls
    */
+   
    
   apiRecorder: async ({}, use, testInfo) => {
     const includeRawBodies = shouldIncludeRawBodies(process.env);
@@ -226,6 +228,7 @@ export const utilsFixtures = {
    * Test-scoped: provides fresh header builder for each test.
    */
    
+   
   xsrfHeaders: async ({}, use) => {
     await use(buildXsrfHeaders);
   },
@@ -249,21 +252,26 @@ export const utilsFixtures = {
     await Promise.all(clients.map((client) => client.dispose()));
   },
    
+   
   config: async ({}, use) => {
     await use(config);
   },
+   
    
   cookieUtils: async ({}, use) => {
     await use(new CookieUtils());
   },
    
+   
   waitUtils: async ({}, use) => {
     await use(new WaitUtils());
   },
    
+   
   tableUtils: async ({}, use) => {
     await use(new TableUtils());
   },
+   
    
   validatorUtils: async ({}, use) => {
     await use(new ValidatorUtils());
@@ -276,6 +284,7 @@ export const utilsFixtures = {
     await use(axeUtils);
     await axeUtils.generateReport(testInfo);
   },
+   
    
   SessionUtils: async ({}, use) => {
     await use(SessionUtils);
@@ -353,6 +362,7 @@ export const utilsWorkerFixtures = {
    * Fails fast if manifest is missing or invalid.
    */
   seedManifest: [
+     
      
     async ({}, use: (manifest: SeedManifest) => Promise<void>) => {
       const manifest = loadSeedManifest();

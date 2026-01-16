@@ -18,6 +18,7 @@ test.describe("EXUI Case List UI Performance Tests - Casemanager @exui @performa
     await exuiCaseListPage.exuiHeader.checkIsVisible();
     await lighthouseUtils.audit();
   });
+
   test("Example performance test no.2", async ({
     lighthouseUtils,
     exuiCaseListPage,

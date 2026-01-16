@@ -22,6 +22,7 @@ export const test = baseTest.extend<CustomFixtures, CustomWorkerFixtures>({
   // Worker scoped fixtures need to be defined separately
   lighthousePort: [
      
+     
     async ({}, use) => {
       const port = await getPort();
       await use(port);

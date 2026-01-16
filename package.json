@@ -50,7 +50,8 @@
     "test:unit": "vitest run",
     "test:api": "yarn playwright test --project=api",
     "report:coverage": "node ./scripts/coverage-summary.mjs",
-    "report:api-endpoints": "node ./scripts/api-endpoints-report.mjs"
+    "report:api-endpoints": "node ./scripts/api-endpoints-report.mjs",
+    "copy-odhin-report": "node ./scripts/copy-odhin-report.mjs"
   },
   "packageManager": "yarn@4.9.4",
   "dependencies": {
