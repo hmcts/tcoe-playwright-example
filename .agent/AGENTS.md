@@ -93,7 +93,6 @@ This handbook defines His Majesty’s Courts and Tribunals Service (HMCTS) stand
 - Use only HMCTS-approved tools, tenants, and model endpoints.
 - Apply structured prompt templates; log prompt IDs and scenarios.
 - Annotate AI-generated code and include reviewer sign-off in pull requests.
-- Write tests that communicate behavior clearly; name things precisely and keep assertions visible.
 - Run `yarn lint`, `yarn test:*`, and capture Playwright reports (HTML, Odhín, JUnit) for evidence.
 - Complete HMCTS AI Safety & Prompt Engineering training modules annually.
 

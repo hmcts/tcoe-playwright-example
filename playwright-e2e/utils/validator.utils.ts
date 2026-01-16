@@ -8,8 +8,9 @@ export class ValidatorUtils {
    *
    */
   public validateCaseNumber(caseNumber: string) {
-    // TODO: There may be a specification around case numbers somewhere?
-    // For now, this just validates it's only digits
+    // HMCTS case numbers are typically 16 digits (e.g., 1234567812345678).
+    // CCD generates these as sequential IDs. Current validation accepts any digit-only string;
+    // if stricter formatting is required (e.g., exact length, prefix rules), update this regex.
     expect(caseNumber).toMatch(/^\d+$/);
   }
 
@@ -51,6 +52,6 @@ export class ValidatorUtils {
     const dateRegex =
       /^\d{1,2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4}$/;
     expect(date).toMatch(dateRegex);
-    expect(Date.parse(date)).not.toBe(NaN);
+    expect(Date.parse(date)).not.toBe(Number.NaN);
   }
 }

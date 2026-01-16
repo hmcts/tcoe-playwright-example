@@ -47,12 +47,6 @@ test.describe("Caseworker divorce user provisioning @caseworker @api", () => {
 
       const password = resolveCaseworkerPassword();
 
-      console.log(
-        `[CASEWORKER_DIVORCE_USER] email=${user.email} password=${password} roles=${user.roleNames.join(
-          ","
-        )}`
-      );
-
       await testInfo.attach("caseworker-divorce-user", {
         body: JSON.stringify(
           { email: user.email, password, roles: user.roleNames },

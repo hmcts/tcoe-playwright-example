@@ -1,12 +1,14 @@
-import http from "http";
-import type { AddressInfo } from "net";
+import http from "node:http";
+import type { AddressInfo } from "node:net";
+import { buildApiAttachment } from "@hmcts/playwright-common";
 import { expect, test } from "../../fixtures";
+import { shouldIncludeRawBodies } from "../../utils/api-telemetry";
 
-test.describe("Token exchange API @api", () => {
-  test("returns masked access token and captures telemetry", async ({
+test.describe("Token exchange API @api @security", () => {
+  test("returns 200 with masked access token when valid credentials provided", async ({
     createApiClient,
     apiRecorder,
-  }) => {
+  }, testInfo) => {
     const server = http.createServer((req, res) => {
       if (req.method === "POST") {
         let body = "";
@@ -34,6 +36,7 @@ test.describe("Token exchange API @api", () => {
     });
 
     try {
+      const includeRawBodies = shouldIncludeRawBodies(process.env);
       const response = await client.post<{ access_token: string }>(
         "/oauth/token",
         {
@@ -54,6 +57,21 @@ test.describe("Token exchange API @api", () => {
 
       expect(recordedCall.request.data.clientSecret).toBe("[REDACTED]");
       expect(recordedCall.response.body.access_token).toBe("[REDACTED]");
+
+      const attachment = buildApiAttachment(response.logEntry, {
+        includeRaw: includeRawBodies,
+      });
+      await testInfo.attach(attachment.name, {
+        body: attachment.body,
+        contentType: attachment.contentType,
+      });
+
+      const attachmentJson = JSON.parse(attachment.body) as Record<
+        string,
+        unknown
+      >;
+
+      expect(!!attachmentJson.rawResponse).toBe(includeRawBodies);
     } finally {
       await client.dispose();
       await new Promise((resolve) => server.close(resolve));

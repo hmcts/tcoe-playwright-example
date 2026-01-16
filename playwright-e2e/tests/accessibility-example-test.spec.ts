@@ -9,6 +9,7 @@ test.describe("Accessibility Tests - Citizen @cui", () => {
       password: user.password,
     });
   });
+
   test("Accessibility example using custom fixture @a11y", async ({
     cuiCaseListPage,
     axeUtils,

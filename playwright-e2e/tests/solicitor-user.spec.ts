@@ -40,19 +40,33 @@ test.describe("Solicitor user provisioning @solicitor @api", () => {
     expect(user.roleNames).toEqual(
       expect.arrayContaining([...SOLICITOR_ROLE_NAMES])
     );
+    expect(user.id).toBeTruthy();
+    const userId = user.id as string;
 
-    const fetched = await idamUtils.getUserInfo({
+    const initial = await idamUtils.getUserInfo({
       bearerToken,
       email: user.email,
     });
 
     const password = resolveSolicitorPassword();
+    const updatedSurname = `${user.surname}-updated`;
 
-    console.log(
-      `[SOLICITOR_USER] email=${user.email} password=${password} roles=${user.roleNames.join(
-        ","
-      )}`
-    );
+    const updated = await idamUtils.updateUser({
+      bearerToken,
+      id: userId,
+      password,
+      user: {
+        email: user.email,
+        forename: user.forename,
+        surname: updatedSurname,
+        roleNames: user.roleNames,
+      },
+    });
+
+    const refreshed = await idamUtils.getUserInfo({
+      bearerToken,
+      id: userId,
+    });
 
     await testInfo.attach("solicitor-user", {
       body: JSON.stringify(
@@ -63,9 +77,61 @@ test.describe("Solicitor user provisioning @solicitor @api", () => {
       contentType: "application/json",
     });
 
-    expect(fetched.email).toBe(user.email);
-    expect(fetched.roleNames).toEqual(
+    expect(initial.email).toBe(user.email);
+    expect(initial.roleNames).toEqual(
       expect.arrayContaining([...SOLICITOR_ROLE_NAMES])
     );
+    expect(updated.surname).toBe(updatedSurname);
+    expect(refreshed.surname).toBe(updatedSurname);
+  });
+
+  test("verifies password change by authenticating with new credentials", async ({
+    professionalUserUtils,
+    idamUtils,
+  }, testInfo) => {
+    const bearerToken = await resolveBearerToken(idamUtils);
+    const clientId = requireEnvVar("CLIENT_ID");
+    const clientSecret = requireEnvVar("IDAM_SECRET");
+
+    const user = await professionalUserUtils.createSolicitorUser({
+      bearerToken,
+    });
+
+    const userId = user.id as string;
+    const newPassword = resolveSolicitorPassword();
+
+    await idamUtils.updateUser({
+      bearerToken,
+      id: userId,
+      password: newPassword,
+      user: {
+        email: user.email,
+        forename: user.forename,
+        surname: user.surname,
+        roleNames: user.roleNames,
+      },
+    });
+
+    // Verify the password works by authenticating
+    const loginToken = await idamUtils.generateIdamToken({
+      grantType: "password",
+      clientId,
+      clientSecret,
+      username: user.email,
+      password: newPassword,
+      scope: "openid profile roles",
+    });
+
+    expect(loginToken).toBeTruthy();
+    expect(loginToken).toMatch(/^[A-Za-z0-9._-]+$/);
+
+    await testInfo.attach("password-verification", {
+      body: JSON.stringify(
+        { email: user.email, passwordVerified: true },
+        null,
+        2
+      ),
+      contentType: "application/json",
+    });
   });
 });

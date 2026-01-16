@@ -6,10 +6,10 @@
   },
   "type": "module",
   "devDependencies": {
-    "@axe-core/playwright": "^4.10.0",
+    "@axe-core/playwright": "^4.11.0",
     "@eslint/js": "^9.11.1",
-    "@hmcts/playwright-common": "^1.0.39",
-    "@playwright/test": "^1.56.1",
+    "@hmcts/playwright-common": "^1.1.0",
+    "@playwright/test": "^1.57.0",
     "@types/node": "^22.15.34",
     "@typescript-eslint/eslint-plugin": "^8.8.0",
     "@typescript-eslint/parser": "^8.8.0",
@@ -22,13 +22,14 @@
     "globals": "^16.0.0",
     "lighthouse": "^12.2.1",
     "odhin-reports-playwright": "1.1.8",
-    "playwright": "^1.56.1",
-    "playwright-core": "^1.56.1",
+    "playwright": "^1.57.0",
+    "playwright-core": "^1.57.0",
     "playwright-lighthouse": "^4.0.0",
     "postcss": "^8.4.49",
     "typescript": "^5.6.2",
     "typescript-eslint": "^8.8.0",
-    "vitest": "^1.6.1"
+    "vitest": "^1.6.1",
+    "winston": "^3.13.0"
   },
   "scripts": {
     "playwright": "node ./scripts/cleanup-playwright.mjs && cross-env NODE_OPTIONS= playwright",
@@ -47,7 +48,10 @@
     "test:visual": "yarn playwright test tests/ --grep @visual --project=chromium",
     "test:update-snapshots": "yarn playwright test tests/ --grep @visual --project=chromium --update-snapshots",
     "test:unit": "vitest run",
-    "test:api": "yarn playwright test --project=api"
+    "test:api": "yarn playwright test --project=api",
+    "report:coverage": "node ./scripts/coverage-summary.mjs",
+    "report:api-endpoints": "node ./scripts/api-endpoints-report.mjs",
+    "copy-odhin-report": "node ./scripts/copy-odhin-report.mjs"
   },
   "packageManager": "yarn@4.9.4",
   "dependencies": {
