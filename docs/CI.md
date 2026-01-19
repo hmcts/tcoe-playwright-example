@@ -80,6 +80,11 @@ This may need to be modified depending on where you store your reports, it must 
 - To publish the **Playwright HTML** bundle, keep the defaults above (`playwright-report/index.html`).
 - For the **Odhín** dashboard use `reportDir: "test-results/odhin-report"` and `reportFiles: "playwright-odhin.html"`.
 - If your pipeline consumes **JUnit XML**, call Jenkins’ `junit` step and point it at the file generated via `PLAYWRIGHT_JUNIT_OUTPUT`.
+- To surface coverage + endpoints (from `yarn report:coverage` / `yarn report:api-endpoints`), archive:
+  - `coverage/coverage-summary.txt`
+  - `coverage/coverage-summary-rows.json` (if you emit rows)
+  - `coverage/api-endpoints.json`
+  These gives a quick “what we covered / which APIs we hit” snapshot without opening the full Playwright report.
 
 ## Why is withNightlyPipeline used in the Jenkinsfile_CNP?
 

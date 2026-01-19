@@ -1,4 +1,4 @@
-import type { Locator } from "@playwright/test";
+import type { Locator, TestInfo } from "@playwright/test";
 import { expect, test } from "../fixtures";
 import { config } from "../utils";
 import type { ExuiCaseDetailsPage } from "../page-objects/pages/exui/exui-case-details.po";
@@ -11,14 +11,17 @@ type CaseSelectionContext = {
   caseName: string;
   caseListPage: ExuiCaseListPage;
   caseDetailsPage: ExuiCaseDetailsPage;
+  testInfo: TestInfo;
 };
 
 type CaseSelectionAttemptContext = {
   index: number;
+  caseName: string;
   caseNameLower: string;
   caseListComponent: ExuiCaseListPage["exuiCaseListComponent"];
   caseDetailsComponent: ExuiCaseDetailsPage["exuiCaseDetailsComponent"];
   caseListHeader: ExuiCaseListPage["exuiHeader"];
+  testInfo: TestInfo;
 };
 
 const normalise = (value: string) => value.toLowerCase();
@@ -33,10 +36,12 @@ const waitForVisibleHeader = async (header: Locator) => {
 
 const attemptCaseSelection = async ({
   index,
+  caseName,
   caseNameLower,
   caseListComponent,
   caseDetailsComponent,
   caseListHeader,
+  testInfo,
 }: CaseSelectionAttemptContext): Promise<boolean> => {
   let navigationAttempted = false;
   let selectionSucceeded = false;
@@ -57,15 +62,27 @@ const attemptCaseSelection = async ({
       headerText?.toLowerCase().includes(caseNameLower) ?? false;
 
     if (!selectionSucceeded) {
-      console.warn(
-        `Case selection attempt ${index + 1} produced an unexpected header: ${headerText}`
-      );
+      await testInfo.attach(`selection-attempt-${index + 1}`, {
+        body: JSON.stringify({
+          attempt: index + 1,
+          expectedCaseName: caseName,
+          actualHeader: headerText,
+          reason: "Header mismatch",
+        }),
+        contentType: "application/json",
+      });
     }
 
     return selectionSucceeded;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.warn(`Case selection attempt ${index + 1} failed: ${message}`);
+    await testInfo.attach(`selection-error-${index + 1}`, {
+      body: JSON.stringify({
+        attempt: index + 1,
+        error: message,
+      }),
+      contentType: "application/json",
+    });
     return false;
   } finally {
     if (!selectionSucceeded && navigationAttempted) {
@@ -79,6 +96,7 @@ const selectCaseByName = async ({
   caseName,
   caseListPage,
   caseDetailsPage,
+  testInfo,
 }: CaseSelectionContext): Promise<void> => {
   const { exuiCaseListComponent, exuiHeader } = caseListPage;
   const { exuiCaseDetailsComponent } = caseDetailsPage;
@@ -99,10 +117,12 @@ const selectCaseByName = async ({
 
     const selectionSucceeded = await attemptCaseSelection({
       index,
+      caseName,
       caseNameLower,
       caseListComponent: exuiCaseListComponent,
       caseDetailsComponent: exuiCaseDetailsComponent,
       caseListHeader: exuiHeader,
+      testInfo,
     });
 
     if (selectionSucceeded) {
@@ -133,12 +153,13 @@ test.describe("Case List Tests - Professional @exui", () => {
   test("Search & select a case", async ({
     exuiCaseListPage,
     exuiCaseDetailsPage,
-  }) => {
+  }, testInfo) => {
     const caseName = "test";
     await selectCaseByName({
       caseName,
       caseListPage: exuiCaseListPage,
       caseDetailsPage: exuiCaseDetailsPage,
+      testInfo,
     });
 
     await expect(

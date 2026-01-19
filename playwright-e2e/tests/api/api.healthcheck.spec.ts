@@ -1,31 +1,25 @@
-import http from "http";
-import type { AddressInfo } from "net";
-import type { ApiClient } from "@hmcts/playwright-common";
+import http from "node:http";
+import type { AddressInfo } from "node:net";
+import {
+  isRetryableError,
+  type ApiClient,
+  withRetry,
+} from "@hmcts/playwright-common";
 import { expect, test } from "../../fixtures";
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-async function waitForReadiness(
-  client: ApiClient,
-  maxAttempts = 5,
-  waitMs = 50
-) {
-  let response = await client.get<{ status: string }>("/", {
-    throwOnError: false,
-  });
-
-  for (let attempt = 1; attempt < maxAttempts && response.status !== 200; attempt++) {
-    await delay(waitMs);
-    response = await client.get<{ status: string }>("/", {
-      throwOnError: false,
-    });
-  }
-
-  return response;
+async function waitForReadiness(client: ApiClient) {
+  return withRetry(
+    () => client.get<{ status: string }>("/", { throwOnError: true }),
+    5,
+    50,
+    250,
+    5000,
+    isRetryableError
+  );
 }
 
-test.describe("API health check @api", () => {
-  test("polls readiness endpoint with retries", async ({
+test.describe("API health check @api @smoke", () => {
+  test("returns 200 from readiness endpoint after retrying 503 failures", async ({
     createApiClient,
     apiRecorder,
   }) => {

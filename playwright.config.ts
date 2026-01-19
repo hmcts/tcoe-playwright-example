@@ -71,6 +71,11 @@ const resolveReporters = (): ReporterDescription[] => {
 
   const reporterNames =
     configured?.length ? configured : resolveDefaultReporterNames();
+  const normalizedNames = new Set(reporterNames.map((name) => name.toLowerCase()));
+  const shouldEmitHtmlLinks = normalizedNames.has("html");
+  const shouldEmitOdhinLinks =
+    normalizedNames.has("odhin") ||
+    normalizedNames.has("odhin-reports-playwright");
   const reporters: ReporterDescription[] = [];
 
   for (const name of reporterNames) {
@@ -142,6 +147,20 @@ const resolveReporters = (): ReporterDescription[] => {
         reporters.push([name]);
         break;
     }
+  }
+
+  if (shouldEmitHtmlLinks || shouldEmitOdhinLinks) {
+    reporters.push([
+      "./scripts/report-links-reporter.mjs",
+      {
+        emitHtml: shouldEmitHtmlLinks,
+        emitOdhin: shouldEmitOdhinLinks,
+        htmlOutput: process.env.PLAYWRIGHT_HTML_OUTPUT ?? "playwright-report",
+        htmlIndex: "index.html",
+        odhinOutput: process.env.PW_ODHIN_OUTPUT ?? "test-results/odhin-report",
+        odhinIndex: process.env.PW_ODHIN_INDEX ?? "playwright-odhin.html",
+      },
+    ]);
   }
 
   return reporters;

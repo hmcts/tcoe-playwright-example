@@ -12,6 +12,23 @@ This repository serves as a template for UI test automation using [Playwright](h
 - **CI/CD ready**: Sample Jenkinsfile included for integrating with your CI pipeline.
 - **Test tagging**: Use tags like `@a11y` for accessibility, `@smoke` for smoke tests, and more.
 - **Structured logging**: Shared Winston logger + API client factory automatically attach sanitised call details to Playwright reports.
+- **Coverage + endpoint insights**: Sample scripts to emit c8 summaries and API endpoint coverage from your Playwright specs.
+  - See `docs/coverage-and-endpoints.md` for the readable rundown.
+  - See `docs/api-client.md` for using the shared ApiClient (timeouts, retries, attachments, redaction).
+- **Circuit breaker resilience**: Demo of protecting flaky services using the `CircuitBreaker` pattern (see [`circuit-breaker.spec.ts`](./playwright-e2e/tests/api/circuit-breaker.spec.ts)).
+  
+  The circuit breaker prevents cascading failures by monitoring service health and blocking requests during outages:
+  
+  ```
+  CLOSED ──[5 failures]──> OPEN ──[cooldown]──> HALF-OPEN
+    ↑                                              │
+    └──────────[success]──────────────────────────┘
+            [failure]──> OPEN
+  ```
+  
+  - **CLOSED**: Normal operation, all requests proceed
+  - **OPEN**: Service degraded, requests fast-fail without hitting backend
+  - **HALF-OPEN**: Testing recovery with limited trial requests
 
 ## Project Structure
 
@@ -33,6 +50,19 @@ TCoE Best Practices for setting up playwright in your service can be found in th
 ## Contributing
 
 We all share the responsibility of ensuring this repo is up to date and accurate in terms of best practice. If you would like to contribute you can raise a github issue with the improvement you are suggesting or raise a PR yourself. See the [contribution guide](https://github.com/hmcts/tcoe-playwright-example/blob/master/CONTRIBUTING.md) for more info.
+
+## AI-assisted test generation (safe workflow)
+
+Follow the HMCTS playbook in `agents.md`: use approved tools/tenants, scrub prompts, and require peer review for every AI-assisted change. Label PRs or commit messages to indicate AI assistance.
+
+Starter prompt example:
+
+```text
+Generate a Playwright API test for <endpoint> that:
+- uses the shared fixtures from playwright-e2e/fixtures.ts
+- asserts status and error body shape for 200/400/401
+- avoids logging secrets and uses buildApiAttachment for artifacts
+```
 
 ## Getting Started
 
@@ -69,6 +99,24 @@ Run unit tests that cover shared utilities:
 yarn test:unit
 ```
 
+Generate a coverage summary (expects c8 `coverage-summary.json`):
+
+```bash
+yarn report:coverage
+# optional overrides:
+#   COVERAGE_SUMMARY=./path/to/coverage-summary.json
+#   COVERAGE_SUMMARY_TXT=./path/to/output.txt
+```
+
+List API endpoints exercised by your Playwright API specs:
+
+```bash
+yarn report:api-endpoints
+# optional overrides:
+#   API_TEST_ROOT=./playwright-e2e/tests/api
+#   API_ENDPOINTS_REPORT=./coverage/api-endpoints.json
+```
+
 To run a specific test file:
 
 ```bash
@@ -88,8 +136,14 @@ yarn playwright test --project=webkit
 You can use tags to group tests, for example:
 
 ```bash
-yarn playwright test --grep @smoke
+npx playwright test -g "@smoke"
+yarn playwright test --grep @security
 ```
+
+Common subsets in this template:
+- `@smoke` for quick readiness checks
+- `@security` for auth/redaction/error-contract coverage
+- `@refdata` for manifest-driven or read-only sweeps
 
 ### Debugging Tests
 
@@ -153,11 +207,29 @@ Setting `PLAYWRIGHT_DEBUG_API=1` includes raw API payloads in test attachments. 
   - `PLAYWRIGHT_HTML_OUTPUT` (`playwright-report`) – output directory.
   - `PLAYWRIGHT_HTML_OPEN` (`never`) – one of `never`, `on-failure`, `always`.
 - The report is written to `playwright-report/index.html`; open it in a browser after each run or let Playwright auto-open it when `PLAYWRIGHT_HTML_OPEN=always`.
+- When HTML or Odhín reporters are enabled, the run output includes report links:
+  - `[REPORT] HTML report: <path>`
+  - `[REPORT] Odhín report: <path>`
 
 #### JUnit XML (for CI integrations)
 
 - Enable with `PLAYWRIGHT_REPORTERS=junit` or add it alongside others: `PLAYWRIGHT_REPORTERS=list,junit`.  
 - Configure output path using `PLAYWRIGHT_JUNIT_OUTPUT` (defaults to `playwright-junit.xml`) then publish the XML to your CI system’s test results view.
+
+#### Optional Allure (local or CI)
+
+Install and add the reporter if you want Allure results:
+
+```bash
+yarn add -D allure-playwright
+```
+
+```ts
+reporter: [
+  ["list"],
+  ["allure-playwright", { outputFolder: "allure-results" }],
+]
+```
 
 #### Odhín rich HTML report
 
@@ -264,6 +336,17 @@ test.describe("@api smoke checks", () => {
 ```
 
 After the test finishes you will see an `api-calls.json` attachment in the Playwright HTML report. Sensitive headers/body fields (`token`, `secret`, `password`, etc.) are automatically masked. Flip `PLAYWRIGHT_DEBUG_API=1` if you need the raw payload locally.
+
+For IDAM examples (create, fetch, and update users), see `playwright-e2e/tests/solicitor-user.spec.ts`.
+
+#### Seed manifest (fail-fast test data)
+
+API demo specs can load deterministic IDs from a manifest file and fail fast if the manifest is missing or invalid. The example fixture reads:
+
+- Default manifest: `playwright-e2e/data/seed-manifest.json`
+- Override path: `SEED_MANIFEST_PATH=/path/to/seed-manifest.json`
+
+See `playwright-e2e/tests/api/seed-manifest.spec.ts` for usage. If the manifest is missing, the run fails immediately with a clear message pointing to the sample file.
 
 #### Cleaning duplicate Playwright installations
 

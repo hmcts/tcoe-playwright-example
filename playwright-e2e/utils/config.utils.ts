@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { ConfigUtils } from "@hmcts/playwright-common";
 
 // This needs to be placed somewhere before attempting to access any environment variables
 dotenv.config({ quiet: true });
@@ -87,8 +88,8 @@ function getEnvVar(name: string, fallback = ""): string {
 }
 
 export function requireEnvVar(name: string): string {
-  const value = process.env[name];
-  if (!value || !value.trim()) {
+  const value = ConfigUtils.getEnvVar(name);
+  if (!value.trim()) {
     throw new Error(
       `Missing required environment variable: ${name}. Ensure it is set before running the test suite.`
     );

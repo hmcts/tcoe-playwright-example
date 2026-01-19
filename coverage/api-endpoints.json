@@ -1,0 +1,41 @@
+{
+  "totalHits": 13,
+  "endpoints": [
+    {
+      "endpoint": "/",
+      "hits": 1
+    },
+    {
+      "endpoint": "/fail",
+      "hits": 1
+    },
+    {
+      "endpoint": "/flaky",
+      "hits": 4
+    },
+    {
+      "endpoint": "/invalid",
+      "hits": 1
+    },
+    {
+      "endpoint": "/oauth/token",
+      "hits": 1
+    },
+    {
+      "endpoint": "/ok",
+      "hits": 1
+    },
+    {
+      "endpoint": "/rate-limit",
+      "hits": 2
+    },
+    {
+      "endpoint": "/secure",
+      "hits": 1
+    },
+    {
+      "endpoint": "/xsrf",
+      "hits": 1
+    }
+  ]
+}

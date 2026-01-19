@@ -3,6 +3,30 @@ import { expect } from "@playwright/test";
 import { test } from "../fixtures";
 import { config } from "../utils";
 
+// Test data constants
+const CASE_NUMBER_LENGTH = 5;
+const MAX_RANDOM_DIGIT = 10;
+const MEDIA_VIEWER_MAX_DIFF_RATIO = 0.04;
+
+const runMediaViewerVisualTest = async (
+  mediaViewerPage: ExuiMediaViewerPage
+) => {
+  await mediaViewerPage.waitForLoad();
+  const totalPages = await mediaViewerPage.getNumberOfPages();
+  const screenshotOptions = {
+    clip: mediaViewerPage.clippingCoords.fullPage,
+    mask: [mediaViewerPage.toolbar.container],
+    maxDiffPixelRatio: MEDIA_VIEWER_MAX_DIFF_RATIO,
+  };
+
+  for (let pageIndex = 0; pageIndex + 1 < totalPages; pageIndex++) {
+    await expect(mediaViewerPage.page).toHaveScreenshot(screenshotOptions);
+    await mediaViewerPage.toolbar.pageDownBtn.click();
+  }
+
+  await expect(mediaViewerPage.page).toHaveScreenshot(screenshotOptions);
+};
+
 /*
   To update screenshots for these tests, run the below in order from root:
   - npm run build-container && npm run start-container
@@ -28,8 +52,8 @@ test.describe("Visual Tests (citizen user) @visual", () => {
 
   test("Visual test using a mask", async ({ activateCasePinPage }) => {
     // Insert some dynamic data to the input field
-    const randomNumbers = Array.from({ length: 5 }, () =>
-      Math.floor(Math.random() * 10)
+    const randomNumbers = Array.from({ length: CASE_NUMBER_LENGTH }, () =>
+      Math.floor(Math.random() * MAX_RANDOM_DIGIT)
     ).join("");
     await activateCasePinPage.caseNumber.fill(randomNumbers);
 
@@ -77,6 +101,6 @@ test.describe("Visual Tests (case manager) @visual", () => {
       .click();
 
     const mediaViewerPage = new ExuiMediaViewerPage(await newPage);
-    await mediaViewerPage.runVisualTestOnAllPages();
+    await runMediaViewerVisualTest(mediaViewerPage);
   });
 });
