@@ -53,7 +53,7 @@
     "report:api-endpoints": "node ./scripts/api-endpoints-report.mjs",
     "copy-odhin-report": "node ./scripts/copy-odhin-report.mjs"
   },
-  "packageManager": "yarn@4.9.4",
+  "packageManager": "yarn@4.12.0",
   "dependencies": {
     "uuid": "^11.1.0"
   }
