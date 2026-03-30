@@ -4,10 +4,13 @@
   "engines": {
     "node": ">=20.11.1"
   },
+  "resolutions": {
+    "ajv": "^8.0.0"
+  },
   "type": "module",
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
-    "@eslint/js": "^9.11.1",
+    "@eslint/js": "^10.1.0",
     "@hmcts/playwright-common": "^1.1.0",
     "@playwright/test": "^1.57.0",
     "@types/node": "^22.15.34",
