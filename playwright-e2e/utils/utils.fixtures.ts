@@ -60,7 +60,7 @@ function attachApiLogsToReport(
     limitBytes: attachmentLimit,
     summaryLimit: resolveApiSummaryLimit(process.env),
   });
-  
+
   void testInfo.attach("api-calls.json", {
     body: attachment.payload,
     contentType: "application/json",
@@ -84,7 +84,7 @@ function attachApiLogsToReport(
       } were truncated to respect PW_ODHIN_API_MAX_FIELD_CHARS.`
     );
   }
-  
+
   for (const note of annotations) {
     testInfo.annotations.push({
       type: "info",
@@ -167,7 +167,7 @@ export const utilsFixtures = {
    * Winston logger instance configured for test execution.
    * Test-scoped: creates a new logger for each test with test metadata.
    */
-   
+
   logger: async ({}, use, testInfo) => {
     const logger = createLogger({
       serviceName: "tcoe-playwright-example",
@@ -180,7 +180,7 @@ export const utilsFixtures = {
   /**
    * Records API calls for attachment to Playwright reports.
    * Test-scoped: captures all API calls during test execution.
-   * 
+   *
    * @remarks
    * Behaviour controlled by environment variables:
    * - `PLAYWRIGHT_ATTACH_API_LOGS`: attach logs to test report (default: failed tests only)
@@ -190,12 +190,12 @@ export const utilsFixtures = {
    * - `PLAYWRIGHT_DEBUG_API`: include raw request/response bodies (default: false, use only for local debugging)
    * - `PW_ODHIN_API_SUMMARY_LINES`: max lines in stdout summary mode (default: 50)
    * - `PW_ODHIN_API_STDOUT_KB`: max KB for stdout full mode (default: 100)
-   * 
+   *
    * @see {@link resolveApiMaxLogs} for defaults
    * @see {@link shouldAttachApiLogs} for attachment logic
    * @see {@link shouldIncludeRawBodies} for security controls
    */
-   
+
   apiRecorder: async ({}, use, testInfo) => {
     const includeRawBodies = shouldIncludeRawBodies(process.env);
     const recorder = new ApiRecorder(includeRawBodies, {
@@ -203,14 +203,14 @@ export const utilsFixtures = {
       maxFieldChars: resolveApiMaxFieldChars(process.env),
     });
     await use(recorder);
-    
+
     if (!recorder.hasEntries()) {
       return;
     }
 
     const attachLogs =
       shouldAttachApiLogs(process.env) && testInfo.status === "failed";
-    
+
     if (attachLogs) {
       attachApiLogsToReport(recorder, testInfo, includeRawBodies);
     }
@@ -225,7 +225,7 @@ export const utilsFixtures = {
    * Builder function for XSRF headers from session files.
    * Test-scoped: provides fresh header builder for each test.
    */
-   
+
   xsrfHeaders: async ({}, use) => {
     await use(buildXsrfHeaders);
   },
@@ -248,23 +248,23 @@ export const utilsFixtures = {
 
     await Promise.all(clients.map((client) => client.dispose()));
   },
-   
+
   config: async ({}, use) => {
     await use(config);
   },
-   
+
   cookieUtils: async ({}, use) => {
     await use(new CookieUtils());
   },
-   
+
   waitUtils: async ({}, use) => {
     await use(new WaitUtils());
   },
-   
+
   tableUtils: async ({}, use) => {
     await use(new TableUtils());
   },
-   
+
   validatorUtils: async ({}, use) => {
     await use(new ValidatorUtils());
   },
@@ -276,7 +276,7 @@ export const utilsFixtures = {
     await use(axeUtils);
     await axeUtils.generateReport(testInfo);
   },
-   
+
   SessionUtils: async ({}, use) => {
     await use(SessionUtils);
   },
@@ -353,7 +353,7 @@ export const utilsWorkerFixtures = {
    * Fails fast if manifest is missing or invalid.
    */
   seedManifest: [
-     
+
     async ({}, use: (manifest: SeedManifest) => Promise<void>) => {
       const manifest = loadSeedManifest();
       await use(manifest);

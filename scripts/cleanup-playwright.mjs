@@ -72,7 +72,7 @@ function isAlreadyLinked(nested, topLevel) {
 
   const resolvedNested = safeRealpath(nested);
   const resolvedTopLevel = safeRealpath(topLevel);
-  
+
   return resolvedNested && resolvedTopLevel && resolvedNested === resolvedTopLevel;
 }
 

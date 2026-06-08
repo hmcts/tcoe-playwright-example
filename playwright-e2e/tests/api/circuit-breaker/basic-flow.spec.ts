@@ -1,8 +1,8 @@
 /**
  * Circuit Breaker Pattern - Basic Flow Tests
- * 
+ *
  * Tests the complete circuit breaker lifecycle: closed → open → half-open → closed.
- * 
+ *
  * **State Machine:**
  * ```
  * CLOSED ──[threshold failures]──> OPEN ──[cooldown expires]──> HALF-OPEN
@@ -10,12 +10,12 @@
  *   └────────────────[success in half-open]────────────────────────┘
  *                    [failure in half-open]──> OPEN
  * ```
- * 
+ *
  * **States:**
  * - CLOSED: Normal operation, requests proceed
  * - OPEN: Circuit broken, requests blocked (fast-fail)
  * - HALF-OPEN: Testing recovery with limited trial requests
- * 
+ *
  * @see {@link https://martinfowler.com/bliki/CircuitBreaker.html}
  */
 
@@ -39,7 +39,7 @@ const captureApiClientError = async (
 test.describe("Circuit breaker - basic flow @api", () => {
   /**
    * Tests the complete circuit breaker lifecycle: closed → open → half-open → closed.
-   * 
+   *
    * Verifies that:
    * 1. Circuit remains closed during initial failures (up to threshold)
    * 2. Circuit opens after threshold failures, blocking subsequent requests
