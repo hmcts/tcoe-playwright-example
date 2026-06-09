@@ -1,9 +1,9 @@
 import { test as baseTest } from "@playwright/test";
 import getPort from "get-port";
 import { PageFixtures, pageFixtures } from "./page-objects/pages";
-import { 
-  type UtilsFixtures, 
-  type UtilsWorkerFixtures, 
+import {
+  type UtilsFixtures,
+  type UtilsWorkerFixtures,
   utilsFixtures,
   utilsWorkerFixtures,
 } from "./utils";
@@ -21,8 +21,6 @@ export const test = baseTest.extend<CustomFixtures, CustomWorkerFixtures>({
   ...utilsWorkerFixtures,
   // Worker scoped fixtures need to be defined separately
   lighthousePort: [
-     
-     
     async ({}, use) => {
       const port = await getPort();
       await use(port);
@@ -30,6 +28,5 @@ export const test = baseTest.extend<CustomFixtures, CustomWorkerFixtures>({
     { scope: "worker" },
   ],
 });
-
 // If you were extending assertions, you would also import the "expect" property from this file
 export const expect = test.expect;

@@ -1,0 +1,354 @@
+{
+  "linterOptions": {
+    "reportUnusedDisableDirectives": 1
+  },
+  "rules": {
+    "constructor-super": [
+      0
+    ],
+    "getter-return": [
+      0,
+      {
+        "allowImplicit": false
+      }
+    ],
+    "no-class-assign": [
+      0
+    ],
+    "no-const-assign": [
+      0
+    ],
+    "no-dupe-args": [
+      0
+    ],
+    "no-dupe-class-members": [
+      0
+    ],
+    "no-dupe-keys": [
+      0
+    ],
+    "no-func-assign": [
+      0
+    ],
+    "no-import-assign": [
+      0
+    ],
+    "no-new-native-nonconstructor": [
+      0
+    ],
+    "no-new-symbol": [
+      0
+    ],
+    "no-obj-calls": [
+      0
+    ],
+    "no-redeclare": [
+      0,
+      {
+        "builtinGlobals": true
+      }
+    ],
+    "no-setter-return": [
+      0
+    ],
+    "no-this-before-super": [
+      0
+    ],
+    "no-undef": [
+      0,
+      {
+        "typeof": false
+      }
+    ],
+    "no-unreachable": [
+      0
+    ],
+    "no-unsafe-negation": [
+      0,
+      {
+        "enforceForOrderingRelations": false
+      }
+    ],
+    "no-var": [
+      2
+    ],
+    "no-with": [
+      0
+    ],
+    "prefer-const": [
+      2,
+      {
+        "destructuring": "any",
+        "ignoreReadBeforeAssign": false
+      }
+    ],
+    "prefer-rest-params": [
+      2
+    ],
+    "prefer-spread": [
+      2
+    ],
+    "@typescript-eslint/ban-ts-comment": [
+      2
+    ],
+    "no-array-constructor": [
+      0
+    ],
+    "@typescript-eslint/no-array-constructor": [
+      2
+    ],
+    "@typescript-eslint/no-duplicate-enum-values": [
+      2
+    ],
+    "@typescript-eslint/no-empty-object-type": [
+      2
+    ],
+    "@typescript-eslint/no-explicit-any": [
+      2
+    ],
+    "@typescript-eslint/no-extra-non-null-assertion": [
+      2
+    ],
+    "@typescript-eslint/no-misused-new": [
+      2
+    ],
+    "@typescript-eslint/no-namespace": [
+      2
+    ],
+    "@typescript-eslint/no-non-null-asserted-optional-chain": [
+      2
+    ],
+    "@typescript-eslint/no-require-imports": [
+      2
+    ],
+    "@typescript-eslint/no-this-alias": [
+      2
+    ],
+    "@typescript-eslint/no-unnecessary-type-constraint": [
+      2
+    ],
+    "@typescript-eslint/no-unsafe-declaration-merging": [
+      2
+    ],
+    "@typescript-eslint/no-unsafe-function-type": [
+      2
+    ],
+    "no-unused-expressions": [
+      0,
+      {
+        "allowShortCircuit": false,
+        "allowTernary": false,
+        "allowTaggedTemplates": false,
+        "enforceForJSX": false,
+        "ignoreDirectives": false
+      }
+    ],
+    "@typescript-eslint/no-unused-expressions": [
+      2,
+      {
+        "allowShortCircuit": false,
+        "allowTaggedTemplates": false,
+        "allowTernary": false
+      }
+    ],
+    "no-unused-vars": [
+      0
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      2
+    ],
+    "@typescript-eslint/no-wrapper-object-types": [
+      2
+    ],
+    "@typescript-eslint/prefer-as-const": [
+      2
+    ],
+    "@typescript-eslint/prefer-namespace-keyword": [
+      2
+    ],
+    "@typescript-eslint/triple-slash-reference": [
+      2
+    ],
+    "@typescript-eslint/no-floating-promises": [
+      2
+    ],
+    "no-empty-pattern": [
+      0,
+      {
+        "allowObjectPatternsAsParameters": false
+      }
+    ],
+    "playwright/consistent-spacing-between-blocks": [
+      1
+    ],
+    "playwright/expect-expect": [
+      0
+    ],
+    "playwright/max-nested-describe": [
+      1
+    ],
+    "playwright/missing-playwright-await": [
+      2
+    ],
+    "playwright/no-conditional-expect": [
+      1
+    ],
+    "playwright/no-conditional-in-test": [
+      1
+    ],
+    "playwright/no-element-handle": [
+      1
+    ],
+    "playwright/no-eval": [
+      1
+    ],
+    "playwright/no-focused-test": [
+      2
+    ],
+    "playwright/no-force-option": [
+      1
+    ],
+    "playwright/no-nested-step": [
+      1
+    ],
+    "playwright/no-networkidle": [
+      2
+    ],
+    "playwright/no-page-pause": [
+      1
+    ],
+    "playwright/no-skipped-test": [
+      1
+    ],
+    "playwright/no-standalone-expect": [
+      2
+    ],
+    "playwright/no-unsafe-references": [
+      2
+    ],
+    "playwright/no-unused-locators": [
+      2
+    ],
+    "playwright/no-useless-await": [
+      1
+    ],
+    "playwright/no-useless-not": [
+      1
+    ],
+    "playwright/no-wait-for-navigation": [
+      2
+    ],
+    "playwright/no-wait-for-selector": [
+      1
+    ],
+    "playwright/no-wait-for-timeout": [
+      1
+    ],
+    "playwright/prefer-web-first-assertions": [
+      2
+    ],
+    "playwright/valid-describe-callback": [
+      2
+    ],
+    "playwright/valid-expect": [
+      2
+    ],
+    "playwright/valid-expect-in-promise": [
+      2
+    ],
+    "playwright/valid-test-tags": [
+      2
+    ],
+    "playwright/valid-title": [
+      2
+    ]
+  },
+  "plugins": [
+    "@",
+    "@typescript-eslint:@typescript-eslint/eslint-plugin@8.53.0",
+    "playwright"
+  ],
+  "language": "@/js",
+  "languageOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2026,
+    "parser": "typescript-eslint/parser@8.53.0",
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "globals": {
+      "AbortController": false,
+      "AbortSignal": false,
+      "AsyncDisposableStack": false,
+      "atob": false,
+      "Blob": false,
+      "BroadcastChannel": false,
+      "btoa": false,
+      "ByteLengthQueuingStrategy": false,
+      "clearInterval": false,
+      "clearTimeout": false,
+      "CloseEvent": false,
+      "CompressionStream": false,
+      "console": false,
+      "CountQueuingStrategy": false,
+      "crypto": false,
+      "Crypto": false,
+      "CryptoKey": false,
+      "CustomEvent": false,
+      "DecompressionStream": false,
+      "DisposableStack": false,
+      "DOMException": false,
+      "ErrorEvent": false,
+      "Event": false,
+      "EventTarget": false,
+      "fetch": false,
+      "File": false,
+      "FormData": false,
+      "Headers": false,
+      "localStorage": false,
+      "MessageChannel": false,
+      "MessageEvent": false,
+      "MessagePort": false,
+      "navigator": false,
+      "Navigator": false,
+      "performance": false,
+      "Performance": false,
+      "PerformanceEntry": false,
+      "PerformanceMark": false,
+      "PerformanceMeasure": false,
+      "PerformanceObserver": false,
+      "PerformanceObserverEntryList": false,
+      "PerformanceResourceTiming": false,
+      "queueMicrotask": false,
+      "ReadableByteStreamController": false,
+      "ReadableStream": false,
+      "ReadableStreamBYOBReader": false,
+      "ReadableStreamBYOBRequest": false,
+      "ReadableStreamDefaultController": false,
+      "ReadableStreamDefaultReader": false,
+      "Request": false,
+      "Response": false,
+      "sessionStorage": false,
+      "setInterval": false,
+      "setTimeout": false,
+      "Storage": false,
+      "structuredClone": false,
+      "SubtleCrypto": false,
+      "SuppressedError": false,
+      "TextDecoder": false,
+      "TextDecoderStream": false,
+      "TextEncoder": false,
+      "TextEncoderStream": false,
+      "TransformStream": false,
+      "TransformStreamDefaultController": false,
+      "URL": false,
+      "URLPattern": false,
+      "URLSearchParams": false,
+      "WebAssembly": false,
+      "WebSocket": false,
+      "WritableStream": false,
+      "WritableStreamDefaultController": false,
+      "WritableStreamDefaultWriter": false
+    }
+  }
+}

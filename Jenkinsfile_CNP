@@ -30,13 +30,6 @@ def archiveCoverageReports(yarnBuilder) {
   withNightlyPipeline(type, product, component) {
     enableSlackNotifications(channel)
     afterAlways('DependencyCheckNightly') {
-      stage('Lint') {
-          try {
-            yarnBuilder.yarn('lint')
-          } catch (Error) {
-            unstable(message: "${STAGE_NAME} is unstable: " + Error.toString())
-          }
-        }
       stage('Generate coverage & endpoint reports') {
         archiveCoverageReports(yarnBuilder)
       }

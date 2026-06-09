@@ -1,19 +1,28 @@
 import { TableUtils } from "@hmcts/playwright-common";
-import { Page } from "@playwright/test";
+import { Page, Locator } from "@playwright/test";
 import { ValidatorUtils } from "../../../utils";
 
 export class CuiCaseListComponent {
-  readonly caseList = this.page.locator("[data-module='govuk-tabs']");
-  readonly tabList = this.page.getByRole("tablist");
-  readonly draftTab = this.tabList.locator("#tab_draft-cases");
-  readonly draftCases = this.page.locator("#draft-cases");
-  readonly activeTab = this.tabList.locator("#tab_active-cases");
-  readonly activeCases = this.page.locator("#active-cases");
-  readonly closedTab = this.tabList.locator("#tab_closed-cases");
-  readonly closedCases = this.page.locator("#closed-cases");
+  readonly caseList: Locator;
+  readonly tabList: Locator;
+  readonly draftTab: Locator;
+  readonly draftCases: Locator;
+  readonly activeTab: Locator;
+  readonly activeCases: Locator;
+  readonly closedTab: Locator;
+  readonly closedCases: Locator;
   private validator = new ValidatorUtils();
 
-  constructor(private page: Page) {}
+  constructor(private page: Page) {
+    this.caseList = this.page.locator("[data-module='govuk-tabs']");
+    this.tabList = this.page.getByRole("tablist");
+    this.draftTab = this.tabList.locator("#tab_draft-cases");
+    this.draftCases = this.page.locator("#draft-cases");
+    this.activeTab = this.tabList.locator("#tab_active-cases");
+    this.activeCases = this.page.locator("#active-cases");
+    this.closedTab = this.tabList.locator("#tab_closed-cases");
+    this.closedCases = this.page.locator("#closed-cases");
+  }
 
   async getDraftTable() {
     return await new TableUtils().mapCitizenTable(

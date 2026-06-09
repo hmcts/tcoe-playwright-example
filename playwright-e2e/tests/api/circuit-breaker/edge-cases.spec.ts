@@ -1,6 +1,6 @@
 /**
  * Circuit Breaker Pattern - Edge Cases Tests
- * 
+ *
  * Tests boundary conditions and edge cases for circuit breaker behavior.
  */
 
@@ -10,14 +10,14 @@ import { waitForCooldown } from "./helpers";
 test.describe("Circuit breaker - edge cases @api", () => {
   /**
    * Edge case: Circuit opens exactly at threshold, not before.
-   * 
+   *
    * Validates that:
    * - Circuit remains closed at (threshold - 1) failures
    * - Circuit opens precisely at threshold failures
    */
   test("opens circuit exactly at failure threshold, not before", async () => {
     const { CircuitBreaker } = await import("@hmcts/playwright-common");
-    
+
     const breaker = new CircuitBreaker({
       failureThreshold: 3,
       cooldownMs: 50,
@@ -36,7 +36,7 @@ test.describe("Circuit breaker - edge cases @api", () => {
     // One more failure should open the circuit
     expect(breaker.canProceed()).toBe(true);
     breaker.onFailure();
-    
+
     expect(breaker.getMetrics().state).toBe("open");
     expect(breaker.getMetrics().failureCount).toBe(3);
     expect(breaker.canProceed()).toBe(false);
@@ -44,7 +44,7 @@ test.describe("Circuit breaker - edge cases @api", () => {
 
   /**
    * Edge case: Half-open state respects maxAttempts limit.
-   * 
+   *
    * Validates that:
    * - Circuit allows exactly maxAttempts trials in half-open state
    * - Additional requests are blocked until trial completes
@@ -52,7 +52,7 @@ test.describe("Circuit breaker - edge cases @api", () => {
    */
   test("blocks requests after half-open max attempts reached", async () => {
     const { CircuitBreaker } = await import("@hmcts/playwright-common");
-    
+
     const breaker = new CircuitBreaker({
       failureThreshold: 2,
       cooldownMs: 50,
@@ -85,13 +85,13 @@ test.describe("Circuit breaker - edge cases @api", () => {
 
   /**
    * Edge case: Successful request in closed state resets failure count.
-   * 
+   *
    * Validates that partial failures don't accumulate indefinitely when
    * interspersed with successes.
    */
   test("resets failure count after success in closed state", async () => {
     const { CircuitBreaker } = await import("@hmcts/playwright-common");
-    
+
     const breaker = new CircuitBreaker({
       failureThreshold: 3,
       cooldownMs: 50,
