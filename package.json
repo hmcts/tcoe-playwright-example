@@ -21,7 +21,7 @@
     "get-port": "^7.1.0",
     "globals": "^16.0.0",
     "lighthouse": "^12.2.1",
-    "odhin-reports-playwright": "1.1.8",
+    "odhin-reports-playwright": "1.2.2",
     "playwright": "^1.57.0",
     "playwright-core": "^1.57.0",
     "playwright-lighthouse": "^4.0.0",
@@ -53,7 +53,7 @@
     "report:api-endpoints": "node ./scripts/api-endpoints-report.mjs",
     "copy-odhin-report": "node ./scripts/copy-odhin-report.mjs"
   },
-  "packageManager": "yarn@4.9.4",
+  "packageManager": "yarn@4.18.0",
   "dependencies": {
     "uuid": "^11.1.1"
   }
