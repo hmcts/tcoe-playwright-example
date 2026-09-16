@@ -1,5 +1,5 @@
 #!groovy
-@Library("Infrastructure")
+@Library("Infrastructure@2.8.0")
 
 // Need to replace these with TCoE team once available
 def type = "nodejs"
