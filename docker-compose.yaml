@@ -11,3 +11,6 @@ services:
     volumes:
       - .:/playwright
     entrypoint: ["/bin/bash"]
+    environment:
+      - PUPPETEER_SKIP_DOWNLOAD=true
+
