@@ -1,6 +1,6 @@
 /**
  * Circuit Breaker Pattern - Shared Utilities
- * 
+ *
  * Common helpers and types used across circuit breaker tests.
  */
 

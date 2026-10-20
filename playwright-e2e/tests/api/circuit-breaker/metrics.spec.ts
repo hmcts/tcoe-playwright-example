@@ -1,6 +1,6 @@
 /**
  * Circuit Breaker Pattern - Metrics API Tests
- * 
+ *
  * Validates that circuit breaker exposes metrics for monitoring and observability.
  */
 
@@ -12,7 +12,7 @@ import { formatError } from "./helpers";
 test.describe("Circuit breaker - metrics @api", () => {
   /**
    * Validates that circuit breaker exposes metrics for monitoring.
-   * 
+   *
    * Metrics include:
    * - state: current circuit state (closed/open/half-open)
    * - failureCount: number of consecutive failures

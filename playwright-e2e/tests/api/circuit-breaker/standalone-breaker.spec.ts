@@ -1,6 +1,6 @@
 /**
  * Circuit Breaker Pattern - Standalone Usage Tests
- * 
+ *
  * Demonstrates manual circuit breaker usage without ApiClient for custom retry logic.
  */
 
@@ -10,7 +10,7 @@ import { createFlakyOperation, runBreakerAttempt, waitForCooldown } from "./help
 test.describe("Circuit breaker - standalone usage @api", () => {
   /**
    * Demonstrates manual circuit breaker usage for custom retry logic.
-   * 
+   *
    * Use this pattern when you need fine-grained control over:
    * - When to check if operations can proceed
    * - When to record successes/failures
@@ -18,7 +18,7 @@ test.describe("Circuit breaker - standalone usage @api", () => {
    */
   test("wraps risky operations with standalone CircuitBreaker instance", async () => {
     const { CircuitBreaker } = await import("@hmcts/playwright-common");
-    
+
     const breaker = new CircuitBreaker({
       failureThreshold: 3,
       cooldownMs: 50,
