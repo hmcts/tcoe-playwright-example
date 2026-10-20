@@ -240,9 +240,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hmcts/playwright-common@file:/Users/abigailsmith/HMCTS/playwright-common/package.tgz::locator=tcoe-playwright-example%40workspace%3A.":
+"@hmcts/playwright-common@npm:^1.1.7":
   version: 1.1.7
-  resolution: "@hmcts/playwright-common@file:/Users/abigailsmith/HMCTS/playwright-common/package.tgz#/Users/abigailsmith/HMCTS/playwright-common/package.tgz::hash=1d9359&locator=tcoe-playwright-example%40workspace%3A."
+  resolution: "@hmcts/playwright-common@npm:1.1.7"
   dependencies:
     "@axe-core/playwright": "npm:^4.11.0"
     "@eslint/js": "npm:^9.11.1"
@@ -265,7 +265,7 @@ __metadata:
   bin:
     delete-nightly-dev-branch: dist/scripts/delete-nightly-dev-branch.js
     get-secrets: dist/scripts/get-secrets.js
-  checksum: 10/28416c56c8aff8c76d50798b7c89153daeba4e265be88239ee92c41bc9fec12a0a7405d87f98ef09d01d7848b018fce9ab66278acaf0cb84a1ce8734f26a96ce
+  checksum: 10/b45a23d9af23847e453ca7c2da9f040fb41e222b1da9095c96a293f6172d07a345147c58f1865601d4f5ea69ef118f92a01d6debc72b1d96ad299b8e891e347e
   languageName: node
   linkType: hard
 
@@ -6618,7 +6618,7 @@ __metadata:
   dependencies:
     "@axe-core/playwright": "npm:^4.11.0"
     "@eslint/js": "npm:^9.11.1"
-    "@hmcts/playwright-common": /Users/abigailsmith/HMCTS/playwright-common/package.tgz
+    "@hmcts/playwright-common": "npm:^1.1.7"
     "@playwright/test": "npm:^1.64.0"
     "@types/node": "npm:^22.15.34"
     "@typescript-eslint/eslint-plugin": "npm:^8.8.0"
