@@ -44,9 +44,16 @@ yarn playwright test tests/failing.spec.ts
 
 Only use the heavier command when you’re investigating a specific failure. Videos, traces, and raw JSON blobs are processed inline by Odhín, so capturing them for every test/project will eventually hit Node’s string-size limit.
 
-The utils class has a [helper function](https://github.com/hmcts/tcoe-playwright-example/blob/master/playwright-e2e/utils/config.utils.ts#L47) to ensure the given environment variable is set when loaded (fail fast rather than wait until the specific variable is accessed).
+[`config.utils.ts`](../playwright-e2e/utils/config.utils.ts) provides two helpers with different behaviour:
 
-If you prefer the shared helper from `@hmcts/playwright-common`, use `ConfigUtils.getEnvVar`:
+| Helper | When the variable is missing or empty | Use for |
+|--------|---------------------------------------|---------|
+| `getEnvVar(name, fallback?)` (local, not exported) | Returns `fallback` if given; otherwise logs a warning and returns `""`. **It does not fail.** | Optional values, or values that are only needed by some tests (e.g. user credentials in `config`) |
+| `requireEnvVar(name)` | Throws `Missing required environment variable: <name>` | Values the run cannot work without (e.g. `CLIENT_ID`, `IDAM_SECRET`, `S2S_MICROSERVICE_NAME`) |
+
+Because the local `getEnvVar` falls back to an empty string, a missing credential will not stop the suite at load time. The test that uses it will fail later, usually at login. If you want a variable to fail fast, call `requireEnvVar` where it is first needed.
+
+`ConfigUtils.getEnvVar` from `@hmcts/playwright-common` is different from the local helper: it throws when the variable is missing (see `tests/utils/config-utils.spec.ts`):
 
 ```ts
 import { ConfigUtils } from "@hmcts/playwright-common";
