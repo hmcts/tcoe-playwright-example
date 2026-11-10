@@ -405,10 +405,14 @@ test("Example performance test @performance", async ({ page, lighthouseUtils }) 
 4. Run with headed mode to observe: `--headed`
 
 ### Flaky Tests
-- Increase timeouts for slow environments
-- Add explicit waits: `await page.waitForLoadState("networkidle")`
+- Rely on web-first assertions, which auto-wait and retry until the UI reaches the expected state:
+  `await expect(page.getByRole("heading", { name: "Case details" })).toBeVisible()`
+- If a step depends on a specific backend call, wait for that response explicitly:
+  `await page.waitForResponse((res) => res.url().includes("/api/cases") && res.ok())`
+- Avoid `page.waitForLoadState("networkidle")` and `page.waitForTimeout()`. Polling, analytics and websockets make `networkidle` unreliable, so it causes the flakiness it is meant to fix (Playwright marks it as discouraged, and the `playwright/no-networkidle` lint rule flags it)
 - Check for race conditions in async operations
-- Use `test.retry(2)` for known-flaky tests (sparingly)
+- Increase timeouts only for genuinely slow environments, not to mask missing waits
+- Use retries for known-flaky tests sparingly, e.g. `test.describe.configure({ retries: 2 })`, and raise a ticket to fix the root cause
 
 ### Session Expired Errors
 Re-run global setup to regenerate session files:
