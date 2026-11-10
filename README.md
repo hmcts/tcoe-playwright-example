@@ -47,6 +47,50 @@ See the [POM docs](https://github.com/hmcts/tcoe-playwright-example/blob/master/
 
 TCoE Best Practices for setting up playwright in your service can be found in the [playwright-e2e/readme.md](https://github.com/hmcts/tcoe-playwright-example/blob/master/docs/BEST_PRACTICE.md).
 
+## What's in `@hmcts/playwright-common`
+
+Most of the helpers used here come from the shared [`@hmcts/playwright-common`](https://www.npmjs.com/package/@hmcts/playwright-common) library. Use this table to find an export and an example of it in use.
+
+| Export | What it does | Example in this repo |
+|--------|--------------|----------------------|
+| **Config** | | |
+| `CommonConfig` | Recommended Playwright defaults (`CommonConfig.recommended`) and a default viewport. | [`playwright.config.ts`](./playwright.config.ts) |
+| `ProjectsConfig` | Ready-made browser/device projects (chrome, firefox, webkit, edge, tablets). | [`playwright.config.ts`](./playwright.config.ts) |
+| `LintingConfig` | Shared ESLint flat config, including the Playwright plugin rules. | [`eslint.config.mjs`](./eslint.config.mjs) |
+| `ConfigUtils` | Reads environment variables with consistent error handling. | [`utils/config.utils.ts`](./playwright-e2e/utils/config.utils.ts) |
+| **Page objects** | | |
+| `IdamPage` | IDAM login page; `login(user)` signs a user in. | [`global.setup.ts`](./playwright-e2e/global.setup.ts) |
+| `ExuiCaseListComponent` | ExUI case list: filters, search and result links. | [`case-list-professional.spec.ts`](./playwright-e2e/tests/case-list-professional.spec.ts) |
+| `ExuiCaseDetailsComponent` | ExUI case details: case header, case number, tabs and access-request screens. | [`case-list-professional.spec.ts`](./playwright-e2e/tests/case-list-professional.spec.ts) |
+| `ExuiMediaViewerPage` | ExUI document/media viewer controls. | [`visual-tests.spec.ts`](./playwright-e2e/tests/visual-tests.spec.ts) |
+| `ExuiSpinnerComponent` | ExUI loading spinner, for waiting until a page has settled. | Not used here yet |
+| **UI utilities** | | |
+| `AxeUtils` | Runs axe-core accessibility audits and attaches a report to the test. | [`accessibility-example-test.spec.ts`](./playwright-e2e/tests/accessibility-example-test.spec.ts) |
+| `LighthouseUtils` | Runs Lighthouse performance audits against a page. | [`case-list-casemanager.performance.spec.ts`](./playwright-e2e/tests/case-list-casemanager.performance.spec.ts) |
+| `TableUtils` | Turns ExUI, citizen, CCD key-value and work allocation tables into plain objects. | [`case-list-professional.spec.ts`](./playwright-e2e/tests/case-list-professional.spec.ts) |
+| `LocaleUtils` / `Locale` | Adds a locale (English/Welsh) to the current URL and navigates to it. | [`localisation.spec.ts`](./playwright-e2e/tests/localisation.spec.ts) |
+| `BrowserUtils` | Opens extra browser contexts, e.g. to run two signed-in users in one test. | [`multiple-users.spec.ts`](./playwright-e2e/tests/multiple-users.spec.ts) |
+| `SessionUtils` | Reads saved session cookies and checks whether a session is still valid. | [`global.setup.ts`](./playwright-e2e/global.setup.ts) |
+| `WaitUtils` | Custom visibility waits for cases Playwright's auto-waiting doesn't cover. | [`exui-header.component.ts`](./playwright-e2e/page-objects/components/exui/exui-header.component.ts) |
+| `ValidatorUtils` | Checks that case numbers are digits only and that dates look like "18 Oct 2024". | [`cui-case-list.component.ts`](./playwright-e2e/page-objects/components/cui/cui-case-list.component.ts) |
+| **Auth & users** | | |
+| `IdamUtils` | Gets IDAM tokens and creates, fetches and updates test users. | [`solicitor-user.spec.ts`](./playwright-e2e/tests/solicitor-user.spec.ts) |
+| `ServiceAuthUtils` | Leases S2S service tokens. | [`global.setup.ts`](./playwright-e2e/global.setup.ts) |
+| **API & resilience** | | |
+| `ApiClient` / `ApiClientError` | HTTP client with timeouts, logging, redaction and typed responses. | [`tests/api/api.healthcheck.spec.ts`](./playwright-e2e/tests/api/api.healthcheck.spec.ts) |
+| `buildApiAttachment` | Builds a sanitised API call attachment for the Playwright report. | [`tests/api/token.exchange.spec.ts`](./playwright-e2e/tests/api/token.exchange.spec.ts) |
+| `withRetry` / `isRetryableError` | Retries with exponential backoff for flaky calls. | [`tests/api/api-client-extras.spec.ts`](./playwright-e2e/tests/api/api-client-extras.spec.ts) |
+| `CircuitBreaker` | Stops calling a service that keeps failing (see the diagram above). | [`tests/api/circuit-breaker/`](./playwright-e2e/tests/api/circuit-breaker/) |
+| **Logging & reporting** | | |
+| `createLogger` / `createChildLogger` | Winston logger with secret redaction built in. | [`utils/utils.fixtures.ts`](./playwright-e2e/utils/utils.fixtures.ts) |
+| `readCoverageSummary` and other coverage helpers | Read and format c8 coverage summaries. | [`scripts/coverage-summary.mjs`](./scripts/coverage-summary.mjs) |
+| `scanApiEndpoints` | Lists the API endpoints your specs call. | [`scripts/api-endpoints-report.mjs`](./scripts/api-endpoints-report.mjs) |
+| **CLI scripts** | | |
+| `get-secrets` | Writes a `.env` from an Azure Key Vault (`yarn get-secrets <vault>`). | `load-secrets` in [`package.json`](./package.json) |
+| `delete-nightly-dev-branch` | Deletes the `nightly-dev` branch of an HMCTS GitHub repo (needs `GITHUB_TOKEN`). | Not used here yet |
+
+Most of these are exposed as fixtures in [`utils/utils.fixtures.ts`](./playwright-e2e/utils/utils.fixtures.ts) and [`page-objects/pages/page.fixtures.ts`](./playwright-e2e/page-objects/pages/page.fixtures.ts), so tests can request them by name (e.g. `async ({ tableUtils, idamUtils }) => ...`).
+
 ## Contributing
 
 We all share the responsibility of ensuring this repo is up to date and accurate in terms of best practice. If you would like to contribute you can raise a github issue with the improvement you are suggesting or raise a PR yourself. See the [contribution guide](https://github.com/hmcts/tcoe-playwright-example/blob/master/CONTRIBUTING.md) for more info.
@@ -65,6 +109,8 @@ Generate a Playwright API test for <endpoint> that:
 ```
 
 ## Getting Started
+
+> **Setting this up for your own service?** TCoE recommends keeping your tests in your app's code repo. Follow the [adoption guide](./docs/ADOPTING.md), which covers that setup and a standalone test repo for cross-service journeys.
 
 ### Prerequisites
 
