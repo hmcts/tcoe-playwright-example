@@ -18,9 +18,11 @@ The two options:
 
 If you need both, keep your service's smoke and functional tests in the app repo, and put only the cross-service journeys in a separate repo.
 
+Whichever you choose, finish with [Configure it for your service](#configure-it-for-your-service).
+
 ## Inside your app repo (recommended)
 
-This is the setup TCoE recommends. Steps 2 to 5 of the [standalone checklist](#standalone-test-repo) below also apply (secrets, environment variables, users and URLs, and deleting the PRL examples). These are the extra things to do when the tests sit next to your application.
+This is the setup TCoE recommends.
 
 ### 1. Folder layout
 
@@ -120,25 +122,36 @@ test-results/
 functional-output/
 ```
 
+### 8. Configure and check it
+
+1. Follow [Configure it for your service](#configure-it-for-your-service).
+2. Start your app locally, then run `yarn lint` and `yarn test:smoke` against it.
+
 ## Standalone test repo
 
 1. **Copy what you need.** The minimum is `playwright.config.ts`, `eslint.config.mjs`, `tsconfig.json`, `package.json` (scripts and devDependencies), `.env.example` and `playwright-e2e/` (`fixtures.ts`, `global.setup.ts`, `global.teardown.ts`, `utils/` and `page-objects/base.ts`). Add the Jenkinsfiles, `scripts/` and `docs/` if you want them.
-2. **Point it at your secrets.**
-   - In `package.json`, change `"load-secrets": "yarn get-secrets prl-aat"` to your own Key Vault.
-   - In `Jenkinsfile_nightly` and `Jenkinsfile_nightly_parallel`, replace the `prl-${env}` vault and its secret names, and set `product`, `component` and `channel` to your team's values.
+2. **Configure it** by following [Configure it for your service](#configure-it-for-your-service).
+3. **Check it works:** run `yarn setup`, `yarn lint`, then `yarn test:chrome`. Make sure `.env` and `.sessions/` stay out of git (they're already in `.gitignore`).
+
+## Configure it for your service
+
+These steps apply to both routes.
+
+1. **Point it at your secrets.**
+   - In `package.json`, change `"load-secrets": "yarn get-secrets prl-aat"` to your own Key Vault (add the script if your app repo doesn't have it).
+   - In your Jenkinsfiles, replace the `prl-${env}` vault and its secret names, and set `product`, `component` and `channel` to your team's values. In an app repo that's your `Jenkinsfile_CNP`; in a standalone repo it's `Jenkinsfile_nightly` and `Jenkinsfile_nightly_parallel`.
    - Tag each Key Vault secret with `"e2e": "<ENV_VAR_NAME>"` so `get-secrets` picks it up.
-3. **Set your environment variables** (in `.env` locally, from Key Vault in CI):
+2. **Set your environment variables** (in `.env` locally, from Key Vault in CI):
    - `CLIENT_ID`: your IDAM OAuth2 client (the template uses `prl-cos-api`).
    - `IDAM_SECRET`: the secret for that client.
    - `S2S_MICROSERVICE_NAME` (and `S2S_SECRET` if your gateway needs it).
    - Credentials for each user your tests sign in as (the template has `CASEMANAGER_*` and `JUDGE_*`).
-   - `MANAGE_CASES_BASE_URL`, `CITIZEN_FRONTEND_BASE_URL` and the IDAM/S2S URLs if you aren't testing AAT, or if your citizen UI isn't `privatelaw.aat.platform.hmcts.net`.
-4. **Update users and URLs.** In `playwright-e2e/utils/config.utils.ts`, change `config.users` to your roles and `config.urls` to your defaults. Then update `global.setup.ts` so it signs in those users.
-5. **Delete the examples that don't apply to you.** That includes:
+   - The URLs you test against. In an app repo, `TEST_URL` covers your own app (see [step 5](#5-test-the-environment-the-pipeline-deployed)). Otherwise set `MANAGE_CASES_BASE_URL`, `CITIZEN_FRONTEND_BASE_URL` and the IDAM/S2S URLs if you aren't testing AAT, or if your citizen UI isn't `privatelaw.aat.platform.hmcts.net`.
+3. **Update users and URLs.** In `playwright-e2e/utils/config.utils.ts`, change `config.users` to your roles and `config.urls` to your defaults. Then update `global.setup.ts` so it signs in those users.
+4. **Delete the examples that don't apply to you.** That includes:
    - The PRL citizen journeys (`case-list-citizen.spec.ts`, `activate-case-pin.po.ts`, `cui/` page objects).
    - The divorce caseworker and solicitor provisioning specs, if you don't create users.
    - The `tests/api/` demos (`circuit-breaker/`, `parallel-sweep`, `status-profile`) and `data/seed-manifest.json`, if you don't need them.
    - Any visual snapshots, which need regenerating with `yarn test:update-snapshots` anyway.
-6. **Check it works:** run `yarn setup`, `yarn lint`, then `yarn test:chrome`. Make sure `.env` and `.sessions/` stay out of git (they're already in `.gitignore`).
 
 See [CONFIGURATION.md](./CONFIGURATION.md) for more on config and environment variables, and [CI.md](./CI.md) for the Jenkins pipelines.
