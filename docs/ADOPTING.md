@@ -38,21 +38,39 @@ your-app/
 │   ├── tests/
 │   ├── utils/
 │   └── tsconfig.json       # test-only TypeScript config (see step 4)
+├── scripts/
+│   └── report-links-reporter.mjs   # required, see below
 ├── playwright.config.ts
 └── package.json
 ```
 
-You don't need `scripts/cleanup-playwright.mjs`. It only matters when you're developing against a locally linked copy of `@hmcts/playwright-common`.
+Copy `scripts/report-links-reporter.mjs`. `playwright.config.ts` loads it whenever the `html` or `odhin` reporter is turned on, and [step 6](#6-secrets-and-reports-in-your-jenkinsfile) turns on `html`. Without it the run fails before any test starts. If you don't want the report links, delete the `if (shouldEmitHtmlLinks || shouldEmitOdhinLinks)` block from `resolveReporters()` instead.
+
+You don't need `scripts/cleanup-playwright.mjs`. It only matters when you're developing against a locally linked copy of `@hmcts/playwright-common`, and the scripts in step 3 call `playwright` directly rather than through this repo's `yarn playwright` wrapper.
+
+**Renaming `playwright-e2e/`.** The folder name has no special meaning to Playwright, so you can call it something else, such as `e2e/` or `functional-tests/`. The path is hard-coded in a few places, so update these too:
+
+| Where | What to change |
+|-------|----------------|
+| `playwright.config.ts` | `testDir`, `snapshotDir`, and the Odhín `testFolder` default (or set `PW_ODHIN_TEST_FOLDER`) |
+| `eslint.config.mjs` | The `files` glob for the Playwright rules |
+| `utils/seed-manifest.ts` | The default manifest path (or set `SEED_MANIFEST_PATH`) |
+| `scripts/api-endpoints-report.mjs`, `scripts/copy-odhin-report.mjs` | The API test root (or set `API_TEST_ROOT`), if you copy these scripts |
+| Jenkinsfiles | Any `playwright test playwright-e2e/...` commands and `functional-output/tests/playwright-e2e/...` report paths |
+
+In an app repo, use the new name in the tsconfig, test-runner exclude and ESLint `files` settings from [step 4](#4-keep-the-test-config-separate-from-the-app-config).
 
 ### 2. Dependencies
 
 Add the test packages as **devDependencies**, so they aren't installed in your production image:
 
 ```bash
-yarn add -D @playwright/test @hmcts/playwright-common @axe-core/playwright dotenv
+yarn add -D @playwright/test @hmcts/playwright-common @axe-core/playwright dotenv get-port uuid
 # optional, only if you use them:
-yarn add -D odhin-reports-playwright lighthouse playwright-lighthouse get-port winston
+yarn add -D odhin-reports-playwright lighthouse playwright-lighthouse winston
 ```
+
+`get-port` and `uuid` are required even if you delete the tests that use them. `fixtures.ts` imports `get-port`, and the user utilities (`citizen-user.utils.ts`, `professional-user.utils.ts`) import `uuid`. Both load whenever the fixtures load.
 
 ### 3. Scripts the HMCTS pipeline runs
 
@@ -60,13 +78,16 @@ The CNP pipeline (`withPipeline` from [cnp-jenkins-library](https://github.com/h
 
 ```json
 "scripts": {
-  "test:e2e:install": "playwright install chromium --with-deps",
+  "test:e2e:install": "playwright install chrome --with-deps",
+  "test:e2e:install:all": "playwright install chrome firefox webkit --with-deps",
   "test:smoke": "yarn test:e2e:install && playwright test --grep @smoke --project=chrome",
   "test:functional": "yarn test:e2e:install && playwright test --grep-invert '@a11y|@visual|@performance' --project=chrome",
   "test:a11y": "yarn test:e2e:install && playwright test --grep @a11y --project=chrome",
-  "test:fullfunctional": "yarn test:e2e:install && playwright test --project=chrome --project=firefox --project=webkit"
+  "test:fullfunctional": "yarn test:e2e:install:all && playwright test --project=chrome --project=firefox --project=webkit"
 }
 ```
+
+Install the browsers each script selects. The `chrome` project runs branded Google Chrome (`channel: "chrome"`), so `playwright install chromium` doesn't cover it. Install `chrome` instead. On Linux, installing Google Chrome needs root. If your Jenkins workers can't do that, switch these scripts to `--project=chromium` and install `chromium`.
 
 Your existing `test` script should keep running your unit tests only. Check the version of cnp-jenkins-library you use for the exact script names it calls.
 
@@ -129,9 +150,24 @@ functional-output/
 
 ## Standalone test repo
 
-1. **Copy what you need.** The minimum is `playwright.config.ts`, `eslint.config.mjs`, `tsconfig.json`, `package.json` (scripts and devDependencies), `.env.example` and `playwright-e2e/` (`fixtures.ts`, `global.setup.ts`, `global.teardown.ts`, `utils/` and `page-objects/base.ts`). Add the Jenkinsfiles, `scripts/` and `docs/` if you want them.
+1. **Copy what you need.** The minimum is:
+   - `playwright.config.ts`, `eslint.config.mjs`, `tsconfig.json` and `.env.example`.
+   - `package.json`: its `scripts`, `devDependencies` **and** `dependencies` (which holds `uuid`).
+   - `playwright-e2e/`: `fixtures.ts`, `global.setup.ts`, `global.teardown.ts`, `utils/` and all of `page-objects/` (`fixtures.ts` loads the page fixtures, and `base.ts` loads the components).
+   - These files from `scripts/`:
+
+     | File | Needed by |
+     |------|-----------|
+     | `cleanup-playwright.mjs` | Every `yarn playwright …` command, including `yarn setup` and all the `test:*` scripts |
+     | `report-links-reporter.mjs` | `playwright.config.ts`, whenever the `html` or `odhin` reporter is on |
+     | `copy-odhin-report.mjs` | The Jenkinsfiles, after each test stage |
+     | `coverage-summary.mjs`, `api-endpoints-report.mjs` | The `report:coverage` and `report:api-endpoints` scripts, which the Jenkinsfiles run |
+
+     If you don't want `cleanup-playwright.mjs`, change the `playwright` script in `package.json` to `cross-env NODE_OPTIONS= playwright`. The cleanup only matters when you develop against a locally linked `@hmcts/playwright-common`. Drop the last two rows if you don't copy the Jenkinsfiles.
+
+   Add the Jenkinsfiles and `docs/` if you want them.
 2. **Configure it** by following [Configure it for your service](#configure-it-for-your-service).
-3. **Check it works:** run `yarn setup`, `yarn lint`, then `yarn test:chrome`. Make sure `.env` and `.sessions/` stay out of git (they're already in `.gitignore`).
+3. **Check it works:** run `yarn setup` and `yarn playwright install chrome --with-deps`, then `yarn lint`, then `yarn test:chrome`. `yarn setup` installs Playwright's default browsers (Chromium, Firefox and WebKit), but the `chrome` project needs branded Google Chrome, which is installed separately. Make sure `.env` and `.sessions/` stay out of git (they're already in `.gitignore`).
 
 ## Configure it for your service
 
@@ -153,5 +189,14 @@ These steps apply to both routes.
    - The divorce caseworker and solicitor provisioning specs, if you don't create users.
    - The `tests/api/` demos (`circuit-breaker/`, `parallel-sweep`, `status-profile`) and `data/seed-manifest.json`, if you don't need them.
    - Any visual snapshots, which need regenerating with `yarn test:update-snapshots` anyway.
+
+   **Removing the citizen (CUI) examples.** The `cui/` page objects are wired into shared files. Deleting only the folders breaks type-checking for your remaining ExUI tests. Also remove:
+   - `page-objects/pages/index.ts`: the `export * from "./cui/cui-case-list.po";` line.
+   - `page-objects/components/index.ts`: the `export * from "./cui/cui-case-list.component";` line.
+   - `page-objects/base.ts`: the `CuiCaseListComponent` import, the `cuiCaseListComponent` property and the line that sets it in the constructor.
+   - `page-objects/pages/page.fixtures.ts`: the `CuiCaseListPage` and `ActivateCasePinPage` imports, their entries in `PageFixtures`, and the `cuiCaseListPage` and `activateCasePinPage` fixtures.
+   - The specs that use those fixtures: `case-list-citizen.spec.ts`, `localisation.spec.ts`, `accessibility-example-test.spec.ts`, and the "Visual Tests (citizen user)" block in `visual-tests.spec.ts`. Keep the examples you want, rewritten against your own pages.
+
+   Then run `yarn lint` to confirm nothing still refers to them. Keep `utils/citizen-user.utils.ts` unless you also remove the `citizenUserUtils` fixture from `utils/utils.fixtures.ts`.
 
 See [CONFIGURATION.md](./CONFIGURATION.md) for more on config and environment variables, and [CI.md](./CI.md) for the Jenkins pipelines.
