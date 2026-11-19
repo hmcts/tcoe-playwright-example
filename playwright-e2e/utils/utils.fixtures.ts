@@ -3,6 +3,7 @@ import {
   ApiClientOptions,
   ApiLogEntry,
   AxeUtils,
+  CcdCaseEventUtils,
   BrowserUtils,
   IdamUtils,
   LighthouseUtils,
@@ -18,7 +19,7 @@ import os from "node:os";
 import path from "node:path";
 import { chromium, Page, TestInfo } from "playwright/test";
 import { CitizenUserUtils } from "./citizen-user.utils";
-import { config, Config } from "./config.utils";
+import { config, Config, requireEnvVar } from "./config.utils";
 import { CookieUtils } from "./cookie.utils";
 import { ProfessionalUserUtils } from "./professional-user.utils";
 import { type SeedManifest, loadSeedManifest } from "./seed-manifest";
@@ -152,6 +153,7 @@ export interface UtilsFixtures {
   professionalUserUtils: ProfessionalUserUtils;
   localeUtils: LocaleUtils;
   serviceAuthUtils: ServiceAuthUtils;
+  ccdCaseEventUtils: CcdCaseEventUtils;
   logger: LoggerInstance;
   apiRecorder: ApiRecorder;
   createApiClient: ApiClientFactory;
@@ -343,6 +345,36 @@ export const utilsFixtures = {
         },
       })
     );
+  },
+  /**
+   * Creates CCD cases and fires events via the CCD data store v2 API,
+   * so UI tests can start from a case already in the state they need.
+   * Users can be passed as `{ username, password }` (logged in via CLIENT_ID / IDAM_SECRET)
+   * or `{ bearerToken }`.
+   */
+  ccdCaseEventUtils: async (
+    { config, logger, apiRecorder, idamUtils, serviceAuthUtils },
+    use
+  ) => {
+    const ccd = new CcdCaseEventUtils({
+      idamUtils,
+      serviceAuthUtils,
+      ccdUrl: config.urls.ccdDataStoreUrl,
+      caseType: config.ccd.caseType,
+      microservice: config.ccd.microservice,
+      idamClient: {
+        clientId: requireEnvVar("CLIENT_ID"),
+        clientSecret: requireEnvVar("IDAM_SECRET"),
+        redirectUri: process.env.IDAM_REDIRECT_URI,
+      },
+      logger: createChildLogger(logger, { component: "CcdCaseEventUtils" }),
+      apiClientOptions: {
+        captureRawBodies: apiRecorder.includeRawBodies,
+        onResponse: (entry: ApiLogEntry) => apiRecorder.record(entry),
+      },
+    });
+    await use(ccd);
+    await ccd.dispose();
   },
 };
 

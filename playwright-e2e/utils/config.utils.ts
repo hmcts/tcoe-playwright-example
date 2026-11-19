@@ -23,6 +23,12 @@ interface Urls {
   idamWebUrl: string;
   idamTestingSupportUrl: string;
   serviceAuthUrl: string;
+  ccdDataStoreUrl: string;
+}
+
+interface CcdConfig {
+  caseType: string;
+  microservice: string;
 }
 
 export interface Config {
@@ -31,6 +37,7 @@ export interface Config {
     judge: UserCredentials;
   };
   urls: Urls;
+  ccd: CcdConfig;
 }
 
 export const config: Config = {
@@ -72,6 +79,14 @@ export const config: Config = {
       process.env.S2S_URL ||
         "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal/testing-support/lease"
     ),
+    ccdDataStoreUrl: stripTrailingSlash(
+      process.env.CCD_DATA_STORE_URL ||
+        "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
+    ),
+  },
+  ccd: {
+    caseType: process.env.CCD_CASE_TYPE || "PRLAPPS",
+    microservice: process.env.CCD_S2S_MICROSERVICE || "prl_cos_api",
   },
 };
 
