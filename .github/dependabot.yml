@@ -1,0 +1,20 @@
+# Dependabot is used for security updates only.
+# Version updates (minor/patch/major, Docker base image) are handled by Renovate — see renovate.json.
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # 0 disables version update PRs; security update PRs are unaffected
+    open-pull-requests-limit: 0
+    labels:
+      - "dependencies"
+      - "security"
+    groups:
+      security:
+        applies-to: security-updates
+        patterns:
+          - "*"
